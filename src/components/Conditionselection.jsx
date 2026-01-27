@@ -49,7 +49,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
         <div className="text-center mb-6">
           <button
             onClick={onBack}
-            className="text-blue-500 hover:text-blue-600 text-sm sm:text-base font-medium"
+            className="text-blue-500 hover:text-blue-600 text-sm sm:text-base font-medium cursor-pointer"
           >
             ← Back to models
           </button>
@@ -73,7 +73,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
                   navigate("/Storageselection");
                 }}
                 className="bg-white border-2 border-gray-200 rounded-xl
-                           p-6 sm:p-8 hover:border-blue-500 hover:shadow-lg transition"
+                           p-6 sm:p-8 hover:border-blue-500 hover:shadow-lg transition cursor-pointer"
               >
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full
                   flex items-center justify-center text-2xl sm:text-3xl

@@ -57,7 +57,7 @@ const ModelSelection = ({ selectedBrand }) => {
         <div className="text-center mb-3">
           <button
             onClick={() => navigate("/brandselection")}
-            className="text-blue-500 font-medium hover:underline"
+            className="text-blue-500 font-medium hover:underline cursor-pointer"
           >
             ← Back to brands
           </button>
@@ -70,7 +70,7 @@ const ModelSelection = ({ selectedBrand }) => {
             Choose the model of your {selectedBrand || "phone"}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto ">
             {models.map((model) => (
               <MobileCard
                 key={model.id}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 // import { ChevronRight } from "lucide-react";
+import Header from '../components/header.jsx';
 import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, ArrowRight, ChevronRight } from 'lucide-react';
 
 
@@ -104,8 +105,8 @@ export default function DeviceAssessmentForm() {
   const isFormValid = () => {
     return formData.screenCondition && 
            formData.bodyCondition && 
-           formData.batteryCondition && 
-           formData.images.length > 0;
+           formData.batteryCondition;
+          //  formData.images.length > 0;
   };
 
   const getColorClass = (color, selected) => {
@@ -118,14 +119,18 @@ export default function DeviceAssessmentForm() {
   };
 
   return (
+    <div>  {/* Header */}
+       <Header simple />
+
+
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-blue-600 px-4 py-2 rounded-full mb-4">
+          {/* <div className="inline-flex items-center gap-2 bg-blue-600 px-4 py-2 rounded-full mb-4">
             <Smartphone className="w-5 h-5 text-white" />
             <span className="text-xl font-bold text-gray-900"> <a href="/">CashMish</a> </span>
-          </div>
+          </div> */}
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
             Device Assessment
           </h1>
@@ -153,7 +158,7 @@ export default function DeviceAssessmentForm() {
                   key={condition.value}
                   type="button"
                   onClick={() => handleConditionSelect('screenCondition', condition.value)}
-                  className={`relative p-4 border-2 rounded-xl transition-all ${
+                  className={`relative p-4 border-2 rounded-xl transition-all cursor-pointer ${
                     formData.screenCondition === condition.value
                       ? getColorClass(condition.color, true)
                       : `bg-white ${getColorClass(condition.color, false)}`
@@ -174,24 +179,24 @@ export default function DeviceAssessmentForm() {
           </div>
 
           {/* Body Condition */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 ">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-purple-100 p-3 rounded-xl">
                 <Shield className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">Body Condition</h2>
+                <h2 className="text-xl font-bold text-gray-800 ">Body Condition</h2>
                 <p className="text-sm text-gray-600">Select the physical condition of your device</p>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 gap-4 ">
               {bodyConditions.map((condition) => (
                 <button
                   key={condition.value}
                   type="button"
                   onClick={() => handleConditionSelect('bodyCondition', condition.value)}
-                  className={`relative p-4 border-2 rounded-xl transition-all ${
+                  className={`relative p-4 border-2 rounded-xl transition-all cursor-pointer ${
                     formData.bodyCondition === condition.value
                       ? getColorClass(condition.color, true)
                       : `bg-white ${getColorClass(condition.color, false)}`
@@ -229,7 +234,7 @@ export default function DeviceAssessmentForm() {
                   key={condition.value}
                   type="button"
                   onClick={() => handleConditionSelect('batteryCondition', condition.value)}
-                  className={`relative p-4 border-2 rounded-xl transition-all ${
+                  className={`relative p-4 border-2 rounded-xl transition-all cursor-pointer ${
                     formData.batteryCondition === condition.value
                       ? getColorClass(condition.color, true)
                       : `bg-white ${getColorClass(condition.color, false)}`
@@ -351,6 +356,7 @@ export default function DeviceAssessmentForm() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

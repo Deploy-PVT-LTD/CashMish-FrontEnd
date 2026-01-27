@@ -42,10 +42,10 @@ const StorageSelection = ({
         </div>
 
         {/* Back */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-6 ">
           <button
             onClick={() => onBack ? onBack() : navigate("/modelselection")}
-            className="text-blue-500 hover:text-blue-600 text-sm sm:text-base font-medium"
+            className="text-blue-500 hover:text-blue-600 text-sm sm:text-base font-medium cursor-pointer"
           >
             ← Back to condition
           </button>
@@ -66,7 +66,7 @@ const StorageSelection = ({
               <button
                 key={storage}
                 onClick={() => setSelectedStorage(storage)}
-                className={`rounded-xl border-2 p-4 sm:p-5 transition
+                className={`rounded-xl border-2 p-4 sm:p-5 transition cursor-pointer
                   ${selectedStorage === storage
                     ? 'bg-blue-500 border-blue-500 text-white'
                     : 'bg-white border-gray-200 text-gray-900 hover:border-blue-500'
@@ -87,7 +87,7 @@ const StorageSelection = ({
               navigate("/carrierselection");
             }}
             className="w-44 sm:w-48 bg-blue-500 text-white py-2.5 rounded-lg
-                       font-semibold hover:bg-blue-600 transition"
+                       font-semibold hover:bg-blue-600 transition cursor-pointer"
           >
             Add Data →
           </button>

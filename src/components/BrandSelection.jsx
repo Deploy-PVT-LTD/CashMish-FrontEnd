@@ -61,7 +61,7 @@ const BrandSelection = ({ onSelectBrand }) => {
                   navigate("/ModelSelection");
                 }}
                 className="bg-white border-2 border-gray-200 rounded-xl p-6 sm:p-8
-                           hover:border-blue-500 hover:shadow-lg transition flex flex-col items-center gap-3"
+                           hover:border-blue-500 hover:shadow-lg transition flex flex-col items-center gap-3  cursor-pointer"
               >
                 <img 
                   src={brand.icon} 
