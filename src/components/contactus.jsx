@@ -20,132 +20,117 @@ export default function ContactUs() {
   };
 
   return (
-    // overflow-hidden scrolling ko block karega
-    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50">
+    // lg:h-screen desktop par height fix rakhega, lekin mobile par auto height allow karega
+    // overflow-y-auto zaroori hai taake mobile par scroll ho sake
+    <div className="min-h-screen lg:h-screen flex flex-col overflow-y-auto lg:overflow-hidden bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50">
       <Header />
 
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-4">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6 lg:py-0">
         <div className="max-w-5xl w-full">
           
-          {/* Header Section - Height optimized */}
-          <div className="text-center mb-6 animate-fade-in">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
+          <div className="text-center mb-4 lg:mb-6 animate-fade-in">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-800">
               Get In Touch
             </h1>
           </div>
 
-          {/* Main Content Card */}
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden animate-slide-up">
-            <div className="grid lg:grid-cols-5 gap-0">
+            <div className="grid lg:grid-cols-5">
               
-              {/* Left Side - Info (Original design maintained) */}
-              <div className="lg:col-span-2 bg-gradient-to-br bg-blue-600 to-cyan-600 p-8 text-white relative overflow-hidden">
-                <div className="relative z-10 h-full flex flex-col">
-                  <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+              {/* Left Side - Info */}
+              <div className="lg:col-span-2 bg-gradient-to-br from-blue-600 to-cyan-600 p-6 sm:p-8 text-white relative">
+                <div className="relative z-10">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-2">
                     Contact Information
                   </h2>
-                  <p className="text-teal-100 mb-10 text-sm sm:text-base">
+                  <p className="text-blue-100 mb-6 sm:mb-10 text-xs sm:text-sm">
                     Fill up the form and our Team will get back to you within 24 hours.
                   </p>
 
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                        <Phone className="w-5 h-5 text-white" />
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                        <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
-                      <div>
-                        <div className="text-teal-50 text-xs mb-1">Phone</div>
-                        <div className="font-semibold">+8801797794888</div>
-                        <div className="font-semibold">+880186383848</div>
-                      </div>
+                      <div className="text-sm sm:text-base font-medium">+8801797794888</div>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                        <Mail className="w-5 h-5 text-white" />
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                        <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
-                      <div>
-                        <div className="text-teal-50 text-xs mb-1">Email</div>
-                        <div className="font-semibold">Support@uprankly.com</div>
-                      </div>
+                      <div className="text-sm sm:text-base font-medium">Support@cashmish.com</div>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                        <MapPin className="w-5 h-5 text-white" />
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
-                      <div>
-                        <div className="text-teal-50 text-xs mb-1">Address</div>
-                        <div className="font-semibold">New York, USA</div>
-                      </div>
+                      <div className="text-sm sm:text-base font-medium">New York, USA</div>
                     </div>
                   </div>
-
-                  {/* Decorative Elements */}
-                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full transform translate-x-20 translate-y-20 blur-3xl"></div>
-                  <div className="absolute bottom-10 right-10 w-40 h-40 bg-teal-300/30 rounded-full"></div>
                 </div>
               </div>
 
-              {/* Right Side - Form (Balanced Height) */}
-              <div className="lg:col-span-3 p-8">
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid sm:grid-cols-2 gap-6">
+              {/* Right Side - Form */}
+              <div className="lg:col-span-3 p-6 sm:p-8">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                  <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name</label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="John Trancelgy"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all bg-gray-50 text-gray-800"
+                        placeholder="John Doe"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Your Email</label>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Your Email</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="hello@nureancy.com"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all bg-gray-50 text-gray-800"
+                        placeholder="hello@cashmish.com"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Subject</label>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Your Subject</label>
                     <input
                       type="text"
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      placeholder="When i Recieve Quotation?"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all bg-gray-50 text-gray-800"
+                      placeholder="Quotation Inquiry"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
                       required
                     />
                   </div>
 
-                  <div className="relative">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Message</label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      rows="4" // Adjusted from 6 to 4 for better fit
-                      placeholder="Write here your message"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all bg-gray-50 text-gray-800 resize-none"
+                      rows="3" 
+                      placeholder="Write your message here..."
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm resize-none"
                       required
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    className="bg-blue-600 hover:bg-teal-600 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg shadow-teal-500/25"
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
                   >
                     <span>Send Message</span>
                     <Send className="w-4 h-4" />
@@ -155,16 +140,15 @@ export default function ContactUs() {
             </div>
           </div>
 
-          {/* Footer Area - Smaller margin to fit screen */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm text-gray-600">
-            <a href="#" className="hover:text-teal-600 transition-colors">Terms</a>
-            <a href="#" className="hover:text-teal-600 transition-colors">Privacy</a>
-            <div className="flex items-center gap-4">
-               {/* Logos/Socials same as original */}
-               <div className="flex gap-3">
-                 <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white"><span className="text-[10px]">in</span></div>
-                 <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white"><span className="text-[10px]">fb</span></div>
-               </div>
+          {/* Footer Area */}
+          <div className="mt-6 pb-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-blue-600">Terms</a>
+              <a href="#" className="hover:text-blue-600">Privacy</a>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px]">in</div>
+              <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px]">fb</div>
             </div>
           </div>
         </div>
