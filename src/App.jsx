@@ -14,7 +14,7 @@ import OfferAcceptancePage from './components/acceptRejectOffer';
 import NotFound from './components/NotFound'; // import your 404 Not Found component
 import RejectionPage from './components/NotAccepted'; // import your rejection page
 import CarrierSelection from './components/Phonecarrier';
-import ContactUs from './components/ContactUs';
+import ContactUs from './components/contactus.jsx';
 import AboutUs from './components/About';
 
 
