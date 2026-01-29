@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Send } from 'lucide-react';
 import Header from "../components/header.jsx";
+import linkedinlogo from "../assets/linkedin-logo.svg";
+import fblogo from "../assets/fb-logo.svg";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -143,12 +145,12 @@ export default function ContactUs() {
           {/* Footer Area */}
           <div className="mt-6 pb-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
             <div className="flex gap-4">
-              <a href="#" className="hover:text-blue-600">Terms</a>
-              <a href="#" className="hover:text-blue-600">Privacy</a>
+              <a href="/terms" className="hover:text-blue-600">Terms</a>
+              <a href="/privacy-policy" className="hover:text-blue-600">Privacy</a>
             </div>
             <div className="flex gap-3">
-              <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px]">in</div>
-              <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px]">fb</div>
+              <div className="w-5 h-6 cursor-pointer"><a href="https://www.linkedin.com/"><img src={linkedinlogo} alt="Linked" /></a></div>
+              <div className="w-5 h-6 cursor-pointer"><a href="https://www.facebook.com/"><img src={fblogo} alt="Facebook" /></a></div>
             </div>
           </div>
         </div>

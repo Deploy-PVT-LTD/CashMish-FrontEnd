@@ -69,6 +69,8 @@ const ConditionSelection = ({ onSelectCondition }) => {
               <button
                 key={condition.name}
                 onClick={() => {
+                  localStorage.setItem("selectedCondition", condition.name);
+                  console.log("Saved Condition:", condition.name);
                   onSelectCondition?.(condition.name);
                   navigate("/Storageselection");
                 }}

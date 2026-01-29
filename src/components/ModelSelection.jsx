@@ -1,85 +1,80 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MobileCard from "../components/MobileCard";
 import Header from '../components/header.jsx';
-const ModelSelection = ({ selectedBrand }) => {
+import axios from "axios";
+
+const ModelSelection = () => {
   const navigate = useNavigate();
+  const [models, setModels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // LocalStorage se selected brand (e.g., "Samsung")
+  const brand = localStorage.getItem("selectedBrand");
 
-  // ✅ Static models (abhi backend nahi)
-  const models = [
-    { id: 1, name: "iPhone 15 Pro", icon: "📱" },
-    { id: 2, name: "iPhone 15", icon: "📱" },
-    { id: 3, name: "iPhone 14 Pro", icon: "📱" },
-    { id: 4, name: "iPhone 14", icon: "📱" },
-  ];
+  useEffect(() => {
+    const fetchModelsByBrand = async () => {
+      if (!brand) {
+        navigate("/brandselection");
+        return;
+      }
 
-  // ✅ Model select handler
+      try {
+        setLoading(true);
+        // API call to fetch models based on brand
+        const response = await axios.get(`http://localhost:5000/api/mobiles/brand?brand=${brand}`);
+        
+        console.log("Data received:", response.data);
+        setModels(response.data);
+      } catch (error) {
+        console.error("Fetch Error:", error.response?.data || error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModelsByBrand();
+  }, [brand, navigate]);
+
   const handleSelectModel = (modelName) => {
     localStorage.setItem("selectedModel", modelName);
+console.log("Selected Model:", modelName);
     navigate("/ConditionSelection");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* ================= HEADER ================= */}
-       <Header  />
- 
-      {/* ================= MAIN ================= */}
+      <Header />
       <main className="flex-1 max-w-7xl mx-auto px-6 py-6 w-full">
-
-        {/* ===== Progress Steps ===== */}
-{/* ===== Progress Steps ===== */}
-
-  <div className="mb-8 sm:mb-1 overflow-x-auto">
-  <div className="flex items-center justify-start sm:justify-center gap-6 min-w-[250px] sm:min-w-0">
-    {[1, 2, 3, 4].map((step, i) => (
-      <React.Fragment key={step}>
-        <div className="flex flex-col items-center">
-          <div
-            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-semibold mb-1 sm:mb-2
-              ${step === 1 || step === 2 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-500"}`}
-          >
-            {step === 1 ? "✓" : step}
-          </div>
-          <span className="text-xs sm:text-sm text-gray-500">
-            {["Brand", "Model", "Condition", "Storage"][i]}
-          </span>
-        </div>
-        {step !== 4 && <div className="w-16 sm:w-24 h-0.5 bg-gray-300"></div>}
-      </React.Fragment>
-    ))}
-  </div>
-</div>
-
-
-
-        {/* ===== Back Button ===== */}
-        <div className="text-center mb-3">
-          <button
-            onClick={() => navigate("/brandselection")}
-            className="text-blue-500 font-medium hover:underline cursor-pointer"
-          >
+        
+        <div className="text-center mb-6">
+          <button onClick={() => navigate("/brandselection")} className="text-blue-500 hover:underline">
             ← Back to brands
           </button>
+          <h1 className="text-3xl font-bold mt-4">Select Your {brand} Model</h1>
         </div>
 
-        {/* ===== Model Selection ===== */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">Select Your Model</h1>
-          <p className="text-gray-600 mb-8">
-            Choose the model of your {selectedBrand || "phone"}
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto ">
-            {models.map((model) => (
-              <MobileCard
-                key={model.id}
-                name={model.name}
-                onClick={() => handleSelectModel(model.name)}
-              />
-            ))}
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {models.length > 0 ? (
+              models.map((item) => (
+                <MobileCard
+                  key={item._id}
+                  name={item.phoneModel} // Cards mein model ka naam display hoga
+                  onClick={() => handleSelectModel(item.phoneModel)}
+                />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-20 text-gray-500 bg-white rounded-2xl border-2 border-dashed">
+                Afsos! {brand} ke liye koi models nahi mile database mein.
+              </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );

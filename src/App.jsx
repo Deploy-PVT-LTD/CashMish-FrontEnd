@@ -16,6 +16,7 @@ import RejectionPage from './components/NotAccepted'; // import your rejection p
 import CarrierSelection from './components/Phonecarrier';
 import ContactUs from './components/contactus.jsx';
 import AboutUs from './components/About';
+import PriceResult from './components/priceresult.jsx';
 
 
 function App() {
@@ -28,7 +29,7 @@ function App() {
         <Route path="/modelselection" element={<ModelSelection />} />
         <Route path="/conditionselection" element={<ConditionSelection />} />
         <Route path="/storageselection" element={<Storageselection />} />
-        <Route path="/priceestimate" element={<PriceEstimate />} />
+        {/* <Route path="/priceestimate" element={<PriceEstimate />} /> */}
         <Route path="/howitworks" element={<HowItWorks />} />
         <Route path="/Userdata" element={<Userdata />} />
         <Route path="/deviceassessment" element={<DeviceAssessmentForm />} />
@@ -39,6 +40,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/About" element={<AboutUs />} />
+        {/* <Route path="/priceresult" element={<PriceResult />} /> */}
 
         
 

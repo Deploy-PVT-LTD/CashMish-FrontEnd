@@ -83,6 +83,8 @@ const StorageSelection = ({
           {/* CTA */}
           <button
             onClick={() => {
+              localStorage.setItem("selectedStorage", selectedStorage);
+              console.log("Saved storage:", selectedStorage);
               if (onGetPrice) onGetPrice(selectedStorage);
               navigate("/carrierselection");
             }}
