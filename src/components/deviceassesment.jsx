@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/header.jsx';
 import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon } from 'lucide-react';
-import axios from 'axios'; // Axios install kar lena: npm install axios
 
 const DeviceAssessmentForm = () => {
   const navigate = useNavigate();
@@ -14,8 +13,8 @@ const DeviceAssessmentForm = () => {
   });
 
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]); // Actual file objects storage
 
-  // Conditions Data (Keep original UI)
   const screenConditions = [
     { value: 'perfect', label: 'Perfect', description: 'No scratches or marks', color: 'green' },
     { value: 'scratched', label: 'Scratched', description: 'Minor scratches visible', color: 'yellow' },
@@ -40,6 +39,10 @@ const DeviceAssessmentForm = () => {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
+    // Add actual files for backend
+    setSelectedFiles(prev => [...prev, ...files]);
+    
+    // Create previews for UI
     const newPreviews = files.map(file => ({
       preview: URL.createObjectURL(file),
       name: file.name
@@ -49,45 +52,33 @@ const DeviceAssessmentForm = () => {
 
   const removeImage = (index) => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const isFormValid = () => {
     return formData.screenCondition && formData.bodyCondition && formData.batteryCondition;
   };
 
-  // ✅ DB Save and LocalStorage Logic
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
-      try {
-        // 1. Prepare Data for DB (Matches your Mongoose Schema)
-        const assessmentData = {
-          userId: localStorage.getItem("userId") || "65b7a1234567890123456789", // Replace with real Auth ID
-          mobileId: localStorage.getItem("selectedMobileId") || "65b7b1234567890123456789",
-          storage: localStorage.getItem("selectedStorage") || "128GB",
-          carrier: "Unlocked", // Example field
-          screenCondition: formData.screenCondition,
-          bodyCondition: formData.bodyCondition,
-          batteryCondition: formData.batteryCondition,
-          estimatedPrice: localStorage.getItem("estimatedPrice") || 500,
-          status: "pending"
-        };
+      localStorage.setItem("screenCondition", formData.screenCondition);
+      localStorage.setItem("bodyCondition", formData.bodyCondition);
+      localStorage.setItem("batteryCondition", formData.batteryCondition);
 
-        // 2. Save to DB via API
-        // const response = await axios.post("http://localhost:5000/api/forms", assessmentData);
-        // console.log("Saved to DB:", response.data);
+      const currentStorage = localStorage.getItem("selectedStorage") || "128GB";
+      const currentPrice = localStorage.getItem("estimatedPrice") || "500";
+      
+      const assessmentSummary = {
+        ...formData,
+        storage: currentStorage,
+        estimatedPrice: currentPrice,
+        status: 'pending'
+      };
+      localStorage.setItem("assessmentSummary", JSON.stringify(assessmentSummary));
 
-        // 3. Save to LocalStorage (for next UI screen)
-        localStorage.setItem("screenCondition", formData.screenCondition);
-        localStorage.setItem("bodyCondition", formData.bodyCondition);
-        localStorage.setItem("batteryCondition", formData.batteryCondition);
-
-        // 4. Redirect to User Details page
-        navigate("/userdata");
-      } catch (error) {
-        console.error("Database save failed:", error);
-        alert("Something went wrong while saving data!");
-      }
+      // ✅ Pass files to the next route via state
+      navigate("/userdata", { state: { files: selectedFiles } });
     }
   };
 
@@ -107,7 +98,6 @@ const DeviceAssessmentForm = () => {
         <h1 className="text-3xl font-bold text-center mb-8">Device Assessment</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Section: Screen, Body, Battery (UI Unchanged) */}
           {[ 
             { title: 'Screen Condition', icon: <Smartphone />, field: 'screenCondition', options: screenConditions },
             { title: 'Body Condition', icon: <Shield />, field: 'bodyCondition', options: bodyConditions },
@@ -136,7 +126,6 @@ const DeviceAssessmentForm = () => {
             </div>
           ))}
 
-          {/* Device Photos Section */}
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4 font-bold text-xl">
               <ImageIcon className="text-orange-500" /> Device Photos
@@ -168,7 +157,7 @@ const DeviceAssessmentForm = () => {
               isFormValid() ? "bg-blue-600 hover:bg-blue-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
             }`}
           >
-            {isFormValid() ? "Save & Continue" : "Complete Assessment"}
+            {isFormValid() ? "Save & Continue to Pickup" : "Complete Assessment"}
           </button>
         </form>
       </div>

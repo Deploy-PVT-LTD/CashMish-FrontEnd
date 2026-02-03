@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../components/header.jsx';
+import Header from '../src/components/header.jsx';
 
 // ==================== PRICE ESTIMATE COMPONENT (RESULT SCREEN) ====================
 const PriceEstimate = ({ selectedBrand, selectedCondition, selectedStorage }) => {
@@ -56,12 +56,12 @@ const PriceEstimate = ({ selectedBrand, selectedCondition, selectedStorage }) =>
           </div>
 
           {/* Device Info */}
-          <div className="flex items-center justify-center gap-2 text-gray-600 mb-8">
+          {/* <div className="flex items-center justify-center gap-2 text-gray-600 mb-8">
             <span className="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center">
               <span className="text-xs">ℹ</span>
             </span>
             <span>{selectedBrand} • {selectedCondition} Condition • {selectedStorage}</span>
-          </div>
+          </div> */}
 
           {/* CTA Button */}
           <button className="bg-blue-500 text-white px-12 py-4 rounded-lg font-semibold hover:bg-blue-600 transition text-lg">

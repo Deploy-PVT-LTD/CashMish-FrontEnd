@@ -44,7 +44,7 @@ const StorageSelection = ({
         {/* Back */}
         <div className="text-center mb-6 ">
           <button
-            onClick={() => onBack ? onBack() : navigate("/modelselection")}
+            onClick={() => onBack ? onBack() : navigate("/conditionselection")}
             className="text-blue-500 hover:text-blue-600 text-sm sm:text-base font-medium cursor-pointer"
           >
             ← Back to condition

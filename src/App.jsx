@@ -5,7 +5,6 @@ import BrandSelection from './components/BrandSelection'; // import your brand s
 import ModelSelection from './components/ModelSelection'
 import ConditionSelection from './components/Conditionselection'; // import your condition selection
 import Storageselection from './components/Storageselection'; // import your storage selection
-import PriceEstimate from './components/Priceestimate'; // import your price estimate
 import HowItWorks from './components/HowItWork'; // import your how it works
 import Userdata from './components/form'; // import your user data form
 import DeviceAssessmentForm from './components/deviceassesment';
@@ -16,7 +15,9 @@ import RejectionPage from './components/NotAccepted'; // import your rejection p
 import CarrierSelection from './components/Phonecarrier';
 import ContactUs from './components/contactus.jsx';
 import AboutUs from './components/About';
-import PriceResult from './components/priceresult.jsx';
+// import PriceResult from './components/priceresult.jsx';
+import MobileCart from './components/Mobilecart.jsx';
+
 
 
 function App() {
@@ -29,7 +30,6 @@ function App() {
         <Route path="/modelselection" element={<ModelSelection />} />
         <Route path="/conditionselection" element={<ConditionSelection />} />
         <Route path="/storageselection" element={<Storageselection />} />
-        {/* <Route path="/priceestimate" element={<PriceEstimate />} /> */}
         <Route path="/howitworks" element={<HowItWorks />} />
         <Route path="/Userdata" element={<Userdata />} />
         <Route path="/deviceassessment" element={<DeviceAssessmentForm />} />
@@ -41,6 +41,8 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/About" element={<AboutUs />} />
         {/* <Route path="/priceresult" element={<PriceResult />} /> */}
+        <Route path="/cart" element={<MobileCart />} />
+       
 
         
 

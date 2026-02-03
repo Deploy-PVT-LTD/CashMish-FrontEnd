@@ -31,6 +31,8 @@ const BrandSelection = ({ onSelectBrand }) => {
 
   const handleBrandSelect = (brandName) => {
     localStorage.setItem("selectedBrand", brandName); // Storage mein save
+    console.log(brandName);
+    
     onSelectBrand?.(brandName); // Parent state update
     navigate("/ModelSelection"); // Agla page
   };
