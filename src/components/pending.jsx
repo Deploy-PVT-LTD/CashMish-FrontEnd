@@ -1,14 +1,16 @@
 import React from 'react';
-import { Clock, MessageSquare } from 'lucide-react';
+import { Clock, MessageSquare, DollarSign } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/header.jsx';
 
 export default function PendingPage() {
+  const location = useLocation();
+  const estimatedPrice = location.state?.estimatedPrice || 0;
+
   return (
-    /* h-screen aur overflow-hidden scroll ko khatam kar dega */
     <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100">
       <Header />
 
-      {/* flex-grow bachi hui puri space le lega aur content ko center karega */}
       <div className="flex-grow flex items-center justify-center px-4">
         
         <div className="w-full max-w-xs sm:max-w-md bg-white rounded-2xl shadow-xl p-6 md:p-8 text-center">
@@ -37,6 +39,24 @@ export default function PendingPage() {
               </p>
             </div>
           </div>
+
+          {/* ✅ Estimated Price Section - INFO BOX KE NEECHE */}
+          {estimatedPrice > 0 && (
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <DollarSign className="w-5 h-5 text-green-600" />
+                <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                  Estimated Price
+                </span>
+              </div>
+              <p className="text-3xl font-bold text-green-600">
+                ${estimatedPrice.toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Final price may vary based on device inspection
+              </p>
+            </div>
+          )}
 
           <p className="text-sm text-gray-600 mb-2">
             Your request has been received and is being processed.

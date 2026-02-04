@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SI from '../assets/signin.svg'
+import SU from '../assets/signup.png'
+import logo from '../assets/deploy-logo.png'
+
 
 const LoginCard = () => {
   const [view, setView] = useState('signin');
@@ -128,9 +132,14 @@ const LoginCard = () => {
               ${view === 'signin' ? 'left-[42%] md:top-[33.33%]' : 'left-[75%] md:top-[66.66%]'}
             `}
           />
-          <li className="flex-1 grid place-items-center">
-            <span className="text-white font-bold text-xl">📱</span>
-          </li>
+     <li className="flex-1 grid place-items-center">
+  <img
+    src={logo}
+    alt="logo"
+    className="h-15 w-auto"
+  />
+</li>
+
           <li className="flex-1 grid place-items-center">
             <button
               onClick={() => setView('signin')}
@@ -159,23 +168,31 @@ const LoginCard = () => {
             className="absolute inset-0 transition-all duration-500"
             style={{ top: heroInnerTop }}
           >
-            <div className="h-[200px] md:h-[456px] w-full flex flex-col justify-start md:justify-center">
-              <h2 className="pl-6 pt-4 md:pt-0 text-white text-lg md:text-2xl font-bold">Welcome Back.</h2>
-              <h3 className="pl-6 pt-1 md:pt-0 text-white/75 text-xs md:text-sm">
-                Please enter your credentials.
-              </h3>
-              <div className="w-full h-24 md:h-auto flex items-center justify-center mt-4">
-                <span className="text-6xl">🔐</span>
-              </div>
-            </div>
+           <div className="h-[200px] md:h-[456px] w-full flex flex-col justify-start md:justify-center">
+  <h2 className="pl-6 pt-4 md:pt-0 text-white text-lg md:text-2xl font-bold">Welcome Back.</h2>
+  <h3 className="pl-6 pt-1 md:pt-0 text-white/75 text-xs md:text-sm">
+    Please enter your credentials.
+  </h3>
+  <div className="w-full flex items-center justify-center mt-6">
+    <img 
+      src={SI} 
+      alt="Sign In" 
+      className="w-48 h-48 md:w-64 md:h-64 object-contain transition-transform " 
+    />
+  </div>
+</div>
 
             <div className="h-[456px] w-full flex flex-col justify-center">
-              <h2 className="pl-6 text-white text-lg md:text-2xl font-bold">Sign Up Now.</h2>
-              <h3 className="pl-6 text-white/75 text-xs md:text-sm">
+<h2 className="pl-6 text-white text-lg md:text-2xl font-bold">Sign Up Now.</h2>
+<h3 className="pl-6 text-white/75 text-xs md:text-sm">
                 Join the crowd and get started.
               </h3>
-              <div className="w-full h-24 md:h-auto flex items-center justify-center mt-4">
-                <span className="text-6xl">🚀</span>
+              <div className="w-full flex items-center justify-center mt-6">
+              <img 
+      src={SU} 
+      alt="Sign Up" 
+      className="w-64 h-64 md:w-80 md:h-80 object-contain" 
+    />
               </div>
             </div>
           </div>

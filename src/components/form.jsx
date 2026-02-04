@@ -47,131 +47,117 @@ export default function UserForm() {
     setDeviceDetails(details);
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ // handleSubmit function me ye changes karo:
 
-    if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.date || !selectedTimeSlot) {
-      setShowError(true);
-      alert("Please fill all required fields");
-      return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.date || !selectedTimeSlot) {
+    setShowError(true);
+    alert("Please fill all required fields");
+    return;
+  }
+
+  const mId = localStorage.getItem('selectedMobileId');
+  if (!mId || mId === 'MISSING!') {
+    alert("Mobile selection ID is missing.");
+    return;
+  }
+
+  setLoading(true);
+
+  const data = new FormData();
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user.id || user._id;
+
+  if (userId) {
+    data.append('userId', userId);
+  }
+
+  data.append('mobileId', mId);
+  data.append('storage', deviceDetails.storage);
+  data.append('carrier', "Unlocked");
+  data.append('screenCondition', deviceDetails.screen.toLowerCase());
+  data.append('bodyCondition', deviceDetails.body.toLowerCase());
+  data.append('batteryCondition', deviceDetails.battery.toLowerCase());
+
+  const pickUpDetails = {
+    fullName: formData.fullName,
+    phoneNumber: formData.phoneNumber,
+    address: {
+      addressText: formData.address,
+      location: {
+        type: "Point",
+        coordinates: formData.coords ? [formData.coords.lng, formData.coords.lat] : [0, 0]
+      }
+    },
+    pickUpDate: formData.date,
+    timeSlot: selectedTimeSlot
+  };
+  data.append('pickUpDetails', JSON.stringify(pickUpDetails));
+
+  imagesToUpload.forEach((file) => {
+    data.append('images', file);
+  });
+
+  try {
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const mId = localStorage.getItem('selectedMobileId');
-    if (!mId || mId === 'MISSING!') {
-      alert("Mobile selection ID is missing.");
-      return;
-    }
-
-    setLoading(true);
-
-    // PREPARE FORMDATA FOR MULTIPART UPLOAD
-    const data = new FormData();
-
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id || user._id;
-
-    console.log('📝 Submitting form with userId:', userId);
-    console.log('👤 User object:', user);
-
-    // Add userId if logged in
-    if (userId) {
-      data.append('userId', userId);
-      console.log('✅ Added userId to form data');
-    } else {
-      console.log('⚠️ No userId - guest submission');
-    }
-
-    data.append('mobileId', mId);
-    data.append('storage', deviceDetails.storage);
-    data.append('carrier', "Unlocked");
-    data.append('screenCondition', deviceDetails.screen.toLowerCase());
-    data.append('bodyCondition', deviceDetails.body.toLowerCase());
-    data.append('batteryCondition', deviceDetails.battery.toLowerCase());
-
-    const pickUpDetails = {
-      fullName: formData.fullName,
-      phoneNumber: formData.phoneNumber,
-      address: {
-        addressText: formData.address,
-        location: {
-          type: "Point",
-          coordinates: formData.coords ? [formData.coords.lng, formData.coords.lat] : [0, 0]
-        }
-      },
-      pickUpDate: formData.date,
-      timeSlot: selectedTimeSlot
-    };
-    data.append('pickUpDetails', JSON.stringify(pickUpDetails));
-
-    // APPEND ALL IMAGES
-    imagesToUpload.forEach((file) => {
-      data.append('images', file);
+    const response = await fetch("http://localhost:5000/api/forms", {
+      method: "POST",
+      headers: headers,
+      body: data
     });
 
-    try {
-      const headers = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-        console.log('🔑 Added authorization token');
+    const result = await response.json();
+    console.log('📨 Backend response:', result);
+
+    if (response.ok) {
+      // Cart me save karo
+      const cartKey = userId ? `userCart_${userId}` : 'userCart';
+      const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+
+      const cartEntry = {
+        id: result._id || Date.now(),
+        brand: deviceDetails.brand,
+        name: deviceDetails.model,
+        storage: deviceDetails.storage,
+        condition: deviceDetails.screen,
+        uploadDate: new Date(formData.date).toLocaleDateString(),
+        status: 'pending',
+        address: formData.address,
+        phoneNumber: formData.phoneNumber,
+        timeSlot: selectedTimeSlot,
+        fullName: formData.fullName,
+        estimatedPrice: result.estimatedPrice // ✅ Ye add karo cart me bhi
+      };
+
+      const updatedCart = [...existingCart, cartEntry];
+      localStorage.setItem('userCart', JSON.stringify(updatedCart));
+      if (userId) {
+        localStorage.setItem(cartKey, JSON.stringify(updatedCart));
       }
 
-      console.log('🚀 Sending request to backend...');
-      const response = await fetch("http://localhost:5000/api/forms", {
-        method: "POST",
-        headers: headers,
-        body: data
+      // ✅ YAHAN ESTIMATED PRICE PASS KARO
+      navigate('/pending', { 
+        state: { 
+          estimatedPrice: result.estimatedPrice || 0 
+        } 
       });
-
-      const result = await response.json();
-      console.log('📨 Backend response:', result);
-
-      if (response.ok) {
-        console.log('✅ Form submitted successfully');
-        console.log('📦 Created form with _id:', result._id);
-        console.log('👤 Form userId:', result.userId);
-
-        // Get appropriate cart key based on login status
-        const cartKey = userId ? `userCart_${userId}` : 'userCart';
-        const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
-
-        const cartEntry = {
-          id: result._id || Date.now(),
-          brand: deviceDetails.brand,
-          name: deviceDetails.model,
-          storage: deviceDetails.storage,
-          condition: deviceDetails.screen,
-          uploadDate: new Date(formData.date).toLocaleDateString(),
-          status: 'pending',
-          address: formData.address,
-          phoneNumber: formData.phoneNumber,
-          timeSlot: selectedTimeSlot,
-          fullName: formData.fullName
-        };
-
-        const updatedCart = [...existingCart, cartEntry];
-
-        // Save to both current cart and user-specific cart
-        localStorage.setItem('userCart', JSON.stringify(updatedCart));
-        if (userId) {
-          localStorage.setItem(cartKey, JSON.stringify(updatedCart));
-          console.log(`💾 Saved to ${cartKey}:`, updatedCart.length, 'items');
-        }
-
-        console.log('🎉 Navigating to pending page...');
-        navigate('/pending');
-      } else {
-        console.error('❌ Form submission failed:', result);
-        alert(`Error: ${result.message || "Something went wrong"}`);
-      }
-    } catch (error) {
-      console.error('❌ Form submission error:', error);
-      alert("Server error. Please check if backend is running on port 5000.");
-    } finally {
-      setLoading(false);
+    } else {
+      alert(`Error: ${result.message || "Something went wrong"}`);
     }
-  };
+  } catch (error) {
+    console.error('❌ Form submission error:', error);
+    alert("Server error. Please check if backend is running on port 5000.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
