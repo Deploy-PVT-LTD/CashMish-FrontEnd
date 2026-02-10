@@ -64,30 +64,43 @@ const ModelSelection = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full">
-        {/* Progress Tracker UI */}
-        <div className="mb-10 sm:mb-16 overflow-x-auto">
-          <div className="flex items-center justify-center gap-4 sm:gap-6 min-w-[400px]">
-            {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step < 2;
-              const isActive = step === 2;
-              return (
-                <React.Fragment key={step}>
-                  <div className="flex flex-col items-center">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-colors
-                      ${isCompleted || isActive ? "bg-green-800 text-white" : "bg-gray-200 text-gray-500"}`}>
-                      {isCompleted ? "✓" : step}
-                    </div>
-                    <span className="text-[10px] sm:text-xs font-medium text-gray-500">
-                      {["Brand", "Model", "Condition", "Storage"][i]}
-                    </span>
-                  </div>
-                  {step !== 4 && <div className="w-12 sm:w-16 h-0.5 bg-gray-300"></div>}
-                </React.Fragment>
-              );
-            })}
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
+ <div className="mb-10 sm:mb-16 flex justify-center">
+  <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
+    {[1, 2, 3, 4].map((step, i) => {
+      const isCompleted = step === 1; // first step completed
+      const isActive = step === 2;    // second step active
+
+      return (
+        <React.Fragment key={step}>
+          <div className="flex flex-col items-center">
+            <div
+              className={`rounded-full flex items-center justify-center font-semibold mb-2
+                ${
+                  isCompleted
+                    ? 'bg-green-800 text-white'
+                    : isActive
+                    ? 'bg-green-800 text-white'
+                    : 'bg-gray-200 text-gray-500'
+                }
+                w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
+              `}
+            >
+              {isCompleted ? "✓" : step}
+            </div>
+            <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+              {["Brand", "Model", "Condition", "Storage"][i]}
+            </span>
           </div>
-        </div>
+
+          {step !== 4 && (
+            <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
+          )}
+        </React.Fragment>
+      );
+    })}
+  </div>
+</div>
 
 
         {/* Header Actions */}

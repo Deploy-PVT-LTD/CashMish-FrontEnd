@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Trash2, X, MapPin, Clock, Phone, DollarSign, Check, XCircle } from 'lucide-react';
+import { Bell, Trash2, X, MapPin, Clock, Phone, DollarSign, Check, XCircle, Smartphone } from 'lucide-react';
 import Header from '../components/header.jsx';
 import Swal from 'sweetalert2';
 
@@ -93,6 +93,7 @@ const MobileCart = () => {
       id: form._id,
       brand: form.mobileId?.brand || 'N/A',
       name: form.mobileId?.phoneModel || 'N/A',
+      image: form.mobileId?.image || null, // ✅ Added Image here
       storage: form.storage,
       condition: form.screenCondition,
       uploadDate: new Date(form.pickUpDetails?.pickUpDate).toLocaleDateString(),
@@ -128,13 +129,12 @@ const MobileCart = () => {
       if (response.ok) {
         updateLocalStateAndStorage(id, 'accepted');
         Swal.fire({
-  icon: 'success',
-  title: 'Bid Accepted',
-  text: 'Your bid has been accepted successfully!',
-  timer: 2000,
-  showConfirmButton: false
-});
-
+          icon: 'success',
+          title: 'Bid Accepted',
+          text: 'Your bid has been accepted successfully!',
+          timer: 2000,
+          showConfirmButton: false
+        });
       }
     } catch (error) {
       console.error(error);
@@ -144,17 +144,17 @@ const MobileCart = () => {
   };
 
   const handleRejectBid = async (id) => {
-   const result = await Swal.fire({
-  title: 'Reject Bid?',
-  text: 'Are you sure you want to reject this offer?',
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#dc2626',
-  confirmButtonText: 'Yes, Reject',
-  cancelButtonText: 'Cancel'
-});
+    const result = await Swal.fire({
+      title: 'Reject Bid?',
+      text: 'Are you sure you want to reject this offer?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      confirmButtonText: 'Yes, Reject',
+      cancelButtonText: 'Cancel'
+    });
 
-if (!result.isConfirmed) return;
+    if (!result.isConfirmed) return;
 
     const token = localStorage.getItem('token');
     setProcessingBid(id);
@@ -170,7 +170,7 @@ if (!result.isConfirmed) return;
 
       if (response.ok) {
         updateLocalStateAndStorage(id, 'rejected');
-        alert('Bid rejected');
+        Swal.fire('Rejected', 'The bid has been rejected.', 'info');
       }
     } catch (error) {
       console.error(error);
@@ -189,32 +189,28 @@ if (!result.isConfirmed) return;
     if (userId) localStorage.setItem(`userCart_${userId}`, JSON.stringify(updated));
   };
 
-  // ✅ Fixed removeItem for Guest and Logged-in users
   const removeItem = async (id) => {
-   const result = await Swal.fire({
-  title: 'Cancel Pickup?',
-  text: 'This pickup will be removed permanently',
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#dc2626',
-  confirmButtonText: 'Yes, Cancel',
-  cancelButtonText: 'No'
-});
+    const result = await Swal.fire({
+      title: 'Cancel Pickup?',
+      text: 'This pickup will be removed permanently',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      confirmButtonText: 'Yes, Cancel',
+      cancelButtonText: 'No'
+    });
 
-if (!result.isConfirmed) return;
-
+    if (!result.isConfirmed) return;
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const userId = user.id || user._id;
     const token = localStorage.getItem('token');
 
-    // 1. Pehle local state aur storage update karein (Instant feedback)
     const filteredItems = cartItems.filter(item => item.id !== id);
     setCartItems(filteredItems);
     localStorage.setItem('userCart', JSON.stringify(filteredItems));
     if (userId) localStorage.setItem(`userCart_${userId}`, JSON.stringify(filteredItems));
 
-    // 2. Backend se delete karein (Chahe token ho ya na ho, guest delete allowed hona chaiye)
     try {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -223,7 +219,6 @@ if (!result.isConfirmed) return;
         method: 'DELETE',
         headers: headers
       });
-      console.log('✅ Deleted from backend');
     } catch (error) {
       console.error('❌ Error deleting from backend:', error);
     }
@@ -254,14 +249,14 @@ if (!result.isConfirmed) return;
       <div className="bg-gray-50 min-h-screen">
         <Header />
         <div className="max-w-6xl mx-auto p-4 md:p-8 flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-800"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen font-sans">
       <Header />
       <div className="max-w-6xl mx-auto p-4 md:p-8">
 
@@ -269,7 +264,7 @@ if (!result.isConfirmed) return;
           <h1 className="text-2xl md:text-3xl font-black text-gray-900">Track Orders</h1>
           <p className="text-gray-500 font-medium">
             {cartItems.length} Device(s) scheduled for inspection
-            {!isLoggedIn && <span className="text-orange-500 ml-2">(Guest Mode)</span>}
+            {!isLoggedIn && <span className="text-orange-500 ml-2 font-bold">(Guest Mode)</span>}
           </p>
         </div>
 
@@ -277,7 +272,7 @@ if (!result.isConfirmed) return;
           {cartItems.length === 0 ? (
             <div className="bg-white rounded-3xl p-16 text-center shadow-sm border-2 border-dashed border-gray-200">
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="text-gray-300 w-10 h-10" />
+                <Smartphone className="text-gray-300 w-10 h-10" />
               </div>
               <h3 className="text-xl font-bold text-gray-900">No active pickups</h3>
               <p className="text-gray-500 mt-2">Your scheduled pickups will appear here.</p>
@@ -286,12 +281,12 @@ if (!result.isConfirmed) return;
             cartItems.map((item) => (
               <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 {item.notification && !closedNotifications.has(item.id) && (
-                  <div className="bg-blue-600 p-3 flex items-center justify-between text-white">
+                  <div className="bg-green-800 p-3 flex items-center justify-between text-white">
                     <div className="flex items-center gap-3 ml-2">
                       <Bell className="w-4 h-4 fill-white/20" />
                       <p className="text-xs md:text-sm font-semibold">{item.notification}</p>
                     </div>
-                    <button onClick={() => closeNotification(item.id)} className="hover:bg-blue-700 p-1 rounded-lg transition-colors">
+                    <button onClick={() => closeNotification(item.id)} className="hover:bg-green-900 p-1 rounded-lg transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
@@ -299,19 +294,33 @@ if (!result.isConfirmed) return;
 
                 <div className="p-5 md:p-7">
                   <div className="flex flex-col lg:flex-row gap-8">
-                    <div className="w-full lg:w-72 h-44 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex flex-col items-center justify-center text-white relative shadow-lg">
-                      <span className="text-xs uppercase tracking-widest opacity-50 mb-1 font-bold">{item.brand}</span>
-                      <span className="text-2xl font-black">{item.name}</span>
-                      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center opacity-70">
-                        <span className="text-[10px] font-mono">{item.storage}</span>
-                        <span className="text-[10px] font-mono">ID: #{String(item.id).slice(-6)}</span>
+                    
+                    {/* ✅ Image Section UI Update */}
+                    <div className="w-full lg:w-72 h-48 bg-white rounded-2xl flex flex-col items-center justify-center relative shadow-md border border-gray-100 overflow-hidden group">
+                      {item.image ? (
+                        <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" 
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center bg-slate-100 w-full h-full text-slate-400">
+                          <Smartphone className="w-12 h-12 mb-2" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">{item.brand}</span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-2 right-3">
+                         <span className="text-[9px] font-mono text-gray-400 bg-white/90 px-2 py-0.5 rounded-full border border-gray-100 shadow-sm">
+                           ID: #{String(item.id).slice(-6)}
+                         </span>
                       </div>
                     </div>
 
                     <div className="flex-grow">
                       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                         <div>
-                          <h3 className="text-2xl font-black text-gray-900 uppercase">{item.brand} {item.name}</h3>
+                          <h3 className="text-2xl font-black text-gray-900 uppercase leading-none">{item.brand} {item.name}</h3>
+                          <p className="text-xs text-gray-400 mt-1 font-bold tracking-wider">REF: {item.id}</p>
                         </div>
                         {getStatusBadge(item.status)}
                       </div>
@@ -323,23 +332,23 @@ if (!result.isConfirmed) return;
 
                         <div className="col-span-2 md:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-100">
                           <div className="flex items-center gap-2 mb-1">
-                            <Clock className="w-3 h-3 text-blue-500" />
+                            <Clock className="w-3 h-3 text-green-800" />
                             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Time Slot</p>
                           </div>
                           <p className="text-sm font-bold text-gray-800">{item.timeSlot || 'Not Set'}</p>
                         </div>
 
-                        <div className="col-span-2 bg-blue-50/50 p-4 rounded-xl border border-blue-100/50">
+                        <div className="col-span-2 bg-green-50/30 p-4 rounded-xl border border-green-100/50">
                           <div className="flex items-center gap-2 mb-1">
-                            <MapPin className="w-3 h-3 text-blue-600" />
-                            <p className="text-[10px] text-blue-600 uppercase font-bold tracking-wider">Pickup Address</p>
+                            <MapPin className="w-3 h-3 text-green-800" />
+                            <p className="text-[10px] text-green-800 uppercase font-bold tracking-wider">Pickup Address</p>
                           </div>
                           <p className="text-sm font-medium text-gray-700 line-clamp-2 leading-relaxed">{item.address}</p>
                         </div>
 
                         <div className="col-span-2 md:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-100">
                           <div className="flex items-center gap-2 mb-1">
-                            <Phone className="w-3 h-3 text-green-600" />
+                            <Phone className="w-3 h-3 text-green-700" />
                             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Contact</p>
                           </div>
                           <p className="text-sm font-bold text-gray-800">{item.phoneNumber}</p>
@@ -404,7 +413,6 @@ if (!result.isConfirmed) return;
                       )}
 
                       <div className="mt-8 flex justify-end">
-                        {/* ACCEPT ya REJECT hone ke baad cancel pickup hide ho jayega */}
                         {item.status !== 'accepted' && item.status !== 'rejected' && (
                           <button
                             onClick={() => removeItem(item.id)}
