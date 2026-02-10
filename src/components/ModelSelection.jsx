@@ -19,54 +19,109 @@ const ModelSelection = () => {
       }
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/mobiles/brand?brand=${brand}`);
-        setModels(response.data);
+        // API call se data fetch kiya
+        const res = await axios.get(
+          `http://localhost:5000/api/mobiles/brand?brand=${brand}`
+        );
+
+        // --- DEBUG LOGS START ---
+        console.log("Full API Response:", res.data);
+        if (res.data && res.data.length > 0) {
+          // Check karein ke image field mein base64 string aa rahi hai ya nahi
+          console.log("First Item Image Data:", res.data[0].image);
+        } else {
+          console.warn("No data found for this brand.");
+        }
+        // --- DEBUG LOGS END ---
+
+        setModels(res.data);
       } catch (error) {
         console.error("Fetch Error:", error.message);
       } finally {
         setLoading(false);
       }
     };
+
     fetchModelsByBrand();
   }, [brand, navigate]);
 
-  // ✅ FIX: Yahan poora 'item' object receive hoga
   const handleSelectModel = (item) => {
-    console.log("Selected Full Item Object:", item); // Ab yahan object dikhega, string nahi
-
     if (item && item._id) {
       localStorage.setItem("selectedModel", item.phoneModel);
-      localStorage.setItem("selectedMobileId", item._id); // 🔥 Ye ID ab save ho jayegi
+      localStorage.setItem("selectedMobileId", item._id);
+      localStorage.setItem("selectedMobileImage", item.image);
       navigate("/ConditionSelection");
     } else {
-      console.error("Error: Item object is missing _id!", item);
-      alert("Something went wrong with the selection.");
+      alert("Something went wrong");
     }
+  };
+
+  const onBack = () => {
+    navigate("/brandselection");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-6 w-full">
-        {/* Progress Tracker Title */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold">Select Your {brand} Model</h1>
+
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full">
+        {/* Progress Tracker UI */}
+        <div className="mb-10 sm:mb-16 overflow-x-auto">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 min-w-[400px]">
+            {[1, 2, 3, 4].map((step, i) => {
+              const isCompleted = step < 2;
+              const isActive = step === 2;
+              return (
+                <React.Fragment key={step}>
+                  <div className="flex flex-col items-center">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-colors
+                      ${isCompleted || isActive ? "bg-green-800 text-white" : "bg-gray-200 text-gray-500"}`}>
+                      {isCompleted ? "✓" : step}
+                    </div>
+                    <span className="text-[10px] sm:text-xs font-medium text-gray-500">
+                      {["Brand", "Model", "Condition", "Storage"][i]}
+                    </span>
+                  </div>
+                  {step !== 4 && <div className="w-12 sm:w-16 h-0.5 bg-gray-300"></div>}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
+
+
+        {/* Header Actions */}
+        <div className="text-center mb-8">
+          <button onClick={onBack} className="text-green-800 hover:underline text-sm font-medium mb-4 inline-block">
+            ← Back to Brands
+          </button>
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900">
+            Select Your <span className="text-green-800 uppercase">{brand}</span> Model
+          </h1>
+          <p className="text-gray-500 mt-2">Hum aapke phone ki sahi qeemat lagane mein madad karenge.</p>
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex flex-col justify-center items-center py-20 gap-4">
+            <div className="w-12 h-12 border-4 border-green-800 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-gray-600 font-medium">Fetching Models...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {models.map((item) => (
-              <MobileCard
-                key={item._id}
-                name={item.phoneModel}
-                // ✅ FIX: Yahan 'item.phoneModel' ki jagah sirf 'item' pass karein
-                onClick={() => handleSelectModel(item)} 
-              />
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8 max-w-6xl mx-auto">
+            {models.length > 0 ? (
+              models.map((item) => (
+                <MobileCard
+                  key={item._id}
+                  name={item.phoneModel}
+                  image={item.image} 
+                  onClick={() => handleSelectModel(item)}
+                />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-10 text-gray-500">
+                Is brand ke models filhal dastiyab nahi hain.
+              </div>
+            )}
           </div>
         )}
       </main>

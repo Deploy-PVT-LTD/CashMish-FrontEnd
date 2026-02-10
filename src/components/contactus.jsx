@@ -1,160 +1,180 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import Header from "../components/header.jsx";
-import linkedinlogo from "../assets/linkedin-logo.svg";
-import fblogo from "../assets/fb-logo.svg";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: '', email: '', subject: '', message: ''
   });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus({ type: '', message: '' });
+
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({ type: 'success', message: 'Message sent successfully!' });
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus({ type: 'error', message: data.message || 'Failed to send.' });
+      }
+    } catch {
+      setSubmitStatus({ type: 'error', message: 'Network error. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    // lg:h-screen desktop par height fix rakhega, lekin mobile par auto height allow karega
-    // overflow-y-auto zaroori hai taake mobile par scroll ho sake
-    <div className="min-h-screen lg:h-screen flex flex-col overflow-y-auto lg:overflow-hidden bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50">
+    <div className="min-h-screen lg:h-screen w-full bg-white flex flex-col font-sans text-slate-900 overflow-x-hidden">
       <Header />
 
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6 lg:py-0">
-        <div className="max-w-5xl w-full">
-          
-          <div className="text-center mb-4 lg:mb-6 animate-fade-in">
-            <h1 className="text-2xl sm:text-4xl font-bold text-gray-800">
-              Get In Touch
-            </h1>
-          </div>
+      <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto">
 
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden animate-slide-up">
-            <div className="grid lg:grid-cols-5">
-              
-              {/* Left Side - Info */}
-              <div className="lg:col-span-2 bg-gradient-to-br from-blue-600 to-cyan-600 p-6 sm:p-8 text-white relative">
-                <div className="relative z-10">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-2">
-                    Contact Information
-                  </h2>
-                  <p className="text-blue-100 mb-6 sm:mb-10 text-xs sm:text-sm">
-                    Fill up the form and our Team will get back to you within 24 hours.
-                  </p>
+        {/* LEFT */}
+        <div className="w-full lg:w-[40%] p-6 sm:p-10 md:p-16 lg:p-24 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-green-100 bg-white">
+          <span className="text-green-700 font-bold text-[10px] uppercase tracking-[0.3em] mb-4 block">
+            Connect
+          </span>
 
-                  <div className="space-y-4 sm:space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                        <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <div className="text-sm sm:text-base font-medium">+8801797794888</div>
-                    </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black leading-none mb-6">
+            Let’s <br className="hidden sm:block" />
+            <span className="text-green-800">Talk.</span>
+          </h1>
 
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                        <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <div className="text-sm sm:text-base font-medium">Support@cashmish.com</div>
-                    </div>
+          <p className="text-slate-500 text-base sm:text-lg mb-10 max-w-xs font-medium">
+            Have a question? Our team is here to help you 24/7.
+          </p>
 
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <div className="text-sm sm:text-base font-medium">New York, USA</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Side - Form */}
-              <div className="lg:col-span-3 p-6 sm:p-8">
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-                  <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="John Doe"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-600 mb-1">Your Email</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="hello@cashmish.com"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Your Subject</label>
-                    <input
-                      type="text"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      placeholder="Quotation Inquiry"
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Message</label>
-                    <textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows="3" 
-                      placeholder="Write your message here..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm resize-none"
-                      required
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
-                  >
-                    <span>Send Message</span>
-                    <Send className="w-4 h-4" />
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Area */}
-          <div className="mt-6 pb-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-            <div className="flex gap-4">
-              <a href="/terms" className="hover:text-blue-600">Terms</a>
-              <a href="/privacy-policy" className="hover:text-blue-600">Privacy</a>
-            </div>
-            <div className="flex gap-3">
-              <div className="w-5 h-6 cursor-pointer"><a href="https://www.linkedin.com/"><img src={linkedinlogo} alt="Linked" /></a></div>
-              <div className="w-5 h-6 cursor-pointer"><a href="https://www.facebook.com/"><img src={fblogo} alt="Facebook" /></a></div>
-            </div>
+          <div className="space-y-8">
+            <ContactInfoItem icon={<Phone size={18} />} label="Call us" value="+8801797794888" />
+            <ContactInfoItem icon={<Mail size={18} />} label="Email" value="support@cashmish.com" />
+            <ContactInfoItem icon={<MapPin size={18} />} label="Office" value="New York, USA" />
           </div>
         </div>
-      </div>
+
+        {/* RIGHT */}
+        <div className="flex-1 bg-green-50/50 p-6 sm:p-10 md:p-16 lg:p-24 flex flex-col justify-center">
+          <form onSubmit={handleSubmit} className="max-w-xl w-full mx-auto space-y-6">
+
+            {submitStatus.message && (
+              <div className={`p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border shadow-sm ${
+                submitStatus.type === 'success'
+                  ? 'bg-green-50 text-green-700 border-green-100'
+                  : 'bg-red-50 text-red-600 border-red-100'
+              }`}>
+                {submitStatus.message}
+              </div>
+            )}
+
+            <div className="grid sm:grid-cols-2 gap-6">
+              <InputBlock label="Name" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" disabled={isSubmitting} />
+              <InputBlock label="Email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="hello@cashmish.com" disabled={isSubmitting} />
+            </div>
+
+            <InputBlock label="Subject" name="subject" value={formData.subject} onChange={handleChange} placeholder="Quotation Inquiry" disabled={isSubmitting} />
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                Message
+              </label>
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="How can we help?"
+                rows="4"
+                disabled={isSubmitting}
+                required
+                className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm
+                focus:outline-none focus:ring-4 focus:ring-green-700/10 focus:border-green-700
+                transition-all resize-none disabled:opacity-50 shadow-sm"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-green-800 hover:bg-green-700 text-white font-black uppercase tracking-[0.2em]
+              text-[10px] py-5 rounded-2xl flex items-center justify-center gap-3
+              active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl mt-4"
+            >
+              <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+              <ArrowRight size={16} />
+            </button>
+          </form>
+        </div>
+      </main>
+
+      <footer className="w-full bg-white border-t border-green-100 px-6 py-4 flex items-center justify-between">
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          © 2026 CASHMISH
+        </p>
+        <div className="flex gap-6">
+          <FooterLink href="https://facebook.com" label="Facebook" />
+          <FooterLink href="https://linkedin.com" label="LinkedIn" />
+        </div>
+      </footer>
     </div>
   );
 }
+
+/* HELPERS */
+
+const ContactInfoItem = ({ icon, label, value }) => (
+  <div className="group flex items-start gap-4">
+    <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center
+      group-hover:bg-green-800 group-hover:text-white transition-all shadow-sm">
+      {icon}
+    </div>
+    <div>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+      <p className="text-sm font-bold text-green-800">{value}</p>
+    </div>
+  </div>
+);
+
+const InputBlock = ({ label, name, type = "text", value, onChange, placeholder, disabled }) => (
+  <div className="space-y-2">
+    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      required
+      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm
+      focus:outline-none focus:ring-4 focus:ring-green-700/10 focus:border-green-700
+      transition-all disabled:opacity-50 shadow-sm"
+    />
+  </div>
+);
+
+const FooterLink = ({ href, label }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noreferrer"
+    className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-green-700 transition-colors"
+  >
+    {label}
+  </a>
+);

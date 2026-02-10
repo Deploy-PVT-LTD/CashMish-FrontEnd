@@ -76,7 +76,7 @@ function Header({ simple = false }) {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                className="text-sm font-medium text-gray-600 hover:text-green-800 transition-colors"
               >
                 {link.name}
               </a>
@@ -85,7 +85,7 @@ function Header({ simple = false }) {
             {!simple && (
               <div className="flex items-center gap-4 ml-4">
                 {/* Cart Icon */}
-                <a href="/cart" className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                <a href="/cart" className="relative p-2 text-gray-600 hover:text-green-600 transition-colors">
                   <ShoppingBag size={22} />
                   {cartItemCount > 0 && (
                     <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">
@@ -106,7 +106,7 @@ function Header({ simple = false }) {
                 ) : (
                   <a
                     href="/login"
-                    className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 shadow-md hover:shadow-lg transition-all active:scale-95"
+                    className="bg-green-800 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-green-700 shadow-md hover:shadow-lg transition-all active:scale-95"
                   >
                     Sign Up
                   </a>
@@ -165,7 +165,7 @@ function Header({ simple = false }) {
                   ) : (
                     <a
                       href="/login"
-                      className="block w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-center font-bold shadow-sm"
+                      className="block w-full bg-green-800 text-white px-4 py-3 rounded-lg text-center font-bold shadow-sm"
                       onClick={() => setOpen(false)}
                     >
                       Get Started

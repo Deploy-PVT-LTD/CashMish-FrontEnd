@@ -1,14 +1,16 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/header.jsx';
-
+import first from '../assets/first.png'
+import second from '../assets/second.png'
+import third from '../assets/third.png'
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
 
   const conditions = [
-    { name: 'Mint', description: 'Like new, no scratches', icon: '✨', color: 'green' },
-    { name: 'Good', description: 'Minor signs of use', icon: '👍', color: 'blue' },
-    { name: 'Fair', description: 'Visible wear & tear', icon: '➖', color: 'orange' }
+    { name: 'Mint', description: 'Like new, no scratches', icon: <img src={first} alt="" />, color: 'green' },
+    { name: 'Good', description: 'Minor signs of use', icon:  <img src={second} alt="" />, color: 'blue' },
+    { name: 'Fair', description: 'Visible wear & tear', icon:  <img src={third} alt="" />, color: 'orange' }
   ];
   
   const onBack = () => {
@@ -23,33 +25,48 @@ const ConditionSelection = ({ onSelectCondition }) => {
 
       {/* Main */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
-        {/* Progress Steps (scrollable on mobile) */}
-        <div className="mb-8 overflow-x-auto">
-          <div className="flex items-center justify-start sm:justify-center gap-4 min-w-[250px] sm:min-w-0">
-            {["Brand","Model","Condition","Storage"].map((label, i) => (
-              <React.Fragment key={label}>
-                <div className="flex flex-col items-center">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-semibold mb-1
-                    ${i < 2 ? "bg-blue-500 text-white" : i === 2 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-500"}`}>
-                    {i < 2 ? "✓" : i + 1}
-                  </div>
-                  <span className={`text-xs sm:text-sm ${i <= 2 ? "text-gray-600" : "text-gray-400"}`}>
-                    {label}
-                  </span>
-                </div>
-                {i !== 3 && (
-                  <div className={`w-16 sm:w-24 h-0.5 ${i < 2 ? "bg-blue-500" : "bg-gray-300"}`}></div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
+
+           {/* Progress Tracker */}
+             <div className="mb-10 sm:mb-16 overflow-x-auto">
+               <div className="flex items-center justify-center gap-6">
+                 {[1, 2, 3, 4].map((step, i) => {
+                   const isCompleted = step < 3; // step 1 done
+                   const isActive = step === 3;  // step 2 active
+       
+                   return (
+                     <React.Fragment key={step}>
+                       <div className="flex flex-col items-center">
+                         <div
+                           className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2
+                           ${
+                             isCompleted
+                               ? "bg-green-800 text-white"
+                               : isActive
+                               ? "bg-green-800 text-white"
+                               : "bg-gray-200 text-gray-500"
+                           }`}
+                         >
+                           {isCompleted ? "✓" : step}
+                         </div>
+                         <span className="text-xs text-gray-500">
+                           {["Brand", "Model", "Condition", "Storage"][i]}
+                         </span>
+                       </div>
+                       {step !== 4 && (
+                         <div className="w-16 h-0.5 bg-gray-300"></div>
+                       )}
+                     </React.Fragment>
+                   );
+                 })}
+               </div>
+             </div>
+       
 
         {/* Back */}
         <div className="text-center mb-6">
           <button
             onClick={onBack}
-            className="text-blue-500 hover:text-blue-600 text-sm sm:text-base font-medium cursor-pointer"
+            className="text-green-800 hover:text-green-700 text-sm sm:text-base font-medium cursor-pointer"
           >
             ← Back to models
           </button>
@@ -75,7 +92,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
                   navigate("/Storageselection");
                 }}
                 className="bg-white border-2 border-gray-200 rounded-xl
-                           p-6 sm:p-8 hover:border-blue-500 hover:shadow-lg transition cursor-pointer"
+                           p-6 sm:p-8 hover:border-green-800 hover:shadow-lg transition cursor-pointer"
               >
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full
                   flex items-center justify-center text-2xl sm:text-3xl

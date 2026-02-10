@@ -58,7 +58,7 @@ const CarrierSelection=() =>{
                     onClick={() => setCarrier(c)}
                     className={`cursor-pointer p-5 rounded-xl border-2 text-center font-semibold transition-all capitalize ${
                       carrier === c
-                        ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
+                        ? 'border-greem-800 bg-blue-50 text-green-700 shadow-sm'
                         : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
@@ -74,7 +74,7 @@ const CarrierSelection=() =>{
               onClick={handleContinue} // ✅ Ab ye save bhi karega
               className={`w-full font-semibold py-4 rounded-xl transition-all shadow-lg cursor-pointer ${
                 carrier
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-green-800 text-white hover:bg-green-700"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
               }`}
             >

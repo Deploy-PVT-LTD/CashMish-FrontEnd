@@ -23,7 +23,7 @@ const PhoneFlipLanding = () => {
     const parts = displayText.split(" ");
     return parts.map((word, i) =>
       word === "Price" ? (
-        <span key={i} className="text-blue-600">
+        <span key={i} className="text-green-700">
           {word}{" "}
         </span>
       ) : (
@@ -52,7 +52,7 @@ const PhoneFlipLanding = () => {
             <div className="flex flex-col sm:flex-row gap-2">
               <a
                 href="/brandselection"
-                className="bg-blue-600 text-white px-4 py-2 lg:py-3 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-blue-700 transition-colors"
+                className="bg-green-800 text-white px-4 py-2 lg:py-3 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-green-700 transition-colors"
               >
                 Get Your Price
                 <svg
@@ -103,7 +103,7 @@ const PhoneFlipLanding = () => {
             <div className="relative mt-16 lg:mt-0">
 <div
   className="rounded-[3rem] p-8 shadow-xl w-72 sm:w-80
-             bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600
+             bg-gradient-to-br from-green-500 via-green-900 to-green-600
              animate-phone-card"
 >
   <div className="text-center">
@@ -117,7 +117,7 @@ const PhoneFlipLanding = () => {
               {/* Stats */}
               <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-lg px-6 py-4">
                 <div className="w-12 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-blue-600" />
+                  <Zap className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
                   <div className="text-xl font-bold text-gray-900">$45,000+</div>
@@ -135,8 +135,8 @@ const PhoneFlipLanding = () => {
 
 const Feature = ({ icon, text }) => (
   <div className="flex items-center space-x-3">
-    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-      {React.cloneElement(icon, { className: "w-5 h-5 text-blue-600" })}
+    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+      {React.cloneElement(icon, { className: "w-5 h-5 text-green-600" })}
     </div>
     <span className="text-gray-700 font-medium">{text}</span>
   </div>

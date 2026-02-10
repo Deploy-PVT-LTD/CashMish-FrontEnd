@@ -1,21 +1,24 @@
-import React from "react";
-
-const MobileCard = ({ name, onClick }) => {
+const MobileCard = ({ name, image, onClick }) => {
   return (
-    <button
+    <div 
       onClick={onClick}
-      className="bg-white border-2 border-gray-200 rounded-xl p-8
-                 hover:border-blue-500 hover:shadow-lg transition
-                 flex items-center gap-4 w-full cursor-pointer"
+      className="bg-white border-2 border-gray-100 rounded-2xl p-4 hover:border-green-800 transition-all cursor-pointer group flex flex-col items-center h-64"
     >
-      <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-2xl">
-        📱
+      <div className="w-full h-40 mb-4 overflow-hidden rounded-xl bg-gray-50 flex items-center justify-center">
+        {image ? (
+          <img 
+            src={image} // Direct Base64 string yahan aayegi
+            alt={name} 
+            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+            // Browser console mein agar 404 aaye toh ye error check karega
+            onError={(e) => console.log("Image Load Error for:", name)}
+          />
+        ) : (
+          <div className="text-gray-300 italic text-xs">No Image Available</div>
+        )}
       </div>
-
-      <div className="text-xl font-semibold text-gray-900">
-        {name}
-      </div>
-    </button>
+      <h3 className="text-sm font-bold text-gray-800 text-center line-clamp-2">{name}</h3>
+    </div>
   );
 };
 

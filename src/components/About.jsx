@@ -1,99 +1,135 @@
 import React from 'react';
-import { Target, Users, Award, CheckCircle2 } from 'lucide-react';
+import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck } from 'lucide-react';
 import Header from "../components/header.jsx";
 import imgg from "../assets/image-removebg-preview.png";
 
 export default function AboutUs() {
+  const stats = [
+    { label: 'Projects Done', value: '500+', icon: <TrendingUp className="w-4 h-4" /> },
+    { label: 'Happy Clients', value: '200+', icon: <Users className="w-4 h-4" /> },
+    { label: 'Units Processed', value: '10k+', icon: <CheckCircle2 className="w-4 h-4" /> },
+    { label: 'Expert Team', value: '15+', icon: <Award className="w-4 h-4" /> },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] overflow-x-hidden font-sans">
       <Header />
 
-      {/* Hero Section - Compact Height */}
-      <section className="relative py-10 px-4 bg-gradient-to-br bg-blue-600 to-cyan-600 text-white overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative pt-20 pb-24 px-6 bg-slate-900 text-white overflow-hidden">
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-0 w-full h-full z-0">
+          <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-green-800/20 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-0 right-0 w-[30%] h-[30%] bg-green-700/20 rounded-full blur-[100px]"></div>
+        </div>
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-4 animate-fade-in">
-            Our Journey
+          <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium uppercase bg-green-800/10 border border-green-700/20 rounded-full text-green-700">
+            Who We Are
+          </span>
+
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
+            Our{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-green-500">
+              Journey
+            </span>
           </h1>
-          <p className="text-teal-50 text-base max-w-2xl mx-auto leading-relaxed">
-            CashMish was founded on the basis of giving an alternative option to those looking to either upgrade their phone, find a way to help get some extra money in their pocket, or for those who has a surplus of electronics that they don't know what to do with.
+
+          <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto">
+            CashMish was founded to redefine how you upgrade your tech. We provide a seamless alternative for turning surplus electronics into instant value.
           </p>
         </div>
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-48 h-48 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-400/20 rounded-full translate-x-1/3 translate-y-1/3 blur-2xl"></div>
       </section>
 
-      {/* Stats Section - Balanced Margins */}
-      <div className="max-w-4xl mx-auto w-full -mt-8 px-4 relative z-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: 'Projects Done', value: '500+' },
-            { label: 'Happy Clients', value: '200+' },
-            { label: 'Units Processed', value: '10k+' },
-            { label: 'Expert Team', value: '15+' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-white p-4 rounded-xl shadow-lg text-center border border-teal-50">
-              <div className="text-xl font-bold text-teal-600">{stat.value}</div>
-              <div className="text-gray-500 text-xs">{stat.label}</div>
+      {/* Stats Section */}
+      <section className="max-w-6xl mx-auto w-full -mt-12 px-6 relative z-20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.map((stat, i) => (
+            <div
+              key={i}
+              className="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center hover:-translate-y-1 transition-all"
+            >
+              <div className="p-3 bg-green-100 rounded-xl text-green-800 mb-3 hover:bg-green-800 hover:text-white transition-colors">
+                {stat.icon}
+              </div>
+              <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
+              <div className="text-slate-500 text-sm">{stat.label}</div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Mission & Vision Section */}
-      <section className="py-10 px-4 max-w-5xl mx-auto w-full flex-1">
-        <div className="grid md:grid-cols-2 gap-8 items-center h-full">
-          
-          {/* Left Side: Content */}
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-teal-100 text-teal-700 text-xs font-medium">
-              <Target className="w-3.5 h-3.5" />
-              <span>Our Mission</span>
+      {/* Mission Section */}
+      <section className="py-20 px-6 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+          {/* Left */}
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 text-green-800 text-sm font-bold uppercase">
+              <Target className="w-4 h-4" />
+              Our Mission
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 leading-tight">
-              Complimentary Services
+
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+              Value Driven Results & <br />
+              <span className="text-green-800">Transparent Pricing</span>
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              We want our customer to get the best value for their phones. We do extensive inspection to determine the appropriate reward; it may even be more than you were originally quoted!
+
+            <p className="text-slate-600 text-lg">
+              We ensure our customers receive the best market value through a fair and professional inspection process.
             </p>
-            <ul className="space-y-2">
-              {['Customer Service Guarantees', 'Information and Help Every Step of the Way'].map((item, idx) => (
-                <li key={idx} className="flex items-center gap-2 text-sm text-gray-700">
-                  <CheckCircle2 className="w-4 h-4 text-teal-500" />
-                  {item}
-                </li>
+
+            <div className="space-y-4">
+              {[
+                'Guaranteed Professional Inspection',
+                'Transparent Payout Adjustments',
+                'End-to-End Customer Support'
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-3">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-green-800" />
+                  </div>
+                  <span className="text-slate-700 font-medium">{item}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
-          {/* Right Side: Image and Cards */}
-          <div className="grid grid-cols-2 gap-3 h-full">
-            <div className="space-y-3 flex flex-col justify-center">
-              <div className="bg-teal-50 p-4 rounded-2xl">
-                <Users className="w-6 h-6 text-teal-600 mb-2" />
-                <h3 className="font-bold text-gray-800 text-sm">Expert Team</h3>
+          {/* Right */}
+          <div className="relative">
+            <div className="absolute -inset-4 bg-gradient-to-tr from-green-100 to-green-200 rounded-[2rem] -rotate-2"></div>
+
+            <div className="relative z-10 grid grid-cols-2 gap-4">
+              <div className="space-y-4 pt-8">
+                <div className="bg-white p-6 rounded-2xl shadow-md">
+                  <Users className="w-8 h-8 text-green-800 mb-3" />
+                  <h3 className="font-bold text-slate-800">Expert Team</h3>
+                  <p className="text-xs text-slate-500">Certified technicians</p>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl shadow-md">
+                  <ShieldCheck className="w-8 h-8 text-green-700 mb-3" />
+                  <h3 className="font-bold text-slate-800">Secure Process</h3>
+                  <p className="text-xs text-slate-500">Your data is safe</p>
+                </div>
               </div>
-              <div className="bg-cyan-50 p-4 rounded-2xl">
-                <Award className="w-6 h-6 text-cyan-600 mb-2" />
-                <h3 className="font-bold text-gray-800 text-sm">Top Rated</h3>
+
+              <div className="bg-slate-50 rounded-2xl shadow-inner flex items-center justify-center p-4">
+                <img
+                  src={imgg}
+                  alt="Tech"
+                  className="w-full object-contain hover:scale-105 transition-transform"
+                />
               </div>
-            </div>
-            
-            {/* Image Container - Fixed path logic */}
-            <div className="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden flex items-center justify-center p-2 shadow-inner">
-               <img 
-                 src={imgg} 
-                 alt="Our Journey" 
-                 className="w-full h-auto object-contain max-h-[180px]" 
-               />
             </div>
           </div>
-          
+
         </div>
       </section>
 
-      {/* Simple Footer space if needed */}
-      <div className="h-4"></div>
+      <footer className="py-12 border-t bg-white text-center text-slate-400 text-sm">
+        © {new Date().getFullYear()} CashMish. Empowering your tech journey.
+      </footer>
     </div>
   );
 }

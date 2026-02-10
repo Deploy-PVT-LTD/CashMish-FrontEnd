@@ -128,8 +128,10 @@ const DeviceAssessmentForm = () => {
 
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4 font-bold text-xl">
-              <ImageIcon className="text-orange-500" /> Device Photos
+              <ImageIcon className="text-orange-500" /> Device Photos 
+              <span className="ml-1 text-[12px] text-gray-500 uppercase tracking-wide">(optional)</span>
             </div>
+            
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100">
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
               <p className="text-sm text-gray-500">Upload photos to show condition</p>
@@ -154,7 +156,7 @@ const DeviceAssessmentForm = () => {
             type="submit"
             disabled={!isFormValid()}
             className={`w-full py-4 rounded-xl font-bold text-white text-lg transition-all ${
-              isFormValid() ? "bg-blue-600 hover:bg-blue-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
+              isFormValid() ? "bg-green-800 hover:bg-green-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
             }`}
           >
             {isFormValid() ? "Save & Continue to Pickup" : "Complete Assessment"}

@@ -205,13 +205,13 @@ const handleSubmit = async (e) => {
               { icon: CreditCard, title: 'Instant Payment', text: 'Get paid immediately.' }
             ].map(({ icon: Icon, title, text }) => (
               <div key={title} className="flex gap-4 mb-5">
-                <div className="bg-blue-100 p-3 rounded-xl"><Icon className="w-5 h-5 text-blue-600" /></div>
+                <div className="bg-blue-100 p-3 rounded-xl"><Icon className="w-5 h-5 text-green-600" /></div>
                 <div><h3 className="font-semibold">{title}</h3><p className="text-sm text-gray-600">{text}</p></div>
               </div>
             ))}
           </div>
 
-          <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white shadow">
+          <div className="bg-gradient-to-br from-green-900 to-green-600 rounded-2xl p-6 text-white shadow">
             <div className="flex justify-between mb-6">
               <h2 className="text-xl font-bold">Your Device</h2>
               <a href="/"><img src={deploy} alt="logo" className="w-10 h-10" /></a>
@@ -247,7 +247,7 @@ const handleSubmit = async (e) => {
                 error={showError && !formData.address}
                 rightIcon={
                   <button type="button" onClick={fetchCurrentLocation}>
-                    {locationLoading ? <Loader2 className="animate-spin text-blue-600 w-4 h-4" /> : <Navigation className="text-blue-600 w-4 h-4" />}
+                    {locationLoading ? <Loader2 className="animate-spin text-green-800 w-4 h-4" /> : <Navigation className="text-green-600 w-4 h-4" />}
                   </button>
                 }
               />
@@ -266,13 +266,13 @@ const handleSubmit = async (e) => {
             <div className="grid grid-cols-2 gap-2">
               {timeSlots.map((slot) => (
                 <button type="button" key={slot} onClick={() => setSelectedTimeSlot(slot)}
-                  className={`py-3 rounded-xl text-xs font-semibold transition-all ${selectedTimeSlot === slot ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 hover:bg-gray-200'} ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}>
+                  className={`py-3 rounded-xl text-xs font-semibold transition-all ${selectedTimeSlot === slot ? 'bg-green-800 text-white shadow-md' : 'bg-gray-100 hover:bg-gray-200'} ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}>
                   {slot}
                 </button>
               ))}
             </div>
 
-            <button disabled={loading} type="submit" className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50">
+            <button disabled={loading} type="submit" className="cursor-pointer w-full bg-green-800 hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50">
               {loading ? <Loader2 className="animate-spin" /> : <>Confirm Pickup <ArrowRight size={20} /></>}
             </button>
           </form>

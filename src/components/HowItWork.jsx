@@ -1,16 +1,14 @@
 import React from "react";
 import { useEffect, useState } from "react";
-
 import Header from "../components/header.jsx";
 
 const HowItWorks = () => {
 
-  
   const steps = [
     {
       number: "01",
       icon: "📍",
-      iconBg: "bg-blue-100 text-blue-600",
+      iconBg: "bg-green-100 text-green-700",
       title: "Doorstep Inspection",
       description:
         "Our expert visits your location at a time convenient for you to verify your device condition.",
@@ -19,7 +17,7 @@ const HowItWorks = () => {
     {
       number: "02",
       icon: "✅",
-      iconBg: "bg-indigo-100 text-indigo-600",
+      iconBg: "bg-green-100 text-green-700",
       title: "Final Bid",
       description:
         "Receive your final offer based on physical inspection with zero hidden deductions.",
@@ -28,7 +26,7 @@ const HowItWorks = () => {
     {
       number: "03",
       icon: "💵",
-      iconBg: "bg-green-100 text-green-600",
+      iconBg: "bg-green-100 text-green-700",
       title: "Instant Payment",
       description:
         "Accept the offer and get paid immediately via bank transfer or cash.",
@@ -37,31 +35,28 @@ const HowItWorks = () => {
   ];
 
   const text = "CashMish";
-const [displayText, setDisplayText] = useState("");
+  const [displayText, setDisplayText] = useState("");
 
-useEffect(() => {
-  let index = 0;
-  const interval = setInterval(() => {
-    setDisplayText(text.slice(0, index + 1));
-    index++;
-    if (index === text.length) clearInterval(interval);
-  }, 120); // speed
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setDisplayText(text.slice(0, index + 1));
+      index++;
+      if (index === text.length) clearInterval(interval);
+    }, 120);
 
-  return () => clearInterval(interval);
-}, []);
-
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <Header/>
+      <Header />
 
-      {/* Main Content */}
       <main className="flex-1 w-full">
         {/* Hero Section */}
         <section className="text-center px-4 py-8 md:py-8">
           <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-            How <span className="text-blue-600">CashMish</span> Works
+            How <span className="text-green-800">CashMish</span> Works
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
             Sell your device in just three simple steps with full transparency
@@ -96,7 +91,7 @@ useEffect(() => {
                 <p className="text-gray-600 leading-relaxed mb-4">
                   {step.description}
                 </p>
-                <p className="text-sm font-medium text-blue-600">
+                <p className="text-sm font-medium text-green-700">
                   {step.detail}
                 </p>
               </div>
