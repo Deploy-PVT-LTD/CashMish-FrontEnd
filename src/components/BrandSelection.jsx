@@ -24,16 +24,24 @@ const BrandSelection = ({ onSelectBrand }) => {
     const fetchBrandsFromBE = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/mobiles");
-        const allMobiles = response.data;
-        // Unique brands extract karna
-        const uniqueBrandNames = [...new Set(allMobiles.map(item => item.brand))];
-        setBrands(uniqueBrandNames);
+        const allMobiles = response.data.mobiles; // Access the 'mobiles' array directly
+
+        if (Array.isArray(allMobiles)) {
+          // Unique brands extract karna
+          const uniqueBrandNames = [...new Set(allMobiles.map(item => item.brand))];
+          setBrands(uniqueBrandNames);
+        } else {
+          console.error("API response is not an array:", allMobiles);
+          setBrands([]); // Set an empty array or handle accordingly
+        }
       } catch (error) {
         console.error("Error fetching brands:", error);
+        setBrands([]); // Set an empty array in case of error
       } finally {
         setLoading(false);
       }
     };
+
     fetchBrandsFromBE();
   }, []);
 
@@ -47,37 +55,36 @@ const BrandSelection = ({ onSelectBrand }) => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
-        
-      {/* Progress Tracker */}
-<div className="mb-10 sm:mb-16 flex justify-center">
-  <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-    {[1, 2, 3, 4].map((step, i) => {
-      const isActive = step === 1; // Adjust this as per your active step logic
+        {/* Progress Tracker */}
+        <div className="mb-10 sm:mb-16 flex justify-center">
+          <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
+            {[1, 2, 3, 4].map((step, i) => {
+              const isActive = step === 1; // Adjust this as per your active step logic
 
-      return (
-        <React.Fragment key={step}>
-          <div className="flex flex-col items-center">
-            <div
-              className={`rounded-full flex items-center justify-center font-semibold mb-2
-                ${isActive ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-500'}
-                w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
-              `}
-            >
-              {step}
-            </div>
-            <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-              {["Brand", "Model", "Condition", "Storage"][i]}
-            </span>
+              return (
+                <React.Fragment key={step}>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`rounded-full flex items-center justify-center font-semibold mb-2
+                        ${isActive ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-500'}
+                        w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
+                      `}
+                    >
+                      {step}
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+                      {["Brand", "Model", "Condition", "Storage"][i]}
+                    </span>
+                  </div>
+
+                  {step !== 4 && (
+                    <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
-
-          {step !== 4 && (
-            <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
-          )}
-        </React.Fragment>
-      );
-    })}
-  </div>
-</div>
+        </div>
 
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your Phone Brand</h1>
@@ -88,15 +95,15 @@ const BrandSelection = ({ onSelectBrand }) => {
               <span>Loading Brands...</span>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {brands.map((brandName) => (
-                <button
-                  key={brandName}
-                  onClick={() => handleBrandSelect(brandName)}
-                  className="bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-green-800 hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 cursor-pointer group h-40"
-                >
+            <div className="flex flex-wrap justify-center gap-6 max-w-xl mx-auto">
+                {brands.map((brandName) => (
+                  <button
+                    key={brandName}
+                    onClick={() => handleBrandSelect(brandName)}
+                    className="bg-white border-2 border-gray-100 rounded-4xl p-6 hover:border-green-800 hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 cursor-pointer group h-40 w-40 sm:w-48"
+                  >
                   {/* LOGO LOGIC */}
-                  <div className="w-20 h-20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-20 h-18 flex items-center justify-center group-hover:scale-110 transition-transform">
                     {brandLogos[brandName] ? (
                       <img 
                         src={brandLogos[brandName]} 

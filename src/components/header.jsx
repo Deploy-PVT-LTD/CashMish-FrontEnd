@@ -16,10 +16,31 @@ function Header({ simple = false }) {
     updateCartCount();
   }, []);
 
-  const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem('userCart') || '[]');
-    setCartItemCount(cart.length);
-  };
+  // Header.jsx ke andar updateCartCount function ko replace karein
+// Header.jsx ke andar updateCartCount ko aise badlein:
+const updateCartCount = (event) => {
+  // 1. Agar event se count aa raha hai (Login user ke liye), to wo use karein
+  if (event && event.detail !== undefined) {
+    setCartItemCount(event.detail);
+    return;
+  }
+
+  // 2. Agar event nahi hai (Page load ya Guest), to localStorage check karein
+  const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
+  setCartItemCount(guestOrders.length);
+};
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  setIsLoggedIn(!!token);
+  
+  updateCartCount();
+
+  // Listen for custom event
+  window.addEventListener('cartUpdated', updateCartCount);
+  return () => window.removeEventListener('cartUpdated', updateCartCount);
+}, []);
+
 
   const handleLogout = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');

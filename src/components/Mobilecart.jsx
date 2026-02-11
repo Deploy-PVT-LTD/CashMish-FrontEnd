@@ -1,432 +1,242 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Trash2, X, MapPin, Clock, Phone, DollarSign, Check, XCircle, Smartphone } from 'lucide-react';
+import { Trash2, Clock, DollarSign, Check, Smartphone, RefreshCw } from 'lucide-react';
 import Header from '../components/header.jsx';
 import Swal from 'sweetalert2';
 
 const MobileCart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [closedNotifications, setClosedNotifications] = useState(new Set());
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [processingBid, setProcessingBid] = useState(null);
 
-  useEffect(() => {
-    loadUserCart();
-  }, []);
+  const BASE_URL = 'http://localhost:5000';
 
   const loadUserCart = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id || user._id;
+    const userId = user._id || user.id;
+    const guestOrderIds = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
 
-    if (userId && token) {
-      setIsLoggedIn(true);
-      await fetchLoggedInUserForms(token, userId);
-    } else {
-      setIsLoggedIn(false);
-      await fetchGuestUserForms();
+    try {
+      const response = await fetch(`${BASE_URL}/api/forms`);
+      if (response.ok) {
+        const data = await response.json();
+        const allForms = data.forms || data;
+
+        let myForms = [];
+        if (token && userId) {
+          myForms = allForms.filter(f => {
+            const fUserId = f.userId?._id || f.userId;
+            return fUserId && fUserId.toString() === userId.toString();
+          });
+        } else {
+          myForms = allForms.filter(f => guestOrderIds.includes(f._id));
+        }
+
+        const sorted = myForms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setCartItems(transformForms(sorted));
+
+        // ✅ Header Update Event (Login & Guest dono ke liye)
+        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: myForms.length }));
+      }
+    } catch (error) {
+      console.error("❌ Cart Load Error:", error);
     }
     setLoading(false);
   };
 
-  const fetchLoggedInUserForms = async (token, userId) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/forms', {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const allForms = await response.json();
-        const userForms = allForms.filter(form => {
-          const formUserId = form.userId?._id || form.userId;
-          return formUserId && (formUserId.toString() === userId.toString());
-        });
-
-        const transformedItems = transformForms(userForms);
-        setCartItems(transformedItems);
-        localStorage.setItem(`userCart_${userId}`, JSON.stringify(transformedItems));
-        localStorage.setItem('userCart', JSON.stringify(transformedItems));
-      } else {
-        loadFromLocalStorage(userId);
-      }
-    } catch (error) {
-      loadFromLocalStorage(userId);
-    }
-  };
-
-  const fetchGuestUserForms = async () => {
-    const localCart = JSON.parse(localStorage.getItem('userCart') || '[]');
-    const phoneNumber = localCart[0]?.phoneNumber;
-    
-    if (!phoneNumber) {
-      setCartItems(localCart);
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:5000/api/forms');
-      if (response.ok) {
-        const allForms = await response.json();
-        const guestForms = allForms.filter(form => 
-          form.pickUpDetails?.phoneNumber === phoneNumber
-        );
-        
-        if (guestForms.length > 0) {
-          const transformedItems = transformForms(guestForms);
-          setCartItems(transformedItems);
-          localStorage.setItem('userCart', JSON.stringify(transformedItems));
-        } else {
-          setCartItems(localCart);
-        }
-      }
-    } catch (error) {
-      setCartItems(localCart);
-    }
-  };
-
   const transformForms = (forms) => {
     return forms.map(form => ({
-      id: form._id,
-      brand: form.mobileId?.brand || 'N/A',
-      name: form.mobileId?.phoneModel || 'N/A',
-      image: form.mobileId?.image || null, // ✅ Added Image here
+      id: form._id || form.id,
+      brand: form.mobileId?.brand || form.brand || 'N/A',
+      name: form.mobileId?.phoneModel || form.phoneModel || form.name || 'N/A',
       storage: form.storage,
-      condition: form.screenCondition,
-      uploadDate: new Date(form.pickUpDetails?.pickUpDate).toLocaleDateString(),
-      status: form.status || 'pending',
-      address: form.pickUpDetails?.address?.addressText || 'N/A',
-      phoneNumber: form.pickUpDetails?.phoneNumber || 'N/A',
-      timeSlot: form.pickUpDetails?.timeSlot || 'N/A',
-      fullName: form.pickUpDetails?.fullName || 'N/A',
-      estimatedPrice: form.estimatedPrice || 0,
-      bidPrice: form.bidPrice || 0
+      condition: form.screenCondition || form.condition,
+      uploadDate: form.pickUpDetails?.pickUpDate ? 
+        new Date(form.pickUpDetails.pickUpDate).toLocaleDateString() : 
+        'N/A',
+      status: String(form.status || 'pending').toLowerCase(),
+      address: form.pickUpDetails?.address?.addressText || form.address || 'N/A',
+      bidPrice: parseFloat(form.bidPrice) || 0,
+      modelImage: form.mobileId?.image || form.image || null 
     }));
   };
 
-  const loadFromLocalStorage = (userId) => {
-    const key = userId ? `userCart_${userId}` : 'userCart';
-    const data = localStorage.getItem(key);
-    setCartItems(data ? JSON.parse(data) : []);
+  useEffect(() => {
+    loadUserCart();
+  }, []);
+
+  const getImageUrl = (img) => {
+    if (!img) return null;
+    if (img.startsWith('http')) return img;
+    let path = img.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/^\/+/, '');
+    return path.includes('uploads/') ? `${BASE_URL}/${path}` : `${BASE_URL}/uploads/${path}`;
   };
 
-  const handleAcceptBid = async (id) => {
-    const token = localStorage.getItem('token');
-    setProcessingBid(id);
-    try {
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+  const handleCancelOrder = async (id) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This will permanently remove the order.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    });
 
-      const response = await fetch(`http://localhost:5000/api/forms/${id}`, {
-        method: 'PUT',
-        headers: headers,
-        body: JSON.stringify({ status: 'accepted' })
-      });
-
-      if (response.ok) {
-        updateLocalStateAndStorage(id, 'accepted');
-        Swal.fire({
-          icon: 'success',
-          title: 'Bid Accepted',
-          text: 'Your bid has been accepted successfully!',
-          timer: 2000,
-          showConfirmButton: false
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${BASE_URL}/api/forms/${id}`, {
+          method: 'DELETE',
+          headers: { ...(token && { 'Authorization': `Bearer ${token}` }) }
         });
+
+        if (response.ok) {
+          const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
+          localStorage.setItem('myGuestOrders', JSON.stringify(guestOrders.filter(oid => oid !== id)));
+          Swal.fire('Deleted!', 'Order cancelled.', 'success');
+          loadUserCart();
+        }
+      } catch (error) {
+        Swal.fire('Error', 'Failed to cancel.', 'error');
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setProcessingBid(null);
     }
   };
 
-  const handleRejectBid = async (id) => {
-    const result = await Swal.fire({
-      title: 'Reject Bid?',
-      text: 'Are you sure you want to reject this offer?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc2626',
-      confirmButtonText: 'Yes, Reject',
-      cancelButtonText: 'Cancel'
-    });
-
-    if (!result.isConfirmed) return;
-
+  const handleUpdateStatus = async (id, newStatus) => {
     const token = localStorage.getItem('token');
-    setProcessingBid(id);
     try {
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-
-      const response = await fetch(`http://localhost:5000/api/forms/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/forms/${id}`, {
         method: 'PUT',
-        headers: headers,
-        body: JSON.stringify({ status: 'rejected' })
+        headers: { 
+          'Content-Type': 'application/json', 
+          ...(token && { 'Authorization': `Bearer ${token}` }) 
+        },
+        body: JSON.stringify({ status: newStatus })
       });
-
       if (response.ok) {
-        updateLocalStateAndStorage(id, 'rejected');
-        Swal.fire('Rejected', 'The bid has been rejected.', 'info');
+        Swal.fire({ icon: 'success', title: `Bid ${newStatus}`, showConfirmButton: false, timer: 1500 });
+        loadUserCart();
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setProcessingBid(null);
-    }
+    } catch (e) { console.error(e); }
   };
-
-  const updateLocalStateAndStorage = (id, newStatus) => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id || user._id;
-
-    const updated = cartItems.map(item => item.id === id ? { ...item, status: newStatus } : item);
-    setCartItems(updated);
-    localStorage.setItem('userCart', JSON.stringify(updated));
-    if (userId) localStorage.setItem(`userCart_${userId}`, JSON.stringify(updated));
-  };
-
-  const removeItem = async (id) => {
-    const result = await Swal.fire({
-      title: 'Cancel Pickup?',
-      text: 'This pickup will be removed permanently',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc2626',
-      confirmButtonText: 'Yes, Cancel',
-      cancelButtonText: 'No'
-    });
-
-    if (!result.isConfirmed) return;
-
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id || user._id;
-    const token = localStorage.getItem('token');
-
-    const filteredItems = cartItems.filter(item => item.id !== id);
-    setCartItems(filteredItems);
-    localStorage.setItem('userCart', JSON.stringify(filteredItems));
-    if (userId) localStorage.setItem(`userCart_${userId}`, JSON.stringify(filteredItems));
-
-    try {
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-
-      await fetch(`http://localhost:5000/api/forms/${id}`, {
-        method: 'DELETE',
-        headers: headers
-      });
-    } catch (error) {
-      console.error('❌ Error deleting from backend:', error);
-    }
-  };
-
-  const closeNotification = (id) => {
-    setClosedNotifications(prev => new Set(prev).add(id));
-  };
-
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pending Pickup' },
-      bid_received: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Bid Received' },
-      accepted: { bg: 'bg-green-100', text: 'text-green-800', label: 'Accepted' },
-      rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' },
-      under_review: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Under Review' }
-    };
-    const config = statusConfig[status] || statusConfig.pending;
-    return (
-      <span className={`px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider ${config.bg} ${config.text}`}>
-        {config.label}
-      </span>
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className="bg-gray-50 min-h-screen">
-        <Header />
-        <div className="max-w-6xl mx-auto p-4 md:p-8 flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-800"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className="bg-[#fcfcfc] min-h-screen pb-10 font-sans">
       <Header />
-      <div className="max-w-6xl mx-auto p-4 md:p-8">
-
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
-          <h1 className="text-2xl md:text-3xl font-black text-gray-900">Track Orders</h1>
-          <p className="text-gray-500 font-medium">
-            {cartItems.length} Device(s) scheduled for inspection
-            {!isLoggedIn && <span className="text-orange-500 ml-2 font-bold">(Guest Mode)</span>}
-          </p>
+      <div className="max-w-4xl mx-auto p-3 md:p-6">
+        <div className="flex justify-between items-center mb-6 px-2">
+          <h1 className="text-xl font-black text-gray-800 uppercase tracking-tight">Orders Tracking</h1>
+          <button onClick={loadUserCart} className="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-all" disabled={loading}>
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+          </button>
         </div>
-
-        <div className="space-y-6">
-          {cartItems.length === 0 ? (
-            <div className="bg-white rounded-3xl p-16 text-center shadow-sm border-2 border-dashed border-gray-200">
-              <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Smartphone className="text-gray-300 w-10 h-10" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">No active pickups</h3>
-              <p className="text-gray-500 mt-2">Your scheduled pickups will appear here.</p>
+        
+        <div className="space-y-4">
+          {cartItems.length === 0 && !loading ? (
+            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
+              <Smartphone className="mx-auto text-gray-200 mb-2" size={48} />
+              <p className="text-gray-400 font-bold uppercase text-xs">No orders found</p>
             </div>
+          ) : loading ? (
+            <div className="text-center py-20"><RefreshCw className="animate-spin mx-auto text-blue-600 mb-2" size={32} /></div>
           ) : (
-            cartItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                {item.notification && !closedNotifications.has(item.id) && (
-                  <div className="bg-green-800 p-3 flex items-center justify-between text-white">
-                    <div className="flex items-center gap-3 ml-2">
-                      <Bell className="w-4 h-4 fill-white/20" />
-                      <p className="text-xs md:text-sm font-semibold">{item.notification}</p>
-                    </div>
-                    <button onClick={() => closeNotification(item.id)} className="hover:bg-green-900 p-1 rounded-lg transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+            cartItems.map((item) => {
+              const displayImg = item.modelImage;
+              const isRejected = item.status === 'rejected';
+              const isAccepted = item.status === 'accepted';
+              const hasBid = item.bidPrice > 0;
 
-                <div className="p-5 md:p-7">
-                  <div className="flex flex-col lg:flex-row gap-8">
+              return (
+                <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:border-blue-200 transition-all duration-300">
+                  <div className="p-4 md:p-5 flex flex-col md:flex-row gap-5 items-center md:items-start">
                     
-                    {/* ✅ Image Section UI Update */}
-                    <div className="w-full lg:w-72 h-48 bg-white rounded-2xl flex flex-col items-center justify-center relative shadow-md border border-gray-100 overflow-hidden group">
-                      {item.image ? (
+                    {/* Image Section with Pop-up Effect */}
+                    <div className="group w-28 h-28 md:w-32 md:h-32 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-50 shrink-0 shadow-inner relative overflow-hidden transition-all duration-300 hover:shadow-md hover:border-blue-100">
+                      {displayImg ? (
                         <img 
-                          src={item.image} 
-                          alt={item.name} 
-                          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" 
+                          src={getImageUrl(displayImg)} 
+                          className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2" 
+                          alt="model"
+                          onError={(e) => { e.target.src = "https://via.placeholder.com/100?text=Phone"; }}
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center bg-slate-100 w-full h-full text-slate-400">
-                          <Smartphone className="w-12 h-12 mb-2" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">{item.brand}</span>
-                        </div>
+                        <Smartphone className="text-gray-200 group-hover:scale-110 transition-transform" size={30} />
                       )}
-                      <div className="absolute bottom-2 right-3">
-                         <span className="text-[9px] font-mono text-gray-400 bg-white/90 px-2 py-0.5 rounded-full border border-gray-100 shadow-sm">
-                           ID: #{String(item.id).slice(-6)}
-                         </span>
-                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </div>
 
-                    <div className="flex-grow">
-                      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div className="flex-grow w-full text-center md:text-left">
+                      <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-2 mb-3">
                         <div>
-                          <h3 className="text-2xl font-black text-gray-900 uppercase leading-none">{item.brand} {item.name}</h3>
-                          <p className="text-xs text-gray-400 mt-1 font-bold tracking-wider">REF: {item.id}</p>
+                          <h3 className="text-lg font-black text-gray-800 leading-none uppercase tracking-tight">{item.brand} {item.name}</h3>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Requested on {item.uploadDate}</p>
                         </div>
-                        {getStatusBadge(item.status)}
+                        <Badge status={item.status} />
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <InfoBox label="Condition" value={item.condition} />
-                        <InfoBox label="Storage" value={item.storage} />
-                        <InfoBox label="Scheduled Date" value={item.uploadDate} />
-
-                        <div className="col-span-2 md:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Clock className="w-3 h-3 text-green-800" />
-                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Time Slot</p>
-                          </div>
-                          <p className="text-sm font-bold text-gray-800">{item.timeSlot || 'Not Set'}</p>
-                        </div>
-
-                        <div className="col-span-2 bg-green-50/30 p-4 rounded-xl border border-green-100/50">
-                          <div className="flex items-center gap-2 mb-1">
-                            <MapPin className="w-3 h-3 text-green-800" />
-                            <p className="text-[10px] text-green-800 uppercase font-bold tracking-wider">Pickup Address</p>
-                          </div>
-                          <p className="text-sm font-medium text-gray-700 line-clamp-2 leading-relaxed">{item.address}</p>
-                        </div>
-
-                        <div className="col-span-2 md:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Phone className="w-3 h-3 text-green-700" />
-                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Contact</p>
-                          </div>
-                          <p className="text-sm font-bold text-gray-800">{item.phoneNumber}</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        <MiniBox label="Storage" value={item.storage} />
+                        <MiniBox label="Condition" value={item.condition} />
+                        <div className="col-span-2 bg-gray-50 px-3 py-2 rounded-lg text-left border border-gray-100/50">
+                          <p className="text-[9px] text-gray-400 font-bold uppercase mb-1">Pickup Address</p>
+                          <p className="text-xs font-semibold text-gray-600 truncate">{item.address}</p>
                         </div>
                       </div>
 
-                      {item.bidPrice > 0 && (
-                        <div className="mt-6 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-green-200 rounded-xl p-5">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <div className="bg-green-100 p-2 rounded-lg">
-                                <DollarSign className="w-5 h-5 text-green-600" />
-                              </div>
-                              <div>
-                                <p className="text-xs text-green-600 font-bold uppercase tracking-wider">Bid Price by Admin</p>
-                                <p className="text-2xl font-black text-green-700">${item.bidPrice.toLocaleString()}</p>
-                              </div>
+                      {hasBid ? (
+                        <div className={`rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-4 ${isRejected ? 'bg-red-50/50' : isAccepted ? 'bg-green-50/50' : 'bg-blue-50'}`}>
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2.5 rounded-xl ${isRejected ? 'bg-red-100 text-red-600' : isAccepted ? 'bg-green-100 text-green-600' : 'bg-blue-600 text-white shadow-lg shadow-blue-100'}`}>
+                              <DollarSign size={18} strokeWidth={2.5} />
                             </div>
-                            {item.estimatedPrice > 0 && (
-                              <div className="text-right">
-                                <p className="text-[10px] text-gray-500 uppercase font-bold">Estimated</p>
-                                <p className="text-sm font-semibold text-gray-600">${item.estimatedPrice.toLocaleString()}</p>
-                              </div>
-                            )}
+                            <div className="text-left">
+                              <p className="text-[10px] font-bold uppercase text-gray-400 leading-none mb-1">Final Price Offer</p>
+                              <p className={`text-2xl font-black ${isRejected ? 'text-red-400 line-through' : isAccepted ? 'text-green-700' : 'text-blue-700'}`}>
+                                ${item.bidPrice}
+                              </p>
+                            </div>
                           </div>
 
-                          {item.status !== 'accepted' && item.status !== 'rejected' && (
-                            <div className="flex gap-3">
-                              <button
-                                onClick={() => handleAcceptBid(item.id)}
-                                disabled={processingBid === item.id}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                          {!isAccepted && !isRejected && (
+                            <div className="flex gap-3 w-full md:w-auto">
+                              <button 
+                                onClick={() => handleUpdateStatus(item.id, 'accepted')} 
+                                className="flex-1 md:px-6 py-2.5 bg-green-600 text-white text-[11px] font-black uppercase rounded-xl hover:bg-green-700 hover:shadow-lg hover:shadow-green-200 active:scale-95 transition-all flex items-center justify-center gap-2 tracking-wider"
                               >
-                                <Check className="w-4 h-4" />
-                                {processingBid === item.id ? 'Processing...' : 'Accept Bid'}
+                                <Check size={16} strokeWidth={3}/> Accept Bid
                               </button>
-                              <button
-                                onClick={() => handleRejectBid(item.id)}
-                                disabled={processingBid === item.id}
-                                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                              <button 
+                                onClick={() => handleUpdateStatus(item.id, 'rejected')} 
+                                className="flex-1 md:px-6 py-2.5 bg-white border-2 border-red-50 text-red-500 text-[11px] font-black uppercase rounded-xl hover:bg-red-50 hover:border-red-100 active:scale-95 transition-all tracking-wider"
                               >
-                                <XCircle className="w-4 h-4" />
-                                {processingBid === item.id ? 'Processing...' : 'Reject Bid'}
+                                Reject
                               </button>
                             </div>
                           )}
-
-                          {item.status === 'accepted' && (
-                            <div className="bg-green-100 border-2 border-green-300 rounded-lg p-4 flex items-center justify-center gap-2">
-                              <Check className="w-5 h-5 text-green-600" />
-                              <p className="text-green-800 font-bold text-sm uppercase">Bid Accepted Successfully!</p>
+                          {isAccepted && <div className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-200 animate-pulse">✓ Bid Accepted</div>}
+                          {isRejected && <div className="text-red-600 text-xs font-black uppercase">✗ Bid Declined</div>}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-3 rounded-2xl p-4 bg-amber-50 border border-amber-100/50">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-amber-100 p-2 rounded-lg">
+                                <Clock className="text-amber-600" size={18} />
                             </div>
-                          )}
-
-                          {item.status === 'rejected' && (
-                            <div className="bg-red-100 border-2 border-red-300 rounded-lg p-4 flex items-center justify-center gap-2">
-                              <XCircle className="w-5 h-5 text-red-600" />
-                              <p className="text-red-800 font-bold text-sm uppercase">Bid Rejected</p>
-                            </div>
-                          )}
+                            <p className="text-xs font-bold text-amber-800 tracking-tight">Awaiting Admin Verification & Price Offer</p>
+                          </div>
+                          <button 
+                            onClick={() => handleCancelOrder(item.id)}
+                            className="w-full md:w-auto px-5 py-2.5 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase rounded-xl hover:bg-red-50 transition-all flex items-center justify-center gap-2"
+                          >
+                            <Trash2 size={14} /> Cancel Request
+                          </button>
                         </div>
                       )}
-
-                      <div className="mt-8 flex justify-end">
-                        {item.status !== 'accepted' && item.status !== 'rejected' && (
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="flex items-center gap-2 text-gray-400 hover:text-red-600 font-bold text-xs uppercase tracking-widest transition-colors group bg-transparent border-none cursor-pointer"
-                          >
-                            <Trash2 className="w-4 h-4" /> Cancel Pickup
-                          </button>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
@@ -434,11 +244,27 @@ const MobileCart = () => {
   );
 };
 
-const InfoBox = ({ label, value }) => (
-  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">{label}</p>
-    <p className="text-sm font-bold text-gray-800">{value || 'N/A'}</p>
+const MiniBox = ({ label, value }) => (
+  <div className="bg-gray-50 px-3 py-2 rounded-lg text-left border border-gray-100/50 hover:bg-white transition-colors">
+    <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">{label}</p>
+    <p className="text-xs font-bold text-gray-700">{value || 'N/A'}</p>
   </div>
 );
+
+const Badge = ({ status }) => {
+  const statusMap = {
+    pending: { bg: "bg-orange-100", text: "text-orange-600", label: "Pending" },
+    accepted: { bg: "bg-green-100", text: "text-green-600", label: "Accepted" },
+    rejected: { bg: "bg-red-100", text: "text-red-600", label: "Rejected" },
+    bid_received: { bg: "bg-blue-100", text: "text-blue-600", label: "Bid Received" },
+    "bid-placed": { bg: "bg-blue-100", text: "text-blue-600", label: "Bid Placed" }
+  };
+  const statusStyle = statusMap[status] || statusMap.pending;
+  return (
+    <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider ${statusStyle.bg} ${statusStyle.text} border border-white/50 shadow-sm`}>
+      {statusStyle.label}
+    </span>
+  );
+};
 
 export default MobileCart;
