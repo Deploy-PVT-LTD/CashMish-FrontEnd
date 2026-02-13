@@ -129,7 +129,7 @@ const DeviceAssessmentForm = () => {
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4 font-bold text-xl">
               <ImageIcon className="text-orange-500" /> Device Photos 
-              <span className="ml-1 text-[12px] text-gray-500 uppercase tracking-wide">(optional)</span>
+              <span className="ml-1 text-[12px] text-gray-400 lowercase tracking-wide">(optional)</span>
             </div>
             
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100">
