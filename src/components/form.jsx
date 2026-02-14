@@ -83,22 +83,26 @@ export default function UserForm() {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const userId = user._id || user.id;
 
-    // 1. Basic Fields (Jo aapke Model mein required: true hain)
+    // 1. Basic Fields
     if (token && userId) data.append("userId", userId);
     
     data.append("mobileId", mId);
     data.append("storage", deviceDetails.storage);
-    data.append("condition", deviceDetails.condition); // <--- OVERALL CONDITION FIXED
+    data.append("condition", deviceDetails.condition);
     data.append("screenCondition", deviceDetails.screen);
     data.append("bodyCondition", deviceDetails.body);
     data.append("batteryCondition", deviceDetails.battery);
     data.append("carrier", "Unlocked");
 
-    // 2. Pickup Details (Injected email here)
+    // Important: Price bhi append karein agar display karni hai
+    const savedPrice = localStorage.getItem('estimatedPrice') || "0";
+    data.append("estimatedPrice", savedPrice);
+
+    // 2. Pickup Details
     const pickUpDetails = {
       fullName: formData.fullName,
       phoneNumber: formData.phoneNumber,
-      email: formData.email, // <--- EMAIL ADDED TO PAYLOAD
+      email: formData.email,
       address: {
         addressText: formData.address,
         location: { 
@@ -112,20 +116,29 @@ export default function UserForm() {
 
     data.append("pickUpDetails", JSON.stringify(pickUpDetails));
 
-    // 3. Images
-    imagesToUpload.forEach(file => data.append("images", file));
+    // 3. 📸 IMAGES UPLOAD FIX:
+    // Check karein imagesToUpload khali toh nahi? 
+    // Console mein check karein: console.log("Files to upload:", imagesToUpload);
+    if (imagesToUpload.length > 0) {
+      imagesToUpload.forEach((file) => {
+        // "images" wahi name hona chahiye jo backend (Multer) expect kar raha hai
+        data.append("images", file); 
+      });
+    }
 
     try {
       const res = await fetch("http://localhost:5000/api/forms", {
         method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: data
+        headers: {
+          // ⚠️ 'Content-Type' manually set MAT karein FormData ke liye
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: data // FormData khud boundary set kar lega
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        // Agar abhi bhi error aaye toh ye message dikhayega
         alert(result.message || "Form submission failed");
         return;
       }
@@ -139,7 +152,8 @@ export default function UserForm() {
         }
       }
 
-      navigate("/pending", { state: { estimatedPrice: result.estimatedPrice || 0 } });
+      // Result se price nikal kar bhejें
+      navigate("/pending", { state: { estimatedPrice: result.estimatedPrice || savedPrice } });
 
     } catch (err) {
       console.error("Submission error:", err);
