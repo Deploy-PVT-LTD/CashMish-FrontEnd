@@ -64,7 +64,7 @@ const updateCartCount = (event) => {
     setIsLoggedIn(false);
     setCartItemCount(0);
     setOpen(false);
-    navigate("/login");
+    navigate("/");
   };
 
   const navLinks = [
