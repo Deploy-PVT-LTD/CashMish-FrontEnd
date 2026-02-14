@@ -39,10 +39,8 @@ const DeviceAssessmentForm = () => {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    // Add actual files for backend
     setSelectedFiles(prev => [...prev, ...files]);
     
-    // Create previews for UI
     const newPreviews = files.map(file => ({
       preview: URL.createObjectURL(file),
       name: file.name
@@ -59,11 +57,10 @@ const DeviceAssessmentForm = () => {
     return formData.screenCondition && formData.bodyCondition && formData.batteryCondition;
   };
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
+      // 1. Save data to LocalStorage
       localStorage.setItem("screenCondition", formData.screenCondition);
       localStorage.setItem("bodyCondition", formData.bodyCondition);
       localStorage.setItem("batteryCondition", formData.batteryCondition);
@@ -79,8 +76,18 @@ const DeviceAssessmentForm = () => {
       };
       localStorage.setItem("assessmentSummary", JSON.stringify(assessmentSummary));
 
-      // ✅ Pass files to the next route via state
-      navigate("/priceresult", { state: { files: selectedFiles } });
+      // 2. 🔥 CHECK LOGIN STATUS
+      // Hum check kar rahe hain ki user ka token ya data hai ya nahi
+      const userToken = localStorage.getItem("token"); // Aapka auth key name yahan aayega
+      const userData = localStorage.getItem("user");
+
+      if (userToken || userData) {
+        // ✅ User Login hai -> Go to UserData (Final Form)
+        navigate("/userdata", { state: { files: selectedFiles } });
+      } else {
+        // ❌ User Login nahi hai -> Go to PriceResult
+        navigate("/priceresult", { state: { files: selectedFiles } });
+      }
     }
   };
 
@@ -161,7 +168,7 @@ const DeviceAssessmentForm = () => {
               isFormValid() ? "bg-green-800 hover:bg-green-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
             }`}
           >
-            {isFormValid() ? "Save & Continue to Pickup" : "Complete Assessment"}
+            {isFormValid() ? "Save & Continue" : "Complete Assessment"}
           </button>
         </form>
       </div>
