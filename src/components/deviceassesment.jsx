@@ -13,7 +13,7 @@ const DeviceAssessmentForm = () => {
   });
 
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]); // Actual file objects storage
+  const [selectedFiles, setSelectedFiles] = useState([]); 
 
   const screenConditions = [
     { value: 'perfect', label: 'Perfect', description: 'No scratches or marks', color: 'green' },
@@ -60,7 +60,6 @@ const DeviceAssessmentForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
-      // 1. Save data to LocalStorage
       localStorage.setItem("screenCondition", formData.screenCondition);
       localStorage.setItem("bodyCondition", formData.bodyCondition);
       localStorage.setItem("batteryCondition", formData.batteryCondition);
@@ -76,18 +75,8 @@ const DeviceAssessmentForm = () => {
       };
       localStorage.setItem("assessmentSummary", JSON.stringify(assessmentSummary));
 
-      // 2. 🔥 CHECK LOGIN STATUS
-      // Hum check kar rahe hain ki user ka token ya data hai ya nahi
-      const userToken = localStorage.getItem("token"); // Aapka auth key name yahan aayega
-      const userData = localStorage.getItem("user");
-
-      if (userToken || userData) {
-        // ✅ User Login hai -> Go to UserData (Final Form)
-        navigate("/userdata", { state: { files: selectedFiles } });
-      } else {
-        // ❌ User Login nahi hai -> Go to PriceResult
-        navigate("/priceresult", { state: { files: selectedFiles } });
-      }
+      // ✅ Har condition mein PriceResult hi jayega
+      navigate("/priceresult", { state: { files: selectedFiles } });
     }
   };
 

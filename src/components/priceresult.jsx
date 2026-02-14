@@ -18,7 +18,7 @@ const PriceResult = () => {
   const storage = localStorage.getItem('selectedStorage') || '128GB';
   const mobileId = localStorage.getItem('selectedMobileId');
 
-  // Assessment data from previous page
+  // Assessment data (images) from previous page
   const assessmentFiles = location.state?.files || [];
 
   useEffect(() => {
@@ -31,7 +31,6 @@ const PriceResult = () => {
           body: JSON.stringify({
             mobileId: mobileId,
             storage: storage,
-            // Backend in teeno conditions ke basis pe price kam/zyada karega
             screenCondition: localStorage.getItem("screenCondition"),
             bodyCondition: localStorage.getItem("bodyCondition"),
             batteryCondition: localStorage.getItem("batteryCondition"),
@@ -41,7 +40,6 @@ const PriceResult = () => {
         const data = await response.json();
         if (response.ok) {
           setEstimatedPrice(data.estimatedPrice);
-          // Local storage mein update kar dein taaki agle page pe kaam aaye
           localStorage.setItem('estimatedPrice', data.estimatedPrice);
         }
       } catch (error) {
@@ -80,13 +78,22 @@ const PriceResult = () => {
   }, [estimatedPrice]);
 
   const handleProceed = () => {
-    // 🔥 Sabse zaroori: Files ko agle page pe forward karna
-    navigate("/cartlogin", { 
-      state: { 
-        files: assessmentFiles,
-        estimatedPrice: estimatedPrice 
-      } 
-    });
+    // 🔥 CHECK LOGIN STATUS
+    const userToken = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
+
+    const stateToPass = { 
+      files: assessmentFiles, 
+      estimatedPrice: estimatedPrice 
+    };
+
+    if (userToken || userData) {
+      // ✅ User Login hai -> Seedha User Data (Form) par bhejo
+      navigate("/userdata", { state: stateToPass });
+    } else {
+      // ❌ User Login nahi hai -> Cart/Login page par bhejo
+      navigate("/cartlogin", { state: stateToPass });
+    }
   };
 
   if (loading) {
