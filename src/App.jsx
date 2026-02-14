@@ -1,51 +1,63 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import PhoneFlipLanding from './components/MainScreen'; // import your landing page
-import Login from './components/LoginCard'; // import your login component
-import BrandSelection from './components/BrandSelection'; // import your brand selection
+// import { GoogleOAuthProvider } from '@react-oauth/google';
+import PhoneFlipLanding from './components/MainScreen';
+import Login from './components/LoginCard';
+import BrandSelection from './components/BrandSelection';
 import ModelSelection from './components/ModelSelection'
-import ConditionSelection from './components/Conditionselection'; // import your condition selection
-import Storageselection from './components/Storageselection'; // import your storage selection
-import HowItWorks from './components/HowItWork'; // import your how it works
-import Userdata from './components/form'; // import your user data form
+import ConditionSelection from './components/Conditionselection';
+import Storageselection from './components/Storageselection';
+import HowItWorks from './components/HowItWork';
+import Userdata from './components/form';
 import DeviceAssessmentForm from './components/deviceassesment';
 import PendingPage from './components/pending';
 import OfferAcceptancePage from './components/acceptRejectOffer';
-import NotFound from './components/NotFound'; // import your 404 Not Found component
-import RejectionPage from './components/NotAccepted'; // import your rejection page
+import NotFound from './components/NotFound';
+import RejectionPage from './components/NotAccepted';
 import CarrierSelection from './components/Phonecarrier';
 import ContactUs from './components/contactus.jsx';
 import AboutUs from './components/About';
-// import PriceResult from './components/priceresult.jsx';
 import MobileCart from './components/Mobilecart.jsx';
-
-
+import CashMishForgotPassword from './components/forgetPassword.jsx'
+import ResetPassword from './components/confirmpassword.jsx'
+import PriceResult from './components/priceresult.jsx'
+import CartLogin from './components/Cartlogin.jsx'
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Marketing Routes */}
         <Route path="/" element={<PhoneFlipLanding />} />
+        <Route path="/howitworks" element={<HowItWorks />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<ContactUs />} />
+
+        {/* Auth Routes */}
         <Route path="/login" element={<Login/>} />
+        <Route path="/forget-password" element={<CashMishForgotPassword />} />
+        <Route path='/confirm-password' element={<ResetPassword/>}/>
+
+        {/* Trade-in Funnel */}
         <Route path="/brandselection" element={<BrandSelection />} />
         <Route path="/modelselection" element={<ModelSelection />} />
-        <Route path="/conditionselection" element={<ConditionSelection />} />
+        <Route path="/carrierselection" element={<CarrierSelection />} />
         <Route path="/storageselection" element={<Storageselection />} />
-        <Route path="/howitworks" element={<HowItWorks />} />
-        <Route path="/Userdata" element={<Userdata />} />
+        <Route path="/conditionselection" element={<ConditionSelection />} />
+        
+        {/* Assessment & Conversion */}
+        <Route path='/priceresult' element={<PriceResult/>}/>
         <Route path="/deviceassessment" element={<DeviceAssessmentForm />} />
+        <Route path="/userdata" element={<Userdata />} />
         <Route path="/offeracceptance" element={<OfferAcceptancePage />} />
+        <Route path="/cart" element={<MobileCart />} />
+        <Route path='/cartlogin' element={<CartLogin />} /> {/* Ensure 'cart' is capitalized in its file */}
+
+        {/* Status Pages */}
         <Route path="/pending" element={<PendingPage />} />
         <Route path="/notaccepted" element={<RejectionPage />} />
-        <Route path="/carrierselection" element={<CarrierSelection />} />
-        <Route path="*" element={<NotFound />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/About" element={<AboutUs />} />
-        {/* <Route path="/priceresult" element={<PriceResult />} /> */}
-        <Route path="/cart" element={<MobileCart />} />
-       
-
         
-
+        {/* Fallback */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

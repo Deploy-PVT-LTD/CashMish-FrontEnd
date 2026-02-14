@@ -59,6 +59,8 @@ const DeviceAssessmentForm = () => {
     return formData.screenCondition && formData.bodyCondition && formData.batteryCondition;
   };
 
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
@@ -78,7 +80,7 @@ const DeviceAssessmentForm = () => {
       localStorage.setItem("assessmentSummary", JSON.stringify(assessmentSummary));
 
       // ✅ Pass files to the next route via state
-      navigate("/userdata", { state: { files: selectedFiles } });
+      navigate("/priceresult", { state: { files: selectedFiles } });
     }
   };
 
@@ -96,7 +98,7 @@ const DeviceAssessmentForm = () => {
       <Header />
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         <h1 className="text-3xl font-bold text-center mb-8">Device Assessment</h1>
-
+      
         <form onSubmit={handleSubmit} className="space-y-6">
           {[ 
             { title: 'Screen Condition', icon: <Smartphone />, field: 'screenCondition', options: screenConditions },
@@ -129,7 +131,7 @@ const DeviceAssessmentForm = () => {
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4 font-bold text-xl">
               <ImageIcon className="text-orange-500" /> Device Photos 
-              <span className="ml-1 text-[12px] text-gray-500 uppercase tracking-wide">(optional)</span>
+              <span className="ml-1 text-[12px] text-gray-400 lowercase tracking-wide">(optional)</span>
             </div>
             
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100">

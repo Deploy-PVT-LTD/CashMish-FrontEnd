@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Header from "../components/header.jsx";
 import {
   Search, CreditCard, Calendar, MapPin, Phone,
   ArrowRight, Mail, Navigation, Loader2, User
 } from 'lucide-react';
-import Header from '../components/header.jsx';
+// import Header from '../components/header.jsx';
 import deploy from '../assets/deploy-logo.png';
 
 export default function UserForm() {
@@ -23,7 +24,8 @@ export default function UserForm() {
 
   const [deviceDetails, setDeviceDetails] = useState({
     brand: 'N/A', model: 'N/A', storage: 'N/A',
-    screen: 'N/A', body: 'N/A', battery: 'N/A', mobileId: ''
+    screen: 'N/A', body: 'N/A', battery: 'N/A', 
+    condition: 'N/A', mobileId: '' // Added overall condition
   });
 
   const [formData, setFormData] = useState({
@@ -38,8 +40,9 @@ export default function UserForm() {
     const details = {
       brand: localStorage.getItem('selectedBrand') || 'N/A',
       model: localStorage.getItem('selectedModel') || 'N/A',
-      mobileId: localStorage.getItem('selectedMobileId') || 'MISSING!',
+      mobileId: localStorage.getItem('selectedMobileId') || '',
       storage: localStorage.getItem('selectedStorage') || '128GB',
+      condition: localStorage.getItem('selectedCondition') || 'Fair', // overall condition from your previous page
       screen: localStorage.getItem('screenCondition') || 'perfect',
       body: localStorage.getItem('bodyCondition') || 'perfect',
       battery: localStorage.getItem('batteryCondition') || 'good'
@@ -48,7 +51,7 @@ export default function UserForm() {
 
     // Pre-fill form for logged-in users
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user && user.name) {
+    if (user && (user.name || user.email)) {
       setFormData(prev => ({
         ...prev,
         fullName: user.name || '',
@@ -80,24 +83,32 @@ export default function UserForm() {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const userId = user._id || user.id;
 
-    // Only add userId if user is logged in
-    if (token && userId) {
-      data.append("userId", userId);
-    }
-
+    // 1. Basic Fields
+    if (token && userId) data.append("userId", userId);
+    
     data.append("mobileId", mId);
     data.append("storage", deviceDetails.storage);
-    data.append("carrier", "Unlocked");
+    data.append("condition", deviceDetails.condition);
     data.append("screenCondition", deviceDetails.screen);
     data.append("bodyCondition", deviceDetails.body);
     data.append("batteryCondition", deviceDetails.battery);
+    data.append("carrier", "Unlocked");
 
+    // Important: Price bhi append karein agar display karni hai
+    const savedPrice = localStorage.getItem('estimatedPrice') || "0";
+    data.append("estimatedPrice", savedPrice);
+
+    // 2. Pickup Details
     const pickUpDetails = {
       fullName: formData.fullName,
       phoneNumber: formData.phoneNumber,
+      email: formData.email,
       address: {
         addressText: formData.address,
-        location: { type: "Point", coordinates: [formData.coords?.lng || 0, formData.coords?.lat || 0] }
+        location: { 
+          type: "Point", 
+          coordinates: [formData.coords?.lng || 0, formData.coords?.lat || 0] 
+        }
       },
       pickUpDate: formData.date,
       timeSlot: selectedTimeSlot
@@ -105,13 +116,24 @@ export default function UserForm() {
 
     data.append("pickUpDetails", JSON.stringify(pickUpDetails));
 
-    imagesToUpload.forEach(file => data.append("images", file));
+    // 3. 📸 IMAGES UPLOAD FIX:
+    // Check karein imagesToUpload khali toh nahi? 
+    // Console mein check karein: console.log("Files to upload:", imagesToUpload);
+    if (imagesToUpload.length > 0) {
+      imagesToUpload.forEach((file) => {
+        // "images" wahi name hona chahiye jo backend (Multer) expect kar raha hai
+        data.append("images", file); 
+      });
+    }
 
     try {
       const res = await fetch("http://localhost:5000/api/forms", {
         method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: data
+        headers: {
+          // ⚠️ 'Content-Type' manually set MAT karein FormData ke liye
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: data // FormData khud boundary set kar lega
       });
 
       const result = await res.json();
@@ -121,17 +143,17 @@ export default function UserForm() {
         return;
       }
 
-      // ✅ SAVE GUEST ORDER ID IN LOCALSTORAGE
+      // Guest logic
       if (!token) {
         const guestOrders = JSON.parse(localStorage.getItem("myGuestOrders") || "[]");
         if (!guestOrders.includes(result._id)) {
           guestOrders.push(result._id);
           localStorage.setItem("myGuestOrders", JSON.stringify(guestOrders));
         }
-        console.log("👤 Guest order saved:", result._id);
       }
 
-      navigate("/pending", { state: { estimatedPrice: result.estimatedPrice || 0 } });
+      // Result se price nikal kar bhejें
+      navigate("/pending", { state: { estimatedPrice: result.estimatedPrice || savedPrice } });
 
     } catch (err) {
       console.error("Submission error:", err);
@@ -161,7 +183,7 @@ export default function UserForm() {
 
   const fetchCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      alert("Geolocation is not supported");
       return;
     }
     setLocationLoading(true);
@@ -177,169 +199,110 @@ export default function UserForm() {
         }));
         setShowSuggestions(false);
       } catch (err) {
-        console.error("Location fetch error:", err);
+        console.error("Location error:", err);
       }
       setLocationLoading(false);
-    }, (error) => {
-      console.error("Geolocation error:", error);
-      alert("Unable to get your location");
+    }, () => {
+      alert("Unable to get location");
       setLocationLoading(false);
     });
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <Header />
+    <div className="bg-gray-50 min-h-screen ">
+       <Header />
       <div className="max-w-4xl mx-auto p-6 grid md:grid-cols-2 gap-8">
+        
+        {/* Left Info Panel */}
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-xl font-bold mb-6 text-gray-800">How It Works</h2>
-            {[
-              { icon: Calendar, title: 'Schedule Pickup', text: 'Choose a convenient time.' },
-              { icon: Search, title: 'Quick Inspection', text: 'Expert verification.' },
-              { icon: CreditCard, title: 'Instant Payment', text: 'Get paid immediately.' }
-            ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="flex gap-4 mb-5">
-                <div className="bg-blue-100 p-3 rounded-xl"><Icon className="w-5 h-5 text-blue-600" /></div>
-                <div><h3 className="font-semibold">{title}</h3><p className="text-sm text-gray-600">{text}</p></div>
+          <div className="bg-white rounded-2xl shadow p-6 border border-gray-100">
+            <h2 className="text-xl font-bold mb-6 text-gray-800">Summary</h2>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-blue-100 p-3 rounded-xl"><User className="w-5 h-5 text-blue-600" /></div>
+                <div><h3 className="font-semibold text-sm">Condition</h3><p className="text-xs text-gray-600">Overall: {deviceDetails.condition}</p></div>
               </div>
-            ))}
+              <div className="flex items-center gap-4">
+                <div className="bg-green-100 p-3 rounded-xl"><Calendar className="w-5 h-5 text-green-600" /></div>
+                <div><h3 className="font-semibold text-sm">Schedule</h3><p className="text-xs text-gray-600">Quick Pickup & Pay</p></div>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-900 to-green-600 rounded-2xl p-6 text-white shadow">
-            <div className="flex justify-between mb-6">
+          <div className="bg-gradient-to-br from-green-900 to-green-700 rounded-2xl p-6 text-white shadow-xl">
+            <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold">Your Device</h2>
-              <a href="/"><img src={deploy} alt="logo" className="w-10 h-10" /></a>
+              <img src={deploy} alt="logo" className="w-8 h-8 opacity-80" />
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between border-b border-white/10 py-2">
-                <span className="text-blue-100">Brand</span>
-                <span className="font-bold uppercase">{deviceDetails.brand}</span>
-              </div>
-              <div className="flex justify-between border-b border-white/10 py-2">
-                <span className="text-blue-100">Model</span>
-                <span className="font-bold">{deviceDetails.model}</span>
-              </div>
-              <div className="flex justify-between border-b border-white/10 py-2">
-                <span className="text-blue-100">Storage</span>
-                <span className="font-semibold">{deviceDetails.storage}</span>
-              </div>
+            <div className="space-y-3">
+              <DetailRow label="Brand" value={deviceDetails.brand} />
+              <DetailRow label="Model" value={deviceDetails.model} />
+              <DetailRow label="Storage" value={deviceDetails.storage} />
+              <DetailRow label="Overall Condition" value={deviceDetails.condition} />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl p-8 h-fit">
-          <h2 className="text-xl font-bold mb-6">Schedule Pickup</h2>
+        {/* Form Panel */}
+        <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+          <h2 className="text-xl font-bold mb-6 text-gray-800">Schedule Pickup</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input 
-              icon={User} 
-              name="fullName" 
-              placeholder="Full Name" 
-              value={formData.fullName} 
-              onChange={handleInputChange} 
-              error={showError && !formData.fullName} 
-            />
-            <Input 
-              icon={Mail} 
-              name="email" 
-              type="email" 
-              placeholder="Email Address (optional)" 
-              value={formData.email} 
-              onChange={handleInputChange} 
-            />
-            <Input 
-              icon={Phone} 
-              name="phoneNumber" 
-              placeholder="Phone Number" 
-              value={formData.phoneNumber} 
-              onChange={handleInputChange} 
-              error={showError && !formData.phoneNumber} 
-            />
+            <Input icon={User} name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleInputChange} error={showError && !formData.fullName} />
+            <Input icon={Mail} name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} />
+            <Input icon={Phone} name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
 
             <div className="relative" ref={suggestionRef}>
               <Input
-                icon={MapPin} 
-                name="address" 
-                autoComplete="off" 
-                placeholder="Pickup address"
-                value={formData.address} 
-                onChange={(e) => { 
-                  handleInputChange(e); 
-                  fetchSuggestions(e.target.value); 
-                }}
+                icon={MapPin} name="address" autoComplete="off" placeholder="Pickup address"
+                value={formData.address} onChange={(e) => { handleInputChange(e); fetchSuggestions(e.target.value); }}
                 error={showError && !formData.address}
                 rightIcon={
-                  <button type="button" onClick={fetchCurrentLocation}>
-                    {locationLoading ? 
-                      <Loader2 className="animate-spin text-green-800 w-4 h-4" /> : 
-                      <Navigation className="text-green-600 w-4 h-4" />
-                    }
+                  <button type="button" onClick={fetchCurrentLocation} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                    {locationLoading ? <Loader2 className="animate-spin text-green-800 w-4 h-4" /> : <Navigation className="text-green-600 w-4 h-4" />}
                   </button>
                 }
               />
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl mt-1 shadow-2xl max-h-48 overflow-y-auto">
                   {suggestions.map((s, i) => (
-                    <div 
-                      key={i} 
-                      onClick={() => { 
-                        setFormData(p => ({ 
-                          ...p, 
-                          address: s.display_name, 
-                          coords: { lat: parseFloat(s.lat), lng: parseFloat(s.lon) } 
-                        })); 
-                        setShowSuggestions(false); 
-                      }}
-                      className="px-4 py-3 text-sm hover:bg-blue-50 cursor-pointer border-b last:border-0"
-                    >
-                      {s.display_name}
-                    </div>
+                    <div key={i} onClick={() => { 
+                      setFormData(p => ({ ...p, address: s.display_name, coords: { lat: parseFloat(s.lat), lng: parseFloat(s.lon) } })); 
+                      setShowSuggestions(false); 
+                    }} className="px-4 py-3 text-sm hover:bg-blue-50 cursor-pointer border-b last:border-0">{s.display_name}</div>
                   ))}
                 </div>
               )}
             </div>
 
-            <Input 
-              type="date" 
-              icon={Calendar} 
-              name="date" 
-              min={today} 
-              value={formData.date} 
-              onChange={handleInputChange} 
-              error={showError && !formData.date} 
-            />
+            <Input type="date" icon={Calendar} name="date" min={today} value={formData.date} onChange={handleInputChange} error={showError && !formData.date} />
 
             <div className="grid grid-cols-2 gap-2">
               {timeSlots.map((slot) => (
                 <button 
-                  type="button" 
-                  key={slot} 
-                  onClick={() => setSelectedTimeSlot(slot)}
-                  className={`py-3 rounded-xl text-xs font-semibold transition-all 
-                    ${selectedTimeSlot === slot ? 
-                      'bg-green-800 text-white shadow-md' : 
-                      'bg-gray-100 hover:bg-gray-200'
-                    } 
-                    ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}
+                  type="button" key={slot} onClick={() => setSelectedTimeSlot(slot)}
+                  className={`py-3 rounded-xl text-[10px] font-bold transition-all ${selectedTimeSlot === slot ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}
                 >
                   {slot}
                 </button>
               ))}
             </div>
 
-            <button 
-              disabled={loading} 
-              type="submit" 
-              className="cursor-pointer w-full bg-green-800 hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50"
-            >
-              {loading ? 
-                <Loader2 className="animate-spin" /> : 
-                <>Confirm Pickup <ArrowRight size={20} /></>
-              }
+            <button disabled={loading} type="submit" className="w-full bg-green-800 hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
+              {loading ? <Loader2 className="animate-spin" /> : <>Confirm Pickup <ArrowRight size={20} /></>}
             </button>
           </form>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Sub-components for cleaner code
+function DetailRow({ label, value }) {
+  return (
+    <div className="flex justify-between border-b border-white/10 py-2">
+      <span className="text-green-100 text-sm">{label}</span>
+      <span className="font-bold text-sm uppercase">{value}</span>
     </div>
   );
 }
@@ -350,11 +313,7 @@ function Input({ icon: Icon, rightIcon, error, ...props }) {
       <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
       <input 
         {...props} 
-        className={`w-full pl-11 pr-10 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none 
-          ${error ? 
-            'border-red-500 bg-red-50' : 
-            'border-gray-200 focus:border-blue-500'
-          }`} 
+        className={`w-full pl-11 pr-10 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`} 
       />
       {rightIcon && <div className="absolute right-4 top-1/2 -translate-y-1/2">{rightIcon}</div>}
     </div>

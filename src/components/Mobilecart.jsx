@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 const MobileCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const BASE_URL = 'http://localhost:5000';
 
   const loadUserCart = async () => {
@@ -35,8 +34,12 @@ const MobileCart = () => {
         const sorted = myForms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setCartItems(transformForms(sorted));
 
-        // ✅ Header Update Event (Login & Guest dono ke liye)
-        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: myForms.length }));
+        // ✅ SIRF ACTIVE ORDERS GINEIN (Accepted/Rejected ko nikaal kar)
+        const activeCount = myForms.filter(f => 
+          f.status !== 'accepted' && f.status !== 'rejected'
+        ).length;
+
+        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: activeCount }));
       }
     } catch (error) {
       console.error("❌ Cart Load Error:", error);

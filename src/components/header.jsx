@@ -9,55 +9,57 @@ function Header({ simple = false }) {
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
 
-  // Check login status and cart count on load
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-    updateCartCount();
-  }, []);
-
-  // Header.jsx ke andar updateCartCount function ko replace karein
-// Header.jsx ke andar updateCartCount ko aise badlein:
+  // Logic to update cart count
 const updateCartCount = (event) => {
-  // 1. Agar event se count aa raha hai (Login user ke liye), to wo use karein
+  // 1. Agar MobileCart.jsx se real-time update (event) aa raha hai
   if (event && event.detail !== undefined) {
     setCartItemCount(event.detail);
     return;
   }
 
-  // 2. Agar event nahi hai (Page load ya Guest), to localStorage check karein
-  const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
-  setCartItemCount(guestOrders.length);
+  // 2. Page refresh ya load hone par check karein
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    // AGAR USER LOGIN HAI: 
+    // Toh localStorage ka count mat dikhao. 
+    // Count tabhi dikhega jab MobileCart API se data fetch karke event fire karega.
+    setCartItemCount(0); 
+  } else {
+    // AGAR GUEST HAI:
+    // Tab local storage se length uthao
+    const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
+    setCartItemCount(guestOrders.length);
+  }
 };
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  setIsLoggedIn(!!token);
-  
-  updateCartCount();
+  useEffect(() => {
+    // Check login status
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    
+    // Initial count set karein
+    updateCartCount();
 
-  // Listen for custom event
-  window.addEventListener('cartUpdated', updateCartCount);
-  return () => window.removeEventListener('cartUpdated', updateCartCount);
-}, []);
-
+    // Listen for custom event 'cartUpdated' from MobileCart.jsx
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    // Cleanup listener on unmount
+    return () => window.removeEventListener('cartUpdated', updateCartCount);
+  }, []);
 
   const handleLogout = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id;
+    const userId = user._id || user.id;
     
     if (userId) {
-      // Save current cart to user-specific storage
       const currentCart = JSON.parse(localStorage.getItem('userCart') || '[]');
       localStorage.setItem(`userCart_${userId}`, JSON.stringify(currentCart));
     }
     
-    // Clear auth data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    
-    // Clear current cart (will show empty or guest cart)
-    localStorage.setItem('userCart', '[]');
+    localStorage.setItem('userCart', '[]'); // Clear current session cart
     
     setIsLoggedIn(false);
     setCartItemCount(0);
@@ -160,7 +162,7 @@ useEffect(() => {
 
         {/* Mobile Menu */}
         {open && (
-          <div className="md:hidden pb-4 mt-2 bg-white rounded-lg shadow-md border-t border-gray-100 animate-in slide-in-from-top duration-300">
+          <div className="md:hidden pb-4 mt-2 bg-white rounded-lg shadow-md border-t border-gray-100">
             <div className="flex flex-col space-y-3 px-4 pt-2">
               {navLinks.map((link) => (
                 <a
