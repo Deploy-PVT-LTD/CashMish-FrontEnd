@@ -21,45 +21,48 @@ import CashMishForgotPassword from './components/forgetPassword.jsx'
 import ResetPassword from './components/confirmpassword.jsx'
 import PriceResult from './components/priceresult.jsx'
 import CartLogin from './components/Cartlogin.jsx'
+import { WalletProvider } from './components/Walletcontext.jsx';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Marketing Routes */}
-        <Route path="/" element={<PhoneFlipLanding />} />
-        <Route path="/howitworks" element={<HowItWorks />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/contact" element={<ContactUs />} />
+    <WalletProvider>
+      <Router>
+        <Routes>
+          {/* Public Marketing Routes */}
+          <Route path="/" element={<PhoneFlipLanding />} />
+          <Route path="/howitworks" element={<HowItWorks />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
 
-        {/* Auth Routes */}
-        <Route path="/login" element={<Login/>} />
-        <Route path="/forget-password" element={<CashMishForgotPassword />} />
-        <Route path='/confirm-password' element={<ResetPassword/>}/>
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login/>} />
+          <Route path="/forget-password" element={<CashMishForgotPassword />} />
+          <Route path='/confirm-password' element={<ResetPassword/>}/>
 
-        {/* Trade-in Funnel */}
-        <Route path="/brandselection" element={<BrandSelection />} />
-        <Route path="/modelselection" element={<ModelSelection />} />
-        <Route path="/carrierselection" element={<CarrierSelection />} />
-        <Route path="/storageselection" element={<Storageselection />} />
-        <Route path="/conditionselection" element={<ConditionSelection />} />
-        
-        {/* Assessment & Conversion */}
-        <Route path='/priceresult' element={<PriceResult/>}/>
-        <Route path="/deviceassessment" element={<DeviceAssessmentForm />} />
-        <Route path="/userdata" element={<Userdata />} />
-        <Route path="/offeracceptance" element={<OfferAcceptancePage />} />
-        <Route path="/cart" element={<MobileCart />} />
-        <Route path='/cartlogin' element={<CartLogin />} /> {/* Ensure 'cart' is capitalized in its file */}
+          {/* Trade-in Funnel */}
+          <Route path="/brandselection" element={<BrandSelection />} />
+          <Route path="/modelselection" element={<ModelSelection />} />
+          <Route path="/carrierselection" element={<CarrierSelection />} />
+          <Route path="/storageselection" element={<Storageselection />} />
+          <Route path="/conditionselection" element={<ConditionSelection />} />
+          
+          {/* Assessment & Conversion */}
+          <Route path='/priceresult' element={<PriceResult/>}/>
+          <Route path="/deviceassessment" element={<DeviceAssessmentForm />} />
+          <Route path="/userdata" element={<Userdata />} />
+          <Route path="/offeracceptance" element={<OfferAcceptancePage />} />
+          <Route path="/cart" element={<MobileCart />} />
+          <Route path='/cartlogin' element={<CartLogin />} /> {/* Ensure 'cart' is capitalized in its file */}
 
-        {/* Status Pages */}
-        <Route path="/pending" element={<PendingPage />} />
-        <Route path="/notaccepted" element={<RejectionPage />} />
-        
-        {/* Fallback */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+          {/* Status Pages */}
+          <Route path="/pending" element={<PendingPage />} />
+          <Route path="/notaccepted" element={<RejectionPage />} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </WalletProvider>
   );
 }
 
