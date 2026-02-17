@@ -13,7 +13,6 @@ function Header({ simple = false }) {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Yahan fallback {} rakha hai taaki crash na ho
   const walletContext = useWallet() || {}; 
   const { 
     walletBalance = 0, 
@@ -37,7 +36,6 @@ function Header({ simple = false }) {
       const token = localStorage.getItem("token");
       if (!token) return navigate("/login");
 
-      // Function call se pehle check
       if (typeof fetchAndUpdateBalance === 'function') {
         await fetchAndUpdateBalance();
       }
@@ -61,7 +59,6 @@ function Header({ simple = false }) {
     const handleOpenWalletEvent = () => {
       handleWalletClick();
     };
-
     window.addEventListener('openWallet', handleOpenWalletEvent);
     return () => window.removeEventListener('openWallet', handleOpenWalletEvent);
   }, [handleWalletClick]);
@@ -85,6 +82,7 @@ function Header({ simple = false }) {
       resetWallet();
     }
     setIsLoggedIn(false);
+    setOpen(false); // Close menu on logout
     navigate("/");
   };
 
@@ -101,6 +99,7 @@ function Header({ simple = false }) {
               </a>
             </div>
 
+            {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6">
               <a href="/" className="text-sm font-medium text-gray-600 hover:text-green-800">Home</a>
               <a href="/Howitworks" className="text-sm font-medium text-gray-600 hover:text-green-800">How It Works</a>
@@ -145,6 +144,7 @@ function Header({ simple = false }) {
               )}
             </div>
 
+            {/* Mobile Header Icons & Toggle */}
             <div className="md:hidden flex items-center gap-3">
               {isLoggedIn && (
                 <button onClick={handleWalletClick} className="flex items-center gap-1.5 relative">
@@ -162,6 +162,33 @@ function Header({ simple = false }) {
               </button>
             </div>
           </div>
+
+          {/* MOBILE MENU CONTENT - YEH MISSING THA */}
+          {open && (
+            <div className="md:hidden border-t border-gray-100 pb-4 bg-white animate-in slide-in-from-top duration-300">
+              <div className="flex flex-col space-y-4 pt-4">
+                <a href="/" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Home</a>
+                <a href="/Howitworks" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">How It Works</a>
+                <a href="/contact" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Contact Us</a>
+                
+                <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
+                  <a href="/cart" onClick={() => setOpen(false)} className="flex items-center gap-2 text-gray-600 font-medium">
+                    <ShoppingBag size={20} /> Cart ({cartItemCount})
+                  </a>
+                  
+                  {isLoggedIn ? (
+                    <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
+                      <LogOut size={20} /> Logout
+                    </button>
+                  ) : (
+                    <a href="/login" onClick={() => setOpen(false)} className="bg-green-800 text-white px-6 py-2 rounded-full text-center font-semibold">
+                      Sign Up
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </nav>
       </header>
 
