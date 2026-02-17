@@ -47,7 +47,7 @@ const CartLogin = () => {
 
   const handleGoogleLogin = () => {
     const receiveMessage = (event) => {
-      if (event.origin !== "https://cashmish-backend.onrender.com/") return;
+      if (event.origin !== "https://cashmish-backend.onrender.com") return;
       const { token, user } = event.data;
       if (token) {
         localStorage.setItem('token', token);
