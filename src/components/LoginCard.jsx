@@ -6,6 +6,7 @@ import logo from '../assets/deploy-logo.png';
 import logogoogle from '../assets/google.png';
 import Swal from 'sweetalert2'; // Make sure Swal is imported
 
+
 const LoginCard = () => {
   const [view, setView] = useState('signin');
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ const LoginCard = () => {
 
   const handleGoogleLogin = () => {
     const receiveMessage = (event) => {
-      if (event.origin !== "https://cashmish-backend.onrender.com/") return;
+      if (event.origin !== "http://localhost:5000") return;
       const { token, user } = event.data;
       if (token) {
         localStorage.setItem('token', token);
@@ -42,14 +43,14 @@ const LoginCard = () => {
       }
     };
     window.addEventListener("message", receiveMessage);
-    window.open('https://cashmish-backend.onrender.com/api/auth/google', 'google-login', `width=500,height=600`);
+    window.open('http://localhost:5000/api/auth/google', 'google-login', `width=500,height=600`);
   };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://cashmish-backend.onrender.com/api/auth/login', {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signInData),
@@ -77,7 +78,7 @@ const LoginCard = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://cashmish-backend.onrender.com/api/auth/signup', {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...signUpData, role: 'user' }),
