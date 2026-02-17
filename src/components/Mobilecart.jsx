@@ -1,31 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Trash2, Clock, DollarSign, Check, Smartphone, RefreshCw, X, Gift, Wallet, AlertCircle } from 'lucide-react';
 import Header from './header.jsx';
 import Swal from 'sweetalert2';
 import { useWallet } from './Walletcontext';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://cashmish-backend.onrender.com';
 
-// ── Accept Bid Popup ──────────────────────────────────────────────────────────
-const AcceptPopup = ({ isOpen, onClose, bidPrice, onWithdraw, onCoupon }) => {
+// ─── Accept Bid Popup ────────────────────────────────────────────────────────
+const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
   if (!isOpen) return null;
-  const bonus = (bidPrice * 0.07).toFixed(2);
-  const withBonus = (bidPrice + parseFloat(bonus)).toFixed(2);
+  const price = parseFloat(amount) || 0;
+  const bonus = (price * 0.07).toFixed(2);
+  const withBonus = (price + parseFloat(bonus)).toFixed(2);
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-5 relative">
-          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors"><X size={20} /></button>
+          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white"><X size={20} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2.5 rounded-xl"><Wallet className="text-white" size={24} /></div>
             <div>
-              <h2 className="text-white font-black text-lg uppercase tracking-tight">Bid Accepted!</h2>
+              <h2 className="text-white font-black text-lg uppercase tracking-tight">Your Wallet</h2>
               <p className="text-green-100 text-xs font-semibold">Choose your payout method</p>
             </div>
           </div>
           <div className="mt-3 bg-white/10 rounded-xl p-3">
-            <p className="text-white/80 text-[11px] font-bold uppercase mb-0.5">Amount Added to Wallet</p>
-            <p className="text-white text-3xl font-black">${parseFloat(bidPrice).toFixed(2)}</p>
+            <p className="text-white/80 text-[11px] font-bold uppercase mb-0.5">Amount in Wallet</p>
+            <p className="text-white text-3xl font-black">${price.toFixed(2)}</p>
           </div>
         </div>
         <div className="p-5 space-y-3">
@@ -37,15 +38,15 @@ const AcceptPopup = ({ isOpen, onClose, bidPrice, onWithdraw, onCoupon }) => {
               <p className="text-gray-500 text-xs font-semibold mt-0.5">Receive in 48 hours to your bank</p>
             </div>
           </button>
-          <button onClick={onCoupon} className="w-full group relative bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all flex items-center gap-4 overflow-hidden">
-            <div className="absolute top-2 right-2 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">+7% Bonus</div>
+          {/* <button onClick={onCoupon} className="w-full group relative bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all flex items-center gap-4 overflow-hidden">
+            <div className="absolute top-2 right-2 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase">+7% Bonus</div>
             <div className="bg-orange-100 p-3 rounded-xl group-hover:bg-orange-500 transition-colors"><Gift className="text-orange-600 group-hover:text-white transition-colors" size={22} /></div>
             <div className="text-left flex-grow">
               <h3 className="text-gray-900 font-black text-base uppercase tracking-tight">Get Coupons</h3>
               <p className="text-gray-600 text-xs font-semibold mt-0.5">Earn <span className="text-orange-600 font-black">${bonus} extra</span> — Total ${withBonus}</p>
             </div>
-          </button>
-          <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors">Decide later from Wallet</button>
+          </button> */}
+          <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors">Decide later</button>
         </div>
       </div>
       <style>{`@keyframes popupIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
@@ -53,9 +54,9 @@ const AcceptPopup = ({ isOpen, onClose, bidPrice, onWithdraw, onCoupon }) => {
   );
 };
 
-// ── Withdraw Form Modal — calls POST /api/bank-details ────────────────────────
+// ─── Withdraw Form Modal ─────────────────────────────────────────────────────
 const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
-  const { withdrawCash } = useWallet();
+  const { clearWalletAfterPayout } = useWallet();
   const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -76,40 +77,45 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
       const token = localStorage.getItem('token');
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = user._id || user.id;
-      if (!userId) { setApiError('User not logged in. Please login first.'); setIsSubmitting(false); return; }
+      if (!userId) { setApiError('User not logged in.'); setIsSubmitting(false); return; }
 
-      const response = await fetch(`${BASE_URL}/api/bank-details`, {
+      // Correct route: /api/bankDetails (as registered in index.js)
+      const response = await fetch(`${BASE_URL}/api/bankDetails`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(token && { 'Authorization': `Bearer ${token}` }) },
-        body: JSON.stringify({ userId, accountHolderName: form.name, accountNumber: form.accountNumber, bankName: form.bankName, amount, orderId, status: 'pending' })
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          userId,
+          accountHolderName: form.name,
+          accountNumber: form.accountNumber,
+          bankName: form.bankName,
+          status: 'pending'
+        })
       });
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || `Server error: ${response.status}`);
+        throw new Error(errData.message || errData.error || `Server error: ${response.status}`);
       }
 
-      withdrawCash(form, orderId);
+      // ✅ Permanently wallet 0 + orderId mark as paid in localStorage
+      clearWalletAfterPayout(orderId);
       setSubmitted(true);
       setTimeout(() => { onSuccess?.(); }, 2000);
     } catch (err) {
-      console.error('Bank details save error:', err);
-      setApiError(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+      setApiError(err.message || 'Something went wrong.');
+    } finally { setIsSubmitting(false); }
   };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-5 relative">
-          <button onClick={onClose} disabled={isSubmitting} className="absolute top-3 right-3 text-white/70 hover:text-white disabled:opacity-40 transition-colors"><X size={20} /></button>
+          <button onClick={onClose} disabled={isSubmitting} className="absolute top-3 right-3 text-white/70 hover:text-white disabled:opacity-40"><X size={20} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2.5 rounded-xl"><DollarSign className="text-white" size={22} /></div>
             <div>
               <h2 className="text-white font-black text-lg uppercase tracking-tight">Withdraw Cash</h2>
-              <p className="text-green-100 text-xs font-semibold">Amount: ${parseFloat(amount).toFixed(2)}</p>
+              <p className="text-green-100 text-xs font-semibold">Amount: ${parseFloat(amount || 0).toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -118,7 +124,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
             <div className="text-center py-6">
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"><Check className="text-green-600" size={32} /></div>
               <h3 className="text-gray-900 font-black text-lg mb-2 uppercase">Request Submitted!</h3>
-              <p className="text-gray-600 text-sm font-semibold mb-1">Aapko 48 hours ke andar paise receive ho jayenge.</p>
+              <p className="text-gray-600 text-sm font-semibold mb-1">You will receive payment within 48 hours.</p>
               <p className="text-gray-400 text-xs">Bank details saved successfully.</p>
             </div>
           ) : (
@@ -126,7 +132,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
               {apiError && (
                 <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl p-3">
                   <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
-                  <p className="text-red-700 text-xs font-semibold">{apiError}</p>
+                  <p className="text-red-700 text-xs font-semibold break-words">{apiError}</p>
                 </div>
               )}
               <div>
@@ -142,8 +148,8 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
                 <input type="text" required value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter bank name" />
               </div>
               <div className="flex gap-3 pt-1">
-                <button type="button" onClick={onClose} disabled={isSubmitting} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 transition-all disabled:opacity-50">Back</button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <button type="button" onClick={onClose} disabled={isSubmitting} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 disabled:opacity-50">Back</button>
+                <button type="submit" disabled={isSubmitting} className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2">
                   {isSubmitting ? <><RefreshCw size={16} className="animate-spin" /> Saving...</> : 'Submit'}
                 </button>
               </div>
@@ -151,24 +157,31 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
           )}
         </div>
       </div>
+      <style>{`@keyframes popupIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
     </div>
   );
 };
 
-// ── Coupon Confirm Modal ──────────────────────────────────────────────────────
+// ─── Coupon Modal ────────────────────────────────────────────────────────────
 const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
-  const { getCoupons, isProcessing } = useWallet();
+  const { clearWalletAfterPayout } = useWallet();
   const [submitted, setSubmitted] = useState(false);
   useEffect(() => { if (isOpen) setSubmitted(false); }, [isOpen]);
   if (!isOpen) return null;
-  const bonus = (amount * 0.07).toFixed(2);
-  const total = (amount + parseFloat(bonus)).toFixed(2);
-  const handleConfirm = () => { getCoupons(orderId); setSubmitted(true); setTimeout(() => { onSuccess?.(); }, 1500); };
+  const price = parseFloat(amount || 0);
+  const bonus = (price * 0.07).toFixed(2);
+  const total = (price + parseFloat(bonus)).toFixed(2);
+  const handleConfirm = () => {
+    // ✅ Permanently wallet 0 + orderId mark as paid
+    clearWalletAfterPayout(orderId);
+    setSubmitted(true);
+    setTimeout(() => { onSuccess?.(); }, 1500);
+  };
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-5 relative">
-          <button onClick={onClose} disabled={isProcessing} className="absolute top-3 right-3 text-white/70 hover:text-white disabled:opacity-40"><X size={20} /></button>
+          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white"><X size={20} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2.5 rounded-xl"><Gift className="text-white" size={22} /></div>
             <div><h2 className="text-white font-black text-lg uppercase">Get Coupons</h2><p className="text-orange-100 text-xs font-semibold">+7% Bonus on your amount</p></div>
@@ -184,30 +197,32 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
           ) : (
             <div className="space-y-4">
               <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-4 space-y-2">
-                <div className="flex justify-between"><span className="text-gray-600 text-sm font-semibold">Original Amount:</span><span className="text-gray-900 font-bold">${parseFloat(amount).toFixed(2)}</span></div>
+                <div className="flex justify-between"><span className="text-gray-600 text-sm font-semibold">Original Amount:</span><span className="text-gray-900 font-bold">${price.toFixed(2)}</span></div>
                 <div className="flex justify-between text-orange-600"><span className="text-sm font-semibold">7% Bonus:</span><span className="font-bold">+${bonus}</span></div>
                 <div className="border-t-2 border-orange-200 pt-2"><div className="flex justify-between"><span className="text-gray-900 font-black uppercase">Total Value:</span><span className="text-green-600 text-xl font-black">${total}</span></div></div>
               </div>
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-3"><p className="text-blue-900 text-xs font-semibold text-center">📧 Coupons will be sent to your registered email</p></div>
               <div className="flex gap-3">
-                <button onClick={onClose} disabled={isProcessing} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 transition-all disabled:opacity-50">Back</button>
-                <button onClick={handleConfirm} disabled={isProcessing} className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-black text-sm uppercase hover:from-orange-600 hover:to-orange-700 transition-all disabled:opacity-50">{isProcessing ? 'Processing...' : 'Confirm'}</button>
+                <button onClick={onClose} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50">Back</button>
+                <button onClick={handleConfirm} className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-black text-sm uppercase">Confirm</button>
               </div>
             </div>
           )}
         </div>
       </div>
+      <style>{`@keyframes popupIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
     </div>
   );
 };
 
-// ── Main Cart ─────────────────────────────────────────────────────────────────
+// ─── Main Cart ───────────────────────────────────────────────────────────────
 const MobileCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingOrders, setProcessingOrders] = useState(new Set());
-  const { addToWallet, walletBalance, pendingOrders } = useWallet();
-  const [acceptPopup, setAcceptPopup] = useState({ open: false, orderId: null, bidPrice: 0 });
+  const { walletBalance, addToWallet } = useWallet();
+
+  const [acceptPopup, setAcceptPopup] = useState({ open: false, orderId: null, amount: 0 });
   const [withdrawModal, setWithdrawModal] = useState({ open: false, orderId: null, amount: 0 });
   const [couponModal, setCouponModal] = useState({ open: false, orderId: null, amount: 0 });
 
@@ -233,7 +248,7 @@ const MobileCart = () => {
         const activeCount = myForms.filter(f => f.status !== 'accepted' && f.status !== 'rejected').length;
         window.dispatchEvent(new CustomEvent('cartUpdated', { detail: activeCount }));
       }
-    } catch (error) { console.error('❌ Cart Load Error:', error); }
+    } catch (err) { console.error('Cart Load Error:', err); }
     setLoading(false);
   };
 
@@ -275,80 +290,71 @@ const MobileCart = () => {
     }
   };
 
- const handleUpdateStatus = async (id, newStatus) => {
-  if (processingOrders.has(id)) return;
-  setProcessingOrders(prev => new Set(prev).add(id));
-  
-  const token = localStorage.getItem('token');
-  
-  try {
-    // Step 1: Status update karo
-    const updateRes = await fetch(`${BASE_URL}/api/forms/${id}`, {
-      method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': `Bearer ${token}` // Token hamesha bhejein
-      },
-      body: JSON.stringify({ status: newStatus })
-    });
+  const handleUpdateStatus = async (id, newStatus) => {
+    if (processingOrders.has(id)) return;
+    setProcessingOrders(prev => new Set(prev).add(id));
+    const token = localStorage.getItem('token');
+    try {
+      const updateRes = await fetch(`${BASE_URL}/api/forms/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!updateRes.ok) throw new Error('Failed to update status');
+      const responseData = await updateRes.json();
+      const updatedForm = responseData.form || responseData;
 
-    if (!updateRes.ok) throw new Error('Failed to update status');
-    
-    const responseData = await updateRes.json();
-    // Backend se updated form ka data lo
-    const updatedForm = responseData.form || responseData;
+      setCartItems(prev => prev.map(item => item.id === id ? { ...item, status: newStatus } : item));
 
-    // Instant UI update
-    setCartItems(prev => prev.map(item => item.id === id ? { ...item, status: newStatus } : item));
-
-    if (newStatus === 'accepted') {
-      // Direct updatedForm se price uthao, dobara fetch karne ki zaroorat nahi
-      const freshBidPrice = parseFloat(updatedForm.bidPrice) || 0;
-
-      if (freshBidPrice > 0) {
-        // Context Update
-        addToWallet(freshBidPrice, id);
-        
-        // Popup dikhao
-        setAcceptPopup({ 
-          open: true, 
-          orderId: id, 
-          bidPrice: freshBidPrice 
-        });
-        
-        // Wallet state ko DB se sync karne ke liye refresh trigger karein
-        if (typeof fetchAndUpdateBalance === 'function') {
-           fetchAndUpdateBalance();
+      if (newStatus === 'accepted') {
+        const freshBidPrice = parseFloat(updatedForm.bidPrice) || 0;
+        if (freshBidPrice > 0) {
+          addToWallet(freshBidPrice);
+          // amount = freshBidPrice (jo abhi accept hua), orderId = id
+          setAcceptPopup({ open: true, orderId: id, amount: freshBidPrice });
         }
+      } else if (newStatus === 'rejected') {
+        Swal.fire({ icon: 'success', title: 'Order Rejected', showConfirmButton: false, timer: 1500 });
       }
-    } else if (newStatus === 'rejected') {
-      Swal.fire({ icon: 'success', title: 'Order Rejected', showConfirmButton: false, timer: 1500 });
+      loadUserCart();
+    } catch (e) {
+      Swal.fire('Connection Error', `Backend check karo: ${BASE_URL}`, 'error');
+    } finally {
+      setProcessingOrders(prev => { const s = new Set(prev); s.delete(id); return s; });
     }
+  };
 
-    // List refresh karein
-    loadUserCart();
+  // View Wallet / wallet icon — walletBalance use karo (same jo header pe show hota hai)
+  const handleOpenWalletPopup = useCallback(() => {
+    if (walletBalance > 0) {
+      const acceptedItem = cartItems.find(item => item.status === 'accepted' && item.bidPrice > 0);
+      setAcceptPopup({ open: true, orderId: acceptedItem?.id || null, amount: walletBalance });
+    }
+  }, [cartItems, walletBalance]);
 
-  } catch (e) {
-    console.error('Update Status Error:', e);
-    // Yahan alert change kar diya taaki user ko pata chale exact error
-    Swal.fire('Connection Error', 'Server se connect nahi ho pa raha. Check if Backend is running at ' + BASE_URL, 'error');
-  } finally {
-    setProcessingOrders(prev => { 
-      const s = new Set(prev); 
-      s.delete(id); 
-      return s; 
-    });
-  }
-};
-  const handlePopupWithdraw = () => { const { orderId, bidPrice } = acceptPopup; setAcceptPopup({ open: false, orderId: null, bidPrice: 0 }); setWithdrawModal({ open: true, orderId, amount: bidPrice }); };
-  const handlePopupCoupon = () => { const { orderId, bidPrice } = acceptPopup; setAcceptPopup({ open: false, orderId: null, bidPrice: 0 }); setCouponModal({ open: true, orderId, amount: bidPrice }); };
+  useEffect(() => {
+    const handler = () => handleOpenWalletPopup();
+    window.addEventListener('openWallet', handler);
+    return () => window.removeEventListener('openWallet', handler);
+  }, [handleOpenWalletPopup]);
+
+  const handlePopupWithdraw = () => {
+    const { orderId, amount } = acceptPopup;
+    setAcceptPopup({ open: false, orderId: null, amount: 0 });
+    setWithdrawModal({ open: true, orderId, amount });
+  };
+  const handlePopupCoupon = () => {
+    const { orderId, amount } = acceptPopup;
+    setAcceptPopup({ open: false, orderId: null, amount: 0 });
+    setCouponModal({ open: true, orderId, amount });
+  };
   const handleWithdrawSuccess = () => setWithdrawModal({ open: false, orderId: null, amount: 0 });
   const handleCouponSuccess = () => setCouponModal({ open: false, orderId: null, amount: 0 });
 
   return (
     <div className="bg-[#fcfcfc] min-h-screen pb-10 font-sans">
       <Header />
-      <AcceptPopup isOpen={acceptPopup.open} onClose={() => setAcceptPopup({ open: false, orderId: null, bidPrice: 0 })} bidPrice={acceptPopup.bidPrice} onWithdraw={handlePopupWithdraw} onCoupon={handlePopupCoupon} />
+      <AcceptPopup isOpen={acceptPopup.open} onClose={() => setAcceptPopup({ open: false, orderId: null, amount: 0 })} amount={acceptPopup.amount} onWithdraw={handlePopupWithdraw} onCoupon={handlePopupCoupon} />
       <WithdrawModal isOpen={withdrawModal.open} onClose={() => setWithdrawModal({ open: false, orderId: null, amount: 0 })} amount={withdrawModal.amount} orderId={withdrawModal.orderId} onSuccess={handleWithdrawSuccess} />
       <CouponModal isOpen={couponModal.open} onClose={() => setCouponModal({ open: false, orderId: null, amount: 0 })} amount={couponModal.amount} orderId={couponModal.orderId} onSuccess={handleCouponSuccess} />
 
@@ -358,6 +364,7 @@ const MobileCart = () => {
           <button onClick={loadUserCart} className="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-all" disabled={loading}><RefreshCw size={18} className={loading ? 'animate-spin' : ''} /></button>
         </div>
 
+        {/* Wallet card — sirf tab show hoga jab balance > 0 ho */}
         {walletBalance > 0 && (
           <div className="mb-4 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-2xl p-4">
             <div className="flex items-center justify-between">
@@ -368,13 +375,9 @@ const MobileCart = () => {
                   <p className="text-2xl font-black text-green-800">${walletBalance.toFixed(2)}</p>
                 </div>
               </div>
-              
-             <button 
-            onClick={() => window.dispatchEvent(new CustomEvent('openWallet'))} 
-            className="px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black uppercase hover:bg-green-700 transition-all"
-          >
-            View Wallet
-          </button>
+              <button onClick={handleOpenWalletPopup} className="px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black uppercase hover:bg-green-700 transition-all">
+                View Wallet
+              </button>
             </div>
           </div>
         )}

@@ -1,5 +1,5 @@
 import { Menu, X, ShoppingBag, LogOut, Wallet } from "lucide-react";
-import { useState, useEffect, useCallback } from "react"; // 1. Added useCallback here
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/deploy-logo.png";
 import { useWallet } from '../components/Walletcontext';
@@ -13,9 +13,15 @@ function Header({ simple = false }) {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { walletBalance, fetchAndUpdateBalance, pendingOrders, resetWallet } = useWallet();
+  // Yahan fallback {} rakha hai taaki crash na ho
+  const walletContext = useWallet() || {}; 
+  const { 
+    walletBalance = 0, 
+    fetchAndUpdateBalance = async () => {}, 
+    pendingOrders = [], 
+    resetWallet = () => {} 
+  } = walletContext;
 
-  // 1. Cart Count Logic
   const updateCartCount = useCallback(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -26,13 +32,15 @@ function Header({ simple = false }) {
     }
   }, []);
 
-  // 2. Wallet Click Logic (Ab sirf ek baar define hai aur useCallback ke saath hai)
   const handleWalletClick = useCallback(async () => {
     try {
-      await fetchAndUpdateBalance();
-
       const token = localStorage.getItem("token");
       if (!token) return navigate("/login");
+
+      // Function call se pehle check
+      if (typeof fetchAndUpdateBalance === 'function') {
+        await fetchAndUpdateBalance();
+      }
 
       if ((pendingOrders && pendingOrders.length > 0) || walletBalance > 0) {
         setWalletModalOpen(true);
@@ -49,7 +57,6 @@ function Header({ simple = false }) {
     }
   }, [fetchAndUpdateBalance, pendingOrders, walletBalance, navigate]);
 
-  // 3. Event Listener (Cart wale button ke liye)
   useEffect(() => {
     const handleOpenWalletEvent = () => {
       handleWalletClick();
@@ -59,13 +66,12 @@ function Header({ simple = false }) {
     return () => window.removeEventListener('openWallet', handleOpenWalletEvent);
   }, [handleWalletClick]);
 
-  // 4. Initial Setup
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
     updateCartCount();
 
-    if (token) {
+    if (token && typeof fetchAndUpdateBalance === 'function') {
       fetchAndUpdateBalance();
     }
 
@@ -73,10 +79,11 @@ function Header({ simple = false }) {
     return () => window.removeEventListener('cartUpdated', updateCartCount);
   }, [fetchAndUpdateBalance, updateCartCount]);
 
-  // 5. Logout Logic
   const handleLogout = () => {
     localStorage.clear();
-    resetWallet();
+    if (typeof resetWallet === 'function') {
+      resetWallet();
+    }
     setIsLoggedIn(false);
     navigate("/");
   };
@@ -87,7 +94,6 @@ function Header({ simple = false }) {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             
-            {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <a href="/" className="flex items-center gap-2 group">
                 <img src={logo} alt="Logo" className="w-10 h-10 group-hover:scale-105 transition-transform" />
@@ -95,7 +101,6 @@ function Header({ simple = false }) {
               </a>
             </div>
 
-            {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6">
               <a href="/" className="text-sm font-medium text-gray-600 hover:text-green-800">Home</a>
               <a href="/Howitworks" className="text-sm font-medium text-gray-600 hover:text-green-800">How It Works</a>
@@ -140,7 +145,6 @@ function Header({ simple = false }) {
               )}
             </div>
 
-            {/* Mobile Toggle */}
             <div className="md:hidden flex items-center gap-3">
               {isLoggedIn && (
                 <button onClick={handleWalletClick} className="flex items-center gap-1.5 relative">

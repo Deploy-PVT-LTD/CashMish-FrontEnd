@@ -21,7 +21,7 @@ const ModelSelection = () => {
         setLoading(true);
         // API call se data fetch kiya
         const res = await axios.get(
-          `http://localhost:5000/api/mobiles/brand?brand=${brand}`
+          `https://cashmish-backend.onrender.com/api/mobiles/brand?brand=${brand}`
         );
 
         // --- DEBUG LOGS START ---
@@ -111,7 +111,7 @@ const ModelSelection = () => {
           <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900">
             Select Your <span className="text-green-800 uppercase">{brand}</span> Model
           </h1>
-          <p className="text-gray-500 mt-2">Hum aapke phone ki sahi qeemat lagane mein madad karenge.</p>
+          <p className="text-gray-500 mt-2">We Offer Bst Price for your Mobile Phones.</p>
         </div>
 
         {loading ? (
@@ -132,7 +132,7 @@ const ModelSelection = () => {
               ))
             ) : (
               <div className="col-span-full text-center py-10 text-gray-500">
-                Is brand ke models filhal dastiyab nahi hain.
+                This Brand Model Is Not Available Yet.
               </div>
             )}
           </div>

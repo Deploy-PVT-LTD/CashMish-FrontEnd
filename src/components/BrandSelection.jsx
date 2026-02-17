@@ -23,7 +23,7 @@ const BrandSelection = ({ onSelectBrand }) => {
   useEffect(() => {
     const fetchBrandsFromBE = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/mobiles");
+        const response = await axios.get("https://cashmish-backend.onrender.com/api/mobiles");
         const allMobiles = response.data.mobiles; // Access the 'mobiles' array directly
 
         if (Array.isArray(allMobiles)) {
