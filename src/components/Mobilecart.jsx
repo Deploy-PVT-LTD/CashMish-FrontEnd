@@ -46,7 +46,10 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
               <p className="text-gray-600 text-xs font-semibold mt-0.5">Earn <span className="text-orange-600 font-black">${bonus} extra</span> — Total ${withBonus}</p>
             </div>
           </button> */}
-          <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors cursor-pointer">Decide later</button>
+
+{/* decide later is here  */}
+          {/* -------- */}
+          {/* <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors cursor-pointer">Decide later</button> */}
         </div>
       </div>
       <style>{`@keyframes popupIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
