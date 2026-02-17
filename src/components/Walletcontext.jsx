@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const WalletContext = createContext();
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://cashmish-backend.onrender.com';
 
 // ── localStorage: paid orderIds track karo ──────────────────────────────────
 const WALLET_PAID_KEY = 'walletPaidOrderIds';

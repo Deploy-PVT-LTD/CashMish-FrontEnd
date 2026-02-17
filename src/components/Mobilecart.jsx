@@ -34,7 +34,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
           <button onClick={onWithdraw} className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4">
             <div className="bg-green-100 p-3 rounded-xl group-hover:bg-green-600 transition-colors"><DollarSign className="text-green-600 group-hover:text-white transition-colors" size={22} /></div>
             <div className="text-left flex-grow">
-              <h3 className="text-gray-900 font-black text-base uppercase tracking-tight">Withdraw Cash</h3>
+              <h3 className="text-gray-900 font-black text-base uppercase tracking-tight cursor-pointer">Withdraw Cash</h3>
               <p className="text-gray-500 text-xs font-semibold mt-0.5">Receive in 48 hours to your bank</p>
             </div>
           </button>
@@ -46,7 +46,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
               <p className="text-gray-600 text-xs font-semibold mt-0.5">Earn <span className="text-orange-600 font-black">${bonus} extra</span> — Total ${withBonus}</p>
             </div>
           </button> */}
-          <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors">Decide later</button>
+          <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors cursor-pointer">Decide later</button>
         </div>
       </div>
       <style>{`@keyframes popupIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
@@ -361,7 +361,7 @@ const MobileCart = () => {
       <div className="max-w-4xl mx-auto p-3 md:p-6">
         <div className="flex justify-between items-center mb-6 px-2">
           <h1 className="text-xl font-black text-gray-800 uppercase tracking-tight">Orders Tracking</h1>
-          <button onClick={loadUserCart} className="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-all" disabled={loading}><RefreshCw size={18} className={loading ? 'animate-spin' : ''} /></button>
+          <button onClick={loadUserCart} className="cursor-pointer text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-all" disabled={loading}><RefreshCw size={18} className={loading ? 'animate-spin' : ''} /></button>
         </div>
 
         {/* Wallet card — sirf tab show hoga jab balance > 0 ho */}
@@ -375,7 +375,7 @@ const MobileCart = () => {
                   <p className="text-2xl font-black text-green-800">${walletBalance.toFixed(2)}</p>
                 </div>
               </div>
-              <button onClick={handleOpenWalletPopup} className="px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black uppercase hover:bg-green-700 transition-all">
+              <button onClick={handleOpenWalletPopup} className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black uppercase hover:bg-green-700 transition-all">
                 View Wallet
               </button>
             </div>
@@ -448,7 +448,7 @@ const MobileCart = () => {
                             <div className="bg-amber-100 p-2 rounded-lg"><Clock className="text-amber-600" size={18} /></div>
                             <p className="text-xs font-bold text-amber-800 tracking-tight">Awaiting Admin Verification & Price Offer</p>
                           </div>
-                          <button onClick={() => handleCancelOrder(item.id)} className="w-full md:w-auto px-5 py-2.5 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase rounded-xl hover:bg-red-50 transition-all flex items-center justify-center gap-2">
+                          <button onClick={() => handleCancelOrder(item.id)} className="cursor-pointer w-full md:w-auto px-5 py-2.5 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase rounded-xl hover:bg-red-50 transition-all flex items-center justify-center gap-2">
                             <Trash2 size={14} /> Cancel Request
                           </button>
                         </div>

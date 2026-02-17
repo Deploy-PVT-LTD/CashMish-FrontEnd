@@ -111,7 +111,7 @@ function Header({ simple = false }) {
                   {isLoggedIn && (
                     <button
                       onClick={handleWalletClick}
-                      className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-full border border-gray-100 transition-all relative"
+                      className="cursor-pointer flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-full border border-gray-100 transition-all relative"
                     >
                       <Wallet size={22} className="text-gray-600" />
                       {pendingOrders?.length > 0 && (
@@ -133,7 +133,7 @@ function Header({ simple = false }) {
                   </a>
 
                   {isLoggedIn ? (
-                    <button onClick={handleLogout} className="flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
+                    <button onClick={handleLogout} className="cursor-pointer flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
                       <LogOut size={16} /> Logout
                     </button>
                   ) : (

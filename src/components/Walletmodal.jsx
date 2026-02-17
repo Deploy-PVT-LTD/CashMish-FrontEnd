@@ -152,7 +152,7 @@ const WalletModal = ({ isOpen, onClose }) => {
               >
                 <div className="bg-green-100 p-3 rounded-xl group-hover:bg-green-600 transition-colors"><DollarSign className="text-green-600 group-hover:text-white transition-colors" size={22} /></div>
                 <div className="text-left flex-grow">
-                  <h3 className="text-gray-900 font-black text-base uppercase tracking-tight">Withdraw Cash</h3>
+                  <h3 className="cursor-pointer text-gray-900 font-black text-base uppercase tracking-tight">Withdraw Cash</h3>
                   <p className="text-gray-500 text-xs font-semibold mt-0.5">Receive in 48 hours to your bank</p>
                 </div>
               </button>
