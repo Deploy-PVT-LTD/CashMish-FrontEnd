@@ -24,6 +24,7 @@ function Header({ simple = false }) {
   const updateCartCount = useCallback(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      // Logic for logged in users cart if needed
       setCartItemCount(0); 
     } else {
       const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
@@ -82,7 +83,7 @@ function Header({ simple = false }) {
       resetWallet();
     }
     setIsLoggedIn(false);
-    setOpen(false); // Close menu on logout
+    setOpen(false); 
     navigate("/");
   };
 
@@ -108,34 +109,32 @@ function Header({ simple = false }) {
               {!simple && (
                 <div className="flex items-center gap-4 ml-4">
                   {isLoggedIn && (
-                    <button
-                      onClick={handleWalletClick}
-                      className="cursor-pointer flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-full border border-gray-100 transition-all relative"
-                    >
-                      <Wallet size={22} className="text-gray-600" />
-                      {pendingOrders?.length > 0 && (
-                        <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
-                      )}
-                      <span className="bg-green-600 text-white text-[14px] font-bold px-2 py-0.5 rounded-full shadow-sm">
-                        ${walletBalance || 0}
-                      </span>
-                    </button>
+                    <>
+                      <button
+                        onClick={handleWalletClick}
+                        className="cursor-pointer flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-full border border-gray-100 transition-all relative"
+                      >
+                        <Wallet size={22} className="text-gray-600" />
+                        {pendingOrders?.length > 0 && (
+                          <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                        )}
+                        <span className="bg-green-600 text-white text-[14px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                          ${walletBalance || 0}
+                        </span>
+                      </button>
+
+                      {/* Desktop Cart - Only for Logged In */}
+                      <a href="/cart" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
+                        <ShoppingBag size={22} />
+                      </a>
+
+                      <button onClick={handleLogout} className="cursor-pointer flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
+                        <LogOut size={16} /> Logout
+                      </button>
+                    </>
                   )}
 
-                  <a href="/cart" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                    <ShoppingBag size={22} />
-                    {cartItemCount > 0 && (
-                      <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                        {cartItemCount}
-                      </span>
-                    )}
-                  </a>
-
-                  {isLoggedIn ? (
-                    <button onClick={handleLogout} className="cursor-pointer flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
-                      <LogOut size={16} /> Logout
-                    </button>
-                  ) : (
+                  {!isLoggedIn && (
                     <a href="/login" className="bg-green-800 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition-all shadow-md">
                       Sign Up
                     </a>
@@ -163,7 +162,7 @@ function Header({ simple = false }) {
             </div>
           </div>
 
-          {/* MOBILE MENU CONTENT - YEH MISSING THA */}
+          {/* MOBILE MENU CONTENT */}
           {open && (
             <div className="md:hidden border-t border-gray-100 pb-4 bg-white animate-in slide-in-from-top duration-300">
               <div className="flex flex-col space-y-4 pt-4">
@@ -172,16 +171,18 @@ function Header({ simple = false }) {
                 <a href="/contact" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Contact Us</a>
                 
                 <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
-                  <a href="/cart" onClick={() => setOpen(false)} className="flex items-center gap-2 text-gray-600 font-medium">
-                    <ShoppingBag size={20} /> Cart ({cartItemCount})
-                  </a>
-                  
+                  {/* Cart logic: Only show if isLoggedIn is true */}
                   {isLoggedIn ? (
-                    <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
-                      <LogOut size={20} /> Logout
-                    </button>
+                    <>
+                      <a href="/cart" onClick={() => setOpen(false)} className="flex items-center gap-2 text-gray-600 font-medium">
+                        <ShoppingBag size={20} /> Cart 
+                      </a>
+                      <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
+                        <LogOut size={20} /> Logout
+                      </button>
+                    </>
                   ) : (
-                    <a href="/login" onClick={() => setOpen(false)} className="bg-green-800 text-white px-6 py-2 rounded-full text-center font-semibold">
+                    <a href="/login" onClick={() => setOpen(false)} className="bg-green-800 text-white w-full py-2 rounded-full text-center font-semibold">
                       Sign Up
                     </a>
                   )}
