@@ -44,6 +44,7 @@ const LoginCard = () => {
     };
     window.addEventListener("message", receiveMessage);
     window.open('https://cashmish-backend.onrender.com/api/auth/google', 'google-login', `width=500,height=600`);
+    //  window.open('http://localhost:5000/api/auth/google', 'google-login', `width=500,height=600`);
   };
 
   const handleSignIn = async (e) => {
@@ -51,6 +52,7 @@ const LoginCard = () => {
     setLoading(true);
     try {
       const response = await fetch('https://cashmish-backend.onrender.com/api/auth/login', {
+        // const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signInData),
@@ -79,6 +81,7 @@ const LoginCard = () => {
     setLoading(true);
     try {
       const response = await fetch('https://cashmish-backend.onrender.com/api/auth/signup', {
+        // const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...signUpData, role: 'user' }),

@@ -22,6 +22,7 @@ const ModelSelection = () => {
         // API call se data fetch kiya
         const res = await axios.get(
           `https://cashmish-backend.onrender.com/api/mobiles/brand?brand=${brand}`
+          //  `http://localhost:5000/api/mobiles/brand?brand=${brand}`
         );
 
         // --- DEBUG LOGS START ---

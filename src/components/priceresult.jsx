@@ -26,6 +26,7 @@ const PriceResult = () => {
       try {
         setLoading(true);
         const response = await fetch("https://cashmish-backend.onrender.com/api/forms/estimate", {
+          // const response = await fetch("http://localhost:5000/api/forms/estimate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

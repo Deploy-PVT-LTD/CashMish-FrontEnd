@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useWallet } from './Walletcontext';
 
 const BASE_URL = 'https://cashmish-backend.onrender.com';
+// const BASE_URL = 'http://localhost:5000';
 
 // ─── Accept Bid Popup ────────────────────────────────────────────────────────
 const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
@@ -14,7 +15,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
   const withBonus = (price + parseFloat(bonus)).toFixed(2);
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-5 relative">
           <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white"><X size={20} /></button>
           <div className="flex items-center gap-3">
@@ -38,18 +39,6 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
               <p className="text-gray-500 text-xs font-semibold mt-0.5">Receive in 48 hours to your bank</p>
             </div>
           </button>
-          {/* <button onClick={onCoupon} className="w-full group relative bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-4 hover:border-orange-400 hover:shadow-md transition-all flex items-center gap-4 overflow-hidden">
-            <div className="absolute top-2 right-2 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase">+7% Bonus</div>
-            <div className="bg-orange-100 p-3 rounded-xl group-hover:bg-orange-500 transition-colors"><Gift className="text-orange-600 group-hover:text-white transition-colors" size={22} /></div>
-            <div className="text-left flex-grow">
-              <h3 className="text-gray-900 font-black text-base uppercase tracking-tight">Get Coupons</h3>
-              <p className="text-gray-600 text-xs font-semibold mt-0.5">Earn <span className="text-orange-600 font-black">${bonus} extra</span> — Total ${withBonus}</p>
-            </div>
-          </button> */}
-
-{/* decide later is here  */}
-          {/* -------- */}
-          {/* <button onClick={onClose} className="w-full text-gray-400 text-xs font-semibold py-2 hover:text-gray-600 transition-colors cursor-pointer">Decide later</button> */}
         </div>
       </div>
       <style>{`@keyframes popupIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
@@ -59,7 +48,8 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
 
 // ─── Withdraw Form Modal ─────────────────────────────────────────────────────
 const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
-  const { clearWalletAfterPayout } = useWallet();
+  // clearWalletAfterPayout ko hum context se nikal rahe hain
+  const { clearWalletAfterPayout, setWalletBalance } = useWallet(); 
   const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -82,7 +72,6 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
       const userId = user._id || user.id;
       if (!userId) { setApiError('User not logged in.'); setIsSubmitting(false); return; }
 
-      // Correct route: /api/bankDetails (as registered in index.js)
       const response = await fetch(`${BASE_URL}/api/bankDetails`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -100,8 +89,16 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
         throw new Error(errData.message || errData.error || `Server error: ${response.status}`);
       }
 
-      // ✅ Permanently wallet 0 + orderId mark as paid in localStorage
-      clearWalletAfterPayout(orderId);
+      // ✅ FRONTEND STATE RESET LOGIC
+      // Agar clearWalletAfterPayout function context mein mil jaye toh woh call hoga
+      // Warna directly setWalletBalance(0) kar dega crash se bachne ke liye
+      if (typeof clearWalletAfterPayout === 'function') {
+        clearWalletAfterPayout(orderId);
+      } else {
+        setWalletBalance(0);
+        localStorage.setItem('walletBalance', '0');
+      }
+      
       setSubmitted(true);
       setTimeout(() => { onSuccess?.(); }, 2000);
     } catch (err) {
@@ -167,19 +164,25 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
 
 // ─── Coupon Modal ────────────────────────────────────────────────────────────
 const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
-  const { clearWalletAfterPayout } = useWallet();
+  const { clearWalletAfterPayout, setWalletBalance } = useWallet();
   const [submitted, setSubmitted] = useState(false);
   useEffect(() => { if (isOpen) setSubmitted(false); }, [isOpen]);
   if (!isOpen) return null;
   const price = parseFloat(amount || 0);
   const bonus = (price * 0.07).toFixed(2);
   const total = (price + parseFloat(bonus)).toFixed(2);
+  
   const handleConfirm = () => {
-    // ✅ Permanently wallet 0 + orderId mark as paid
-    clearWalletAfterPayout(orderId);
+    if (typeof clearWalletAfterPayout === 'function') {
+        clearWalletAfterPayout(orderId);
+    } else {
+        setWalletBalance(0);
+        localStorage.setItem('walletBalance', '0');
+    }
     setSubmitted(true);
     setTimeout(() => { onSuccess?.(); }, 1500);
   };
+  
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
@@ -313,7 +316,6 @@ const MobileCart = () => {
         const freshBidPrice = parseFloat(updatedForm.bidPrice) || 0;
         if (freshBidPrice > 0) {
           addToWallet(freshBidPrice);
-          // amount = freshBidPrice (jo abhi accept hua), orderId = id
           setAcceptPopup({ open: true, orderId: id, amount: freshBidPrice });
         }
       } else if (newStatus === 'rejected') {
@@ -327,7 +329,6 @@ const MobileCart = () => {
     }
   };
 
-  // View Wallet / wallet icon — walletBalance use karo (same jo header pe show hota hai)
   const handleOpenWalletPopup = useCallback(() => {
     if (walletBalance > 0) {
       const acceptedItem = cartItems.find(item => item.status === 'accepted' && item.bidPrice > 0);
@@ -367,7 +368,6 @@ const MobileCart = () => {
           <button onClick={loadUserCart} className="cursor-pointer text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-all" disabled={loading}><RefreshCw size={18} className={loading ? 'animate-spin' : ''} /></button>
         </div>
 
-        {/* Wallet card — sirf tab show hoga jab balance > 0 ho */}
         {walletBalance > 0 && (
           <div className="mb-4 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-2xl p-4">
             <div className="flex items-center justify-between">
