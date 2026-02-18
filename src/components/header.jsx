@@ -13,19 +13,19 @@ function Header({ simple = false }) {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const walletContext = useWallet() || {}; 
-  const { 
-    walletBalance = 0, 
-    fetchAndUpdateBalance = async () => {}, 
-    pendingOrders = [], 
-    resetWallet = () => {} 
+  const walletContext = useWallet() || {};
+  const {
+    walletBalance = 0,
+    fetchAndUpdateBalance = async () => { },
+    pendingOrders = [],
+    resetWallet = () => { }
   } = walletContext;
 
   const updateCartCount = useCallback(() => {
     const token = localStorage.getItem("token");
     if (token) {
       // Logic for logged in users cart if needed
-      setCartItemCount(0); 
+      setCartItemCount(0);
     } else {
       const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
       setCartItemCount(guestOrders.length);
@@ -41,16 +41,7 @@ function Header({ simple = false }) {
         await fetchAndUpdateBalance();
       }
 
-      if ((pendingOrders && pendingOrders.length > 0) || walletBalance > 0) {
-        setWalletModalOpen(true);
-      } else {
-        Swal.fire({
-          title: 'Wallet is Empty',
-          text: 'You have no balance or pending actions. Accept a bid first!',
-          icon: 'info',
-          confirmButtonColor: '#166534'
-        });
-      }
+      setWalletModalOpen(true);
     } catch (error) {
       console.error("Wallet Error:", error);
     }
@@ -83,7 +74,7 @@ function Header({ simple = false }) {
       resetWallet();
     }
     setIsLoggedIn(false);
-    setOpen(false); 
+    setOpen(false);
     navigate("/");
   };
 
@@ -92,7 +83,7 @@ function Header({ simple = false }) {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            
+
             <div className="flex items-center flex-shrink-0">
               <a href="/" className="flex items-center gap-2 group">
                 <img src={logo} alt="Logo" className="w-10 h-10 group-hover:scale-105 transition-transform" />
@@ -169,13 +160,13 @@ function Header({ simple = false }) {
                 <a href="/" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Home</a>
                 <a href="/Howitworks" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">How It Works</a>
                 <a href="/contact" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Contact Us</a>
-                
+
                 <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
                   {/* Cart logic: Only show if isLoggedIn is true */}
                   {isLoggedIn ? (
                     <>
                       <a href="/cart" onClick={() => setOpen(false)} className="flex items-center gap-2 text-gray-600 font-medium">
-                        <ShoppingBag size={20} /> Cart 
+                        <ShoppingBag size={20} /> Cart
                       </a>
                       <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
                         <LogOut size={20} /> Logout

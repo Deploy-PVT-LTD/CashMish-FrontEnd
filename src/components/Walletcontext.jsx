@@ -12,30 +12,55 @@ export const WalletProvider = ({ children }) => {
   // --- 1. Backend se Fresh Data lana ---
   const fetchAndUpdateBalance = useCallback(async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
-
-      if (!token || !userData) {
-        setWalletBalance(0);
-        setPendingOrders([]);
-        setLoading(false);
-        return;
-      }
-
-      const user = JSON.parse(userData);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = user._id || user.id;
+      const guestOrderIds = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
 
-      const response = await fetch(`${BASE_URL}/api/forms/wallet-balance/${userId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      let dbBalance = 0;
+      let dbPending = [];
+      let guestBalance = 0;
+      let guestPending = [];
 
-      if (response.ok) {
-        const data = await response.json();
-        setWalletBalance(data.balance || 0);
-        setPendingOrders(data.pendingActions || []);
+      // 1. DB Balance (Logged-in User)
+      if (userId && token) {
+        const dbRes = await fetch(`${BASE_URL}/api/forms/wallet-balance/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          dbBalance = (parseFloat(dbData.balance) || 0);
+          dbPending = [...(dbData.pendingActions || [])];
+        }
       }
+
+      // 2. Guest Balance (Accepted in localStorage)
+      if (guestOrderIds.length > 0) {
+        const guestRes = await fetch(`${BASE_URL}/api/forms/guest-balance`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderIds: guestOrderIds })
+        });
+        if (guestRes.ok) {
+          const guestData = await guestRes.json();
+          guestBalance = (parseFloat(guestData.balance) || 0);
+          guestPending = [...(guestData.pendingActions || [])];
+        }
+      }
+
+      setWalletBalance(dbBalance + guestBalance);
+      // Merge unique pending actions
+      const mergedPending = [...dbPending];
+      guestPending.forEach(gp => {
+        if (!mergedPending.some(dp => String(dp.orderId) === String(gp.orderId))) {
+          mergedPending.push(gp);
+        }
+      });
+      setPendingOrders(mergedPending);
+
     } catch (err) {
-      console.error('Wallet Fetch Error:', err);
+      console.error('fetchAndUpdateBalance error:', err);
     } finally {
       setLoading(false);
     }
@@ -107,17 +132,13 @@ export const WalletProvider = ({ children }) => {
       const userId = user._id || user.id;
       if (!userId || !token) return [];
 
-      const response = await fetch(`${BASE_URL}/api/bankDetails`, {
+      const response = await fetch(`${BASE_URL}/api/bankDetails/user/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.ok) {
         const data = await response.json();
-        const allTransactions = Array.isArray(data) ? data : [];
-        return allTransactions.filter(item => {
-          const itemUserId = item.userId?._id || item.userId;
-          return String(itemUserId) === String(userId);
-        });
+        return Array.isArray(data) ? data : [];
       }
       return [];
     } catch (err) {

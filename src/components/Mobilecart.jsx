@@ -394,7 +394,8 @@ const MobileCart = () => {
           ) : (
             cartItems.map((item) => {
               const isRejected = item.status === 'rejected';
-              const isAccepted = item.status === 'accepted';
+              const isAccepted = item.status === 'accepted' || item.status === 'paid';
+              const isPaid = item.status === 'paid';
               const hasBid = item.bidPrice > 0;
               const isItemProcessing = processingOrders.has(item.id);
               return (
@@ -430,7 +431,11 @@ const MobileCart = () => {
                               <p className={`text-2xl font-black ${isAccepted ? 'text-green-700' : 'text-blue-700'}`}>${item.bidPrice}</p>
                             </div>
                           </div>
-                          {isAccepted ? (
+                          {isPaid ? (
+                            <div className="bg-green-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-700 shadow-sm flex items-center gap-2">
+                              <Check size={14} strokeWidth={3} /> Paid & Finalized
+                            </div>
+                          ) : isAccepted ? (
                             <div className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-200">✓ Bid Accepted</div>
                           ) : (
                             <div className="flex gap-3 w-full md:w-auto">
@@ -474,7 +479,14 @@ const MiniBox = ({ label, value }) => (
 );
 
 const Badge = ({ status }) => {
-  const statusMap = { pending: { bg: 'bg-orange-100', text: 'text-orange-600', label: 'Pending' }, accepted: { bg: 'bg-green-100', text: 'text-green-600', label: 'Accepted' }, rejected: { bg: 'bg-red-100', text: 'text-red-600', label: 'Rejected' }, bid_received: { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Received' }, 'bid-placed': { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Placed' } };
+  const statusMap = {
+    pending: { bg: 'bg-orange-100', text: 'text-orange-600', label: 'Pending' },
+    accepted: { bg: 'bg-green-100', text: 'text-green-600', label: 'Accepted' },
+    paid: { bg: 'bg-green-600', text: 'text-white', label: 'Paid' },
+    rejected: { bg: 'bg-red-100', text: 'text-red-600', label: 'Rejected' },
+    bid_received: { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Received' },
+    'bid-placed': { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Placed' }
+  };
   const s = statusMap[status] || statusMap.pending;
   return <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider ${s.bg} ${s.text} border border-white/50 shadow-sm`}>{s.label}</span>;
 };

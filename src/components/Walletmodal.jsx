@@ -4,11 +4,11 @@ import { useWallet } from './Walletcontext';
 
 const WalletModal = ({ isOpen, onClose }) => {
   // Context se functions aur state nikaali
-  const { 
-    walletBalance, 
-    isProcessing, 
-    pendingOrders, 
-    fetchUserBankDetails, 
+  const {
+    walletBalance,
+    isProcessing,
+    pendingOrders,
+    fetchUserBankDetails,
     clearWalletAfterPayout,
     withdrawCash // Context wala withdraw use karenge crash se bachne ke liye
   } = useWallet();
@@ -57,7 +57,7 @@ const WalletModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setWithdrawError('');
     setIsSubmitting(true);
-    
+
     try {
       // Context ke main withdraw function ko call kiya
       const result = await withdrawCash(withdrawalForm, pendingOrders?.[0]?.orderId);
@@ -145,8 +145,8 @@ const WalletModal = ({ isOpen, onClose }) => {
           ) : (
             <div className="space-y-4">
               {/* Withdraw Button */}
-              <button 
-                onClick={() => setCurrentView('withdraw')} 
+              <button
+                onClick={() => setCurrentView('withdraw')}
                 disabled={displayAmount <= 0}
                 className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4 disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:bg-white"
               >
@@ -161,24 +161,30 @@ const WalletModal = ({ isOpen, onClose }) => {
               <div>
                 <div className="flex justify-between items-center mb-3 mt-6">
                   <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Transaction History</p>
-                  <RefreshCw 
-                    size={14} 
-                    className={`${loadingBankDetails ? 'animate-spin' : ''} cursor-pointer text-gray-400 hover:text-green-600`} 
-                    onClick={loadBankDetails} 
+                  <RefreshCw
+                    size={14}
+                    className={`${loadingBankDetails ? 'animate-spin' : ''} cursor-pointer text-gray-400 hover:text-green-600`}
+                    onClick={loadBankDetails}
                   />
                 </div>
-                
+
                 {bankDetailsList?.length > 0 ? (
                   <div className="space-y-2">
                     {bankDetailsList.map((item) => (
-                      <div key={item._id} className="bg-gray-50 border border-gray-100 rounded-xl p-3">
+                      <div key={item._id} className="bg-gray-50 border border-gray-100 rounded-xl p-3 hover:bg-white transition-colors">
                         <div className="flex justify-between items-start">
-                          <div>
-                            <p className="text-[11px] font-black text-gray-900 uppercase">{item.bankName}</p>
-                            <p className="text-[10px] text-gray-500 font-medium">A/C: ****{item.accountNumber?.slice(-4)}</p>
-                            <p className="text-[9px] text-gray-400 italic">{item.accountHolderName}</p>
+                          <div className="flex-grow">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-[11px] font-black text-gray-900 uppercase">{item.bankName}</p>
+                              <p className="text-sm font-black text-green-700">${(item.amount || 0).toFixed(2)}</p>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <p className="text-[10px] text-gray-400 font-bold uppercase">
+                                {new Date(item.createdAt).toLocaleDateString('en-GB')}
+                              </p>
+                              <StatusBadge status={item.status} />
+                            </div>
                           </div>
-                          <StatusBadge status={item.status} />
                         </div>
                       </div>
                     ))}
