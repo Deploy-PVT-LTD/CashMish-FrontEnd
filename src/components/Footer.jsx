@@ -43,7 +43,7 @@ const Footer = () => {
                             {['Home', 'How It Works', 'About Us', 'Contact'].map((item) => (
                                 <li key={item}>
                                     <Link
-                                        to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
+                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
                                         className="group flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]"
                                     >
                                         <ArrowRight size={8} className="hidden group-hover:inline opacity-50" />

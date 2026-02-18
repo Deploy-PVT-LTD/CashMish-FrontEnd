@@ -38,7 +38,7 @@ const PhoneFlipLanding = () => {
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 lg:py-4 overflow-hidden">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-14 items-center">
-          
+
           {/* LEFT */}
           <div className="space-y-6">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
@@ -87,7 +87,7 @@ const PhoneFlipLanding = () => {
 
           {/* RIGHT */}
           <div className="relative flex justify-center lg:justify-end">
-            
+
             {/* Verified Badge */}
             <div className="absolute top-8 left-4 lg:left-auto lg:right-[18rem] bg-white rounded-xl shadow-lg px-6 py-3 flex items-center space-x-3 z-10 animate-pulse">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -101,15 +101,15 @@ const PhoneFlipLanding = () => {
 
             {/* PHONE CARD WITH ANIMATED BG */}
             <div className="relative mt-16 lg:mt-0">
-<div
-  className="rounded-[3rem] p-8 shadow-xl w-72 sm:w-80
+              <div
+                className="rounded-[3rem] p-8 shadow-xl w-72 sm:w-80
              bg-gradient-to-br from-green-500 via-green-900 to-green-600
              animate-phone-card"
->
-  <div className="text-center">
-    <img src={phoneMockup} alt="phone" />
-  </div>
-</div>
+              >
+                <div className="text-center">
+                  <img src={phoneMockup} alt="phone" />
+                </div>
+              </div>
 
 
 
