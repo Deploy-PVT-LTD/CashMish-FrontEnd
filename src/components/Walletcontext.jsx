@@ -86,7 +86,7 @@ export const WalletProvider = ({ children }) => {
   };
 
   // --- 3. Cash Withdraw Logic ---
-  const withdrawCash = async (formData) => {
+  const withdrawCash = async (formData, amount) => {
     setIsProcessing(true);
     try {
       const token = localStorage.getItem('token');
@@ -106,7 +106,7 @@ export const WalletProvider = ({ children }) => {
           accountHolderName: formData.name,
           accountNumber: formData.accountNumber,
           bankName: formData.bankName,
-          amount: walletBalance,
+          amount: parseFloat(amount || 0),
           status: 'pending'
         })
       });

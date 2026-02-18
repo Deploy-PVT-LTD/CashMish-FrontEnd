@@ -47,7 +47,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
 // ─── Withdraw Form Modal ─────────────────────────────────────────────────────
 const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   // clearWalletAfterPayout ko hum context se nikal rahe hain
-  const { clearWalletAfterPayout, setWalletBalance } = useWallet();
+  const { withdrawCash, clearWalletAfterPayout, setWalletBalance } = useWallet();
   const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -65,40 +65,15 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
     setIsSubmitting(true);
     setApiError('');
     try {
-      const token = localStorage.getItem('token');
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = user._id || user.id;
-      if (!userId) { setApiError('User not logged in.'); setIsSubmitting(false); return; }
+      const result = await withdrawCash(form, amount);
 
-      const response = await fetch(`${BASE_URL}/api/bankDetails`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({
-          userId,
-          accountHolderName: form.name,
-          accountNumber: form.accountNumber,
-          bankName: form.bankName,
-          status: 'pending'
-        })
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || errData.error || `Server error: ${response.status}`);
-      }
-
-      // ✅ FRONTEND STATE RESET LOGIC
-      // Agar clearWalletAfterPayout function context mein mil jaye toh woh call hoga
-      // Warna directly setWalletBalance(0) kar dega crash se bachne ke liye
-      if (typeof clearWalletAfterPayout === 'function') {
+      if (result.success) {
         clearWalletAfterPayout(orderId);
+        setSubmitted(true);
+        setTimeout(() => { onSuccess?.(); }, 2000);
       } else {
-        setWalletBalance(0);
-        localStorage.setItem('walletBalance', '0');
+        setApiError(result.error || 'Withdrawal failed');
       }
-
-      setSubmitted(true);
-      setTimeout(() => { onSuccess?.(); }, 2000);
     } catch (err) {
       setApiError(err.message || 'Something went wrong.');
     } finally { setIsSubmitting(false); }

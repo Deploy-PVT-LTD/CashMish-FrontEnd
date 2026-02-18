@@ -60,7 +60,7 @@ const WalletModal = ({ isOpen, onClose }) => {
 
     try {
       // Context ke main withdraw function ko call kiya
-      const result = await withdrawCash(withdrawalForm, pendingOrders?.[0]?.orderId);
+      const result = await withdrawCash(withdrawalForm, displayAmount);
 
       if (result.success) {
         // Success hote hi WalletContext.jsx ka clearWalletAfterPayout chal chuka hai
