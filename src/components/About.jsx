@@ -14,7 +14,7 @@ export default function AboutUs() {
 
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-green-100 selection:text-green-900">
-      <Header />
+      {/* <Header /> */}
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-gray-900 text-white">

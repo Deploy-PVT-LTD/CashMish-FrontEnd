@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import phoneMockup from "../assets/image-removebg-preview.png";
 import { Smartphone, Shield, Zap } from "lucide-react";
 import Header from "../components/header.jsx";
+import AboutUs from "./About.jsx";
 
 const PhoneFlipLanding = () => {
   const fullText = "Sell Your Phone at the Best Price";
@@ -129,6 +130,7 @@ const PhoneFlipLanding = () => {
 
         </div>
       </main>
+      <AboutUs />
     </div>
   );
 };
