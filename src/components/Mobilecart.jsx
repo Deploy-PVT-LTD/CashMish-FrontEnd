@@ -3,9 +3,7 @@ import { Trash2, Clock, DollarSign, Check, Smartphone, RefreshCw, X, Gift, Walle
 import Header from './header.jsx';
 import Swal from 'sweetalert2';
 import { useWallet } from './Walletcontext';
-
-const BASE_URL = 'https://cashmish-backend.onrender.com';
-// const BASE_URL = 'http://localhost:5000';
+import { BASE_URL } from '../api/api';
 
 // ─── Accept Bid Popup ────────────────────────────────────────────────────────
 const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
@@ -49,7 +47,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
 // ─── Withdraw Form Modal ─────────────────────────────────────────────────────
 const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   // clearWalletAfterPayout ko hum context se nikal rahe hain
-  const { clearWalletAfterPayout, setWalletBalance } = useWallet(); 
+  const { clearWalletAfterPayout, setWalletBalance } = useWallet();
   const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -98,7 +96,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
         setWalletBalance(0);
         localStorage.setItem('walletBalance', '0');
       }
-      
+
       setSubmitted(true);
       setTimeout(() => { onSuccess?.(); }, 2000);
     } catch (err) {
@@ -171,18 +169,18 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   const price = parseFloat(amount || 0);
   const bonus = (price * 0.07).toFixed(2);
   const total = (price + parseFloat(bonus)).toFixed(2);
-  
+
   const handleConfirm = () => {
     if (typeof clearWalletAfterPayout === 'function') {
-        clearWalletAfterPayout(orderId);
+      clearWalletAfterPayout(orderId);
     } else {
-        setWalletBalance(0);
-        localStorage.setItem('walletBalance', '0');
+      setWalletBalance(0);
+      localStorage.setItem('walletBalance', '0');
     }
     setSubmitted(true);
     setTimeout(() => { onSuccess?.(); }, 1500);
   };
-  
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>

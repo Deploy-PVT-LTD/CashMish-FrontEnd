@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import Header from "../components/header.jsx";
+import { BASE_URL } from '../api/api';
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -19,8 +20,7 @@ export default function ContactUs() {
     setSubmitStatus({ type: '', message: '' });
 
     try {
-      const response = await fetch('https://cashmish-backend.onrender.com/api/contact', {
-          // const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch(`${BASE_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -73,11 +73,10 @@ export default function ContactUs() {
           <form onSubmit={handleSubmit} className="max-w-xl w-full mx-auto space-y-6">
 
             {submitStatus.message && (
-              <div className={`p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border shadow-sm ${
-                submitStatus.type === 'success'
-                  ? 'bg-green-50 text-green-700 border-green-100'
-                  : 'bg-red-50 text-red-600 border-red-100'
-              }`}>
+              <div className={`p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border shadow-sm ${submitStatus.type === 'success'
+                ? 'bg-green-50 text-green-700 border-green-100'
+                : 'bg-red-50 text-red-600 border-red-100'
+                }`}>
                 {submitStatus.message}
               </div>
             )}

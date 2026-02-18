@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { BASE_URL } from '../api/api';
 
 const WalletContext = createContext();
-// const BASE_URL = 'http://localhost:5000'; 
-const BASE_URL = 'https://cashmish-backend.onrender.com'; 
-
 
 export const WalletProvider = ({ children }) => {
   const [walletBalance, setWalletBalance] = useState(0);
@@ -16,7 +14,7 @@ export const WalletProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('token');
       const userData = localStorage.getItem('user');
-      
+
       if (!token || !userData) {
         setWalletBalance(0);
         setPendingOrders([]);
@@ -74,9 +72,9 @@ export const WalletProvider = ({ children }) => {
 
       const response = await fetch(`${BASE_URL}/api/bankDetails`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json', 
-          'Authorization': `Bearer ${token}` 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           userId,
@@ -136,7 +134,7 @@ export const WalletProvider = ({ children }) => {
   return (
     <WalletContext.Provider value={{
       walletBalance,
-      setWalletBalance,      
+      setWalletBalance,
       addToWallet,           // Ab yeh function body ke saath export ho raha hai
       clearWalletAfterPayout, // Ab yeh function body ke saath export ho raha hai
       pendingOrders,

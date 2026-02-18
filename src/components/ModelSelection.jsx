@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import MobileCard from "../components/MobileCard";
 import Header from "../components/header.jsx";
 import axios from "axios";
+import { BASE_URL } from '../api/api';
 
 const ModelSelection = () => {
   const navigate = useNavigate();
@@ -20,22 +21,21 @@ const ModelSelection = () => {
       try {
         setLoading(true);
         // API call se data fetch kiya
-        const res = await axios.get(
-          `https://cashmish-backend.onrender.com/api/mobiles/brand?brand=${brand}`
-          //  `http://localhost:5000/api/mobiles/brand?brand=${brand}`
-        );
+        const response = await axios.get(`${BASE_URL}/api/mobiles/brand`, {
+          params: { brand },
+        });
 
         // --- DEBUG LOGS START ---
-        console.log("Full API Response:", res.data);
-        if (res.data && res.data.length > 0) {
+        console.log("Full API Response:", response.data);
+        if (response.data && response.data.length > 0) {
           // Check karein ke image field mein base64 string aa rahi hai ya nahi
-          console.log("First Item Image Data:", res.data[0].image);
+          console.log("First Item Image Data:", response.data[0].image);
         } else {
           console.warn("No data found for this brand.");
         }
         // --- DEBUG LOGS END ---
 
-        setModels(res.data);
+        setModels(response.data);
       } catch (error) {
         console.error("Fetch Error:", error.message);
       } finally {
@@ -66,42 +66,41 @@ const ModelSelection = () => {
       <Header />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
- <div className="mb-10 sm:mb-16 flex justify-center">
-  <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-    {[1, 2, 3, 4].map((step, i) => {
-      const isCompleted = step === 1; // first step completed
-      const isActive = step === 2;    // second step active
+        <div className="mb-10 sm:mb-16 flex justify-center">
+          <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
+            {[1, 2, 3, 4].map((step, i) => {
+              const isCompleted = step === 1; // first step completed
+              const isActive = step === 2;    // second step active
 
-      return (
-        <React.Fragment key={step}>
-          <div className="flex flex-col items-center">
-            <div
-              className={`rounded-full flex items-center justify-center font-semibold mb-2
-                ${
-                  isCompleted
-                    ? 'bg-green-800 text-white'
-                    : isActive
-                    ? 'bg-green-800 text-white'
-                    : 'bg-gray-200 text-gray-500'
-                }
+              return (
+                <React.Fragment key={step}>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`rounded-full flex items-center justify-center font-semibold mb-2
+                ${isCompleted
+                          ? 'bg-green-800 text-white'
+                          : isActive
+                            ? 'bg-green-800 text-white'
+                            : 'bg-gray-200 text-gray-500'
+                        }
                 w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
               `}
-            >
-              {isCompleted ? "✓" : step}
-            </div>
-            <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-              {["Brand", "Model", "Condition", "Storage"][i]}
-            </span>
-          </div>
+                    >
+                      {isCompleted ? "✓" : step}
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+                      {["Brand", "Model", "Condition", "Storage"][i]}
+                    </span>
+                  </div>
 
-          {step !== 4 && (
-            <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
-          )}
-        </React.Fragment>
-      );
-    })}
-  </div>
-</div>
+                  {step !== 4 && (
+                    <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
 
 
         {/* Header Actions */}
@@ -127,7 +126,7 @@ const ModelSelection = () => {
                 <MobileCard
                   key={item._id}
                   name={item.phoneModel}
-                  image={item.image} 
+                  image={item.image}
                   onClick={() => handleSelectModel(item)}
                 />
               ))

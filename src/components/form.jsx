@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from "../components/header.jsx";
+import { BASE_URL } from '../api/api';
 import {
   Search, CreditCard, Calendar, MapPin, Phone,
   ArrowRight, Mail, Navigation, Loader2, User
@@ -24,8 +25,8 @@ export default function UserForm() {
 
   const [deviceDetails, setDeviceDetails] = useState({
     brand: 'N/A', model: 'N/A', storage: 'N/A',
-    screen: 'N/A', body: 'N/A', battery: 'N/A', 
-    condition: 'N/A', mobileId: '' 
+    screen: 'N/A', body: 'N/A', battery: 'N/A',
+    condition: 'N/A', mobileId: ''
   });
 
   const [formData, setFormData] = useState({
@@ -93,9 +94,9 @@ export default function UserForm() {
       email: formData.email,
       address: {
         addressText: formData.address,
-        location: { 
-          type: "Point", 
-          coordinates: [formData.coords?.lng || 0, formData.coords?.lat || 0] 
+        location: {
+          type: "Point",
+          coordinates: [formData.coords?.lng || 0, formData.coords?.lat || 0]
         }
       },
       pickUpDate: formData.date,
@@ -106,13 +107,12 @@ export default function UserForm() {
     // 3. 📸 IMAGES LOOP (Fix for DB upload)
     if (imagesToUpload.length > 0) {
       imagesToUpload.forEach((file) => {
-        data.append("images", file); 
+        data.append("images", file);
       });
     }
 
     try {
-      const res = await fetch("https://cashmish-backend.onrender.com/api/forms", {
-        // const res = await fetch("http://localhost:5000/api/forms", {
+      const res = await fetch(`${BASE_URL}/api/forms`, {
         method: "POST",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -162,7 +162,7 @@ export default function UserForm() {
         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
         const data = await res.json();
         setFormData(p => ({
-          ...p, 
+          ...p,
           address: data.display_name,
           coords: { lat: latitude, lng: longitude }
         }));
@@ -181,7 +181,7 @@ export default function UserForm() {
     <div className="bg-gray-50 min-h-screen">
       <Header />
       <div className="max-w-4xl mx-auto p-6 grid md:grid-cols-2 gap-8">
-        
+
         {/* Left Info Panel (UI Same as before) */}
         <div className="space-y-6">
           <div className="bg-white rounded-2xl shadow p-6 border border-gray-100">
@@ -196,7 +196,7 @@ export default function UserForm() {
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-green-100 p-3 rounded-xl"><Calendar className="w-5 h-5 text-green-600" /></div>
-                <div> 
+                <div>
                   {/* add estimated value  */}
                   <h3 className="font-semibold text-sm">Schedule</h3>
                   <p className="text-xs text-gray-600">Quick Pickup & Pay</p>
@@ -244,9 +244,9 @@ export default function UserForm() {
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl mt-1 shadow-2xl max-h-48 overflow-y-auto">
                   {suggestions.map((s, i) => (
-                    <div key={i} onClick={() => { 
-                      setFormData(p => ({ ...p, address: s.display_name, coords: { lat: parseFloat(s.lat), lng: parseFloat(s.lon) } })); 
-                      setShowSuggestions(false); 
+                    <div key={i} onClick={() => {
+                      setFormData(p => ({ ...p, address: s.display_name, coords: { lat: parseFloat(s.lat), lng: parseFloat(s.lon) } }));
+                      setShowSuggestions(false);
                     }} className="px-4 py-3 text-sm hover:bg-blue-50 cursor-pointer border-b last:border-0">{s.display_name}</div>
                   ))}
                 </div>
@@ -257,16 +257,16 @@ export default function UserForm() {
 
             <div className="grid grid-cols-2 gap-2">
               {timeSlots.map((slot) => (
-                <button 
+                <button
                   type="button" key={slot} onClick={() => setSelectedTimeSlot(slot)}
-                  className={`py-3 rounded-xl text-[10px] font-bold transition-all ${selectedTimeSlot === slot ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}
+                  className={`py-3 rounded-xl text-[10px] cursor-pointer font-bold transition-all ${selectedTimeSlot === slot ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}
                 >
                   {slot}
                 </button>
               ))}
             </div>
 
-            <button disabled={loading} type="submit" className="w-full bg-green-800 hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
+            <button disabled={loading} type="submit" className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
               {loading ? <Loader2 className="animate-spin" /> : <>Confirm Pickup <ArrowRight size={20} /></>}
             </button>
           </form>
@@ -290,9 +290,9 @@ function Input({ icon: Icon, rightIcon, error, ...props }) {
   return (
     <div className="relative">
       <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-      <input 
-        {...props} 
-        className={`w-full pl-11 pr-10 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`} 
+      <input
+        {...props}
+        className={`w-full pl-11 pr-10 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`}
       />
       {rightIcon && <div className="absolute right-4 top-1/2 -translate-y-1/2">{rightIcon}</div>}
     </div>

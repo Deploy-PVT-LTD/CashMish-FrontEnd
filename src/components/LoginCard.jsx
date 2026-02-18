@@ -4,7 +4,8 @@ import SI from '../assets/signin.svg';
 import SU from '../assets/signup.png';
 import logo from '../assets/deploy-logo.png';
 import logogoogle from '../assets/google.png';
-import Swal from 'sweetalert2'; // Make sure Swal is imported
+import Swal from 'sweetalert2';
+import { BASE_URL } from '../api/api';
 
 
 const LoginCard = () => {
@@ -31,28 +32,28 @@ const LoginCard = () => {
 
   const handleGoogleLogin = () => {
     const receiveMessage = (event) => {
-      if (event.origin !== "https://cashmish-backend.onrender.com") return;
+      if (event.origin !== BASE_URL) return;
       const { token, user } = event.data;
       if (token) {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         window.removeEventListener("message", receiveMessage);
-        
+
         // ✅ Success: Forward with images
         proceedToNextStep();
       }
     };
     window.addEventListener("message", receiveMessage);
-    window.open('https://cashmish-backend.onrender.com/api/auth/google', 'google-login', `width=500,height=600`);
-    //  window.open('http://localhost:5000/api/auth/google', 'google-login', `width=500,height=600`);
+    window.open(`${BASE_URL}/api/auth/google`, 'google-login', `width=500,height=600`);
+    //  window.open(`${BASE_URL}/api/auth/google`, 'google-login', `width=500,height=600`);
   };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://cashmish-backend.onrender.com/api/auth/login', {
-        // const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${BASE_URL}/api/auth/login`, {
+        // const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signInData),
@@ -61,18 +62,18 @@ const LoginCard = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
+
         // ✅ Success: Forward with images
         proceedToNextStep();
-      } else { 
+      } else {
         Swal.fire({
           icon: "error",
           title: data.message || "Login failed",
           text: "Please check your credentials",
         });
       }
-    } catch (err) { 
-      Swal.fire({ icon: "error", title: "Oops...", text: "Network Error" }); 
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Oops...", text: "Network Error" });
     } finally { setLoading(false); }
   };
 
@@ -80,8 +81,8 @@ const LoginCard = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://cashmish-backend.onrender.com/api/auth/signup', {
-        // const response = await fetch('http://localhost:5000/api/auth/signup', {
+      const response = await fetch(`${BASE_URL}/api/auth/signup`, {
+        // const response = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...signUpData, role: 'user' }),
@@ -107,14 +108,14 @@ const LoginCard = () => {
       )}
 
       <div className="flex flex-col md:flex-row w-full max-w-[800px] min-h-[500px] bg-[#1a1d26] rounded-2xl overflow-hidden shadow-xl border border-white/5">
-        
+
         {/* Sidebar */}
         <div className="w-full md:w-[110px] bg-[#15181f] flex md:flex-col items-center py-6 md:py-10 border-b md:border-b-0 md:border-r border-white/5 relative">
-          <img src={logo} alt="logo" className="h-10 md:h-12 lg:h-14 mb-6 md:mb-14 px-2 object-contain" />           
-          
-          <div className="flex md:flex-col gap-8 md:gap-12 w-full justify-center md:justify-start"> 
-            <button 
-              onClick={() => setView('signin')} 
+          <img src={logo} alt="logo" className="h-10 md:h-12 lg:h-14 mb-6 md:mb-14 px-2 object-contain" />
+
+          <div className="flex md:flex-col gap-8 md:gap-12 w-full justify-center md:justify-start">
+            <button
+              onClick={() => setView('signin')}
               className={`flex flex-col items-center gap-2 w-full transition-all relative ${view === 'signin' ? 'text-blue-500' : 'text-gray-600 hover:text-gray-400'}`}
             >
               {view === 'signin' && <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-[4px] h-12 bg-blue-500 rounded-r-lg" />}
@@ -122,8 +123,8 @@ const LoginCard = () => {
               <span className="text-[10px] font-bold tracking-widest uppercase">Sign In</span>
             </button>
 
-            <button 
-              onClick={() => setView('signup')} 
+            <button
+              onClick={() => setView('signup')}
               className={`flex flex-col items-center gap-2 w-full transition-all relative ${view === 'signup' ? 'text-blue-500' : 'text-gray-600 hover:text-gray-400'}`}
             >
               {view === 'signup' && <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-[4px] h-12 bg-blue-500 rounded-r-lg" />}
@@ -142,33 +143,33 @@ const LoginCard = () => {
         {/* Form Section */}
         <div className="flex-1 p-8">
           <h3 className="text-white text-xl font-bold mb-6">{view === 'signin' ? 'Sign In' : 'Sign Up'}</h3>
-          
+
           <form onSubmit={view === 'signin' ? handleSignIn : handleSignUp} className="space-y-4">
             {view === 'signup' && (
-              <input 
+              <input
                 type="text" placeholder="Full Name" required
                 className="w-full h-11 bg-[#252a36] border border-white/10 rounded-lg px-4 text-white focus:outline-none focus:border-blue-500"
                 value={signUpData.name}
-                onChange={(e) => setSignUpData({...signUpData, name: e.target.value})}
+                onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
               />
             )}
-            <input 
+            <input
               type="email" placeholder="Email" required
               className="w-full h-11 bg-[#252a36] border border-white/10 rounded-lg px-4 text-white focus:outline-none focus:border-blue-500"
               value={view === 'signin' ? signInData.email : signUpData.email}
-              onChange={(e) => view === 'signin' 
-                ? setSignInData({...signInData, email: e.target.value}) 
-                : setSignUpData({...signUpData, email: e.target.value})}
+              onChange={(e) => view === 'signin'
+                ? setSignInData({ ...signInData, email: e.target.value })
+                : setSignUpData({ ...signUpData, email: e.target.value })}
             />
-            <input 
+            <input
               type="password" placeholder="Password" required
               className="w-full h-11 bg-[#252a36] border border-white/10 rounded-lg px-4 text-white focus:outline-none focus:border-blue-500"
               value={view === 'signin' ? signInData.password : signUpData.password}
-              onChange={(e) => view === 'signin' 
-                ? setSignInData({...signInData, password: e.target.value}) 
-                : setSignUpData({...signUpData, password: e.target.value})}
+              onChange={(e) => view === 'signin'
+                ? setSignInData({ ...signInData, password: e.target.value })
+                : setSignUpData({ ...signUpData, password: e.target.value })}
             />
-            <button type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95">
+            <button type="submit" className="w-full h-11 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95">
               {loading ? 'WAIT...' : (view === 'signin' ? 'LOGIN' : 'REGISTER')}
             </button>
           </form>

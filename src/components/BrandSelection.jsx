@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from '../components/header.jsx';
 import axios from "axios";
+import { BASE_URL } from '../api/api.js';
 
 // 1. Logos ka mapping object
 const brandLogos = {
@@ -23,8 +24,7 @@ const BrandSelection = ({ onSelectBrand }) => {
   useEffect(() => {
     const fetchBrandsFromBE = async () => {
       try {
-        const response = await axios.get("https://cashmish-backend.onrender.com/api/mobiles");
-              // const response = await axios.get("http://localhost:5000/api/mobiles");
+        const response = await axios.get(`${BASE_URL}/api/mobiles`);
         const allMobiles = response.data.mobiles; // Access the 'mobiles' array directly
 
         if (Array.isArray(allMobiles)) {
@@ -89,7 +89,7 @@ const BrandSelection = ({ onSelectBrand }) => {
 
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your Phone Brand</h1>
-          
+
           {loading ? (
             <div className="mt-20 flex justify-center items-center gap-2">
               <div className="w-6 h-6 border-4 border-green-800 border-t-transparent rounded-full animate-spin"></div>
@@ -97,18 +97,18 @@ const BrandSelection = ({ onSelectBrand }) => {
             </div>
           ) : (
             <div className="flex flex-wrap justify-center gap-6 max-w-xl mx-auto">
-                {brands.map((brandName) => (
-                  <button
-                    key={brandName}
-                    onClick={() => handleBrandSelect(brandName)}
-                    className="bg-white border-2 border-gray-100 rounded-4xl p-6 hover:border-green-800 hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 cursor-pointer group h-40 w-40 sm:w-48"
-                  >
+              {brands.map((brandName) => (
+                <button
+                  key={brandName}
+                  onClick={() => handleBrandSelect(brandName)}
+                  className="bg-white border-2 border-gray-100 rounded-4xl p-6 hover:border-green-800 hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 cursor-pointer group h-40 w-40 sm:w-48"
+                >
                   {/* LOGO LOGIC */}
                   <div className="w-20 h-18 flex items-center justify-center group-hover:scale-110 transition-transform">
                     {brandLogos[brandName] ? (
-                      <img 
-                        src={brandLogos[brandName]} 
-                        alt={brandName} 
+                      <img
+                        src={brandLogos[brandName]}
+                        alt={brandName}
                         className="w-full h-full object-contain p-2"
                       />
                     ) : (

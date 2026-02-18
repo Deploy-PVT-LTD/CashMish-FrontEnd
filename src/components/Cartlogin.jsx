@@ -3,13 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom'; // useLocation add 
 import { ShoppingCart, Shield, CheckCircle } from 'lucide-react';
 import logogoogle from '../assets/google.png';
 import Header from './header';
+import { BASE_URL } from '../api/api';
 
 const CartLogin = () => {
   const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Location hook for state
-  
+
   // 🔥 Pichle page se aayi hui images ko save karke rakhein
   const pendingFiles = location.state?.files || [];
 
@@ -47,28 +48,26 @@ const CartLogin = () => {
 
   const handleGoogleLogin = () => {
     const receiveMessage = (event) => {
-      if (event.origin !== "https://cashmish-backend.onrender.com") return;
+      if (event.origin !== BASE_URL) return;
       const { token, user } = event.data;
       if (token) {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         window.removeEventListener("message", receiveMessage);
-        
+
         // ✅ Login ke baad images ko userdata par bhej rahe hain
         navigate('/userdata', { state: { files: pendingFiles } });
       }
     };
     window.addEventListener("message", receiveMessage);
-    window.open('https://cashmish-backend.onrender.com/api/auth/google', 'google-login', `width=500,height=600`);
-        // window.open('http://localhost:5000/api/auth/google', 'google-login', `width=500,height=600`);
+    window.open(`${BASE_URL}/api/auth/google`, 'google-login', `width=500,height=600`);
   };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://cashmish-backend.onrender.com/api/auth/login', {
-        // const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginForm),
@@ -77,16 +76,16 @@ const CartLogin = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
+
         // ✅ Yahan bhi files forward karni hain
         navigate('/userdata', { state: { files: pendingFiles } });
-      } else { 
-        alert(data.message); 
+      } else {
+        alert(data.message);
       }
-    } catch (err) { 
-      alert('Network error'); 
-    } finally { 
-      setLoading(false); 
+    } catch (err) {
+      alert('Network error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +108,7 @@ const CartLogin = () => {
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <input type="email" name="email" value={loginForm.email} onChange={handleLoginChange} className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl" placeholder="Email Address" required />
               <input type="password" name="password" value={loginForm.password} onChange={handleLoginChange} className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl" placeholder="Password" required />
-              <button type="submit" disabled={loading} className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition">
+              <button type="submit" disabled={loading} className="w-full bg-green-600 text-white py-3 rounded-xl font-bold cursor-pointer hover:bg-green-700 transition">
                 {loading ? 'WAIT...' : 'Sign In'}
               </button>
             </form>
@@ -119,7 +118,7 @@ const CartLogin = () => {
               <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-gray-500">Or continue with</span></div>
             </div>
 
-            <button onClick={handleGoogleLogin} type="button" className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition font-semibold">
+            <button onClick={handleGoogleLogin} type="button" className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition font-semibold">
               <img src={logogoogle} alt="Google" className="w-5 h-5" />
               <span>Continue with Google</span>
             </button>

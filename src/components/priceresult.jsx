@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { TrendingUp, Info, ArrowRight, ShieldCheck, Zap, Truck, CheckCircle, Smartphone, Loader2 } from "lucide-react";
 import Header from '../components/header.jsx';
 import { useNavigate, useLocation } from "react-router-dom";
+import { BASE_URL } from '../api/api';
 
 const PriceResult = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [displayPrice, setDisplayPrice] = useState(0);
   const [estimatedPrice, setEstimatedPrice] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -25,8 +26,7 @@ const PriceResult = () => {
     const fetchPriceFromBE = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://cashmish-backend.onrender.com/api/forms/estimate", {
-          // const response = await fetch("http://localhost:5000/api/forms/estimate", {
+        const response = await fetch(`${BASE_URL}/api/forms/estimate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -73,7 +73,7 @@ const PriceResult = () => {
       const gaugePercentage = Math.min(((estimatedPrice - 100) / 1500) * 100, 100);
       const targetOffset = 251 - (gaugePercentage / 100) * 251;
       setGaugeOffset(targetOffset);
-      
+
       return () => clearInterval(timer);
     }
   }, [estimatedPrice]);
@@ -83,9 +83,9 @@ const PriceResult = () => {
     const userToken = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
 
-    const stateToPass = { 
-      files: assessmentFiles, 
-      estimatedPrice: estimatedPrice 
+    const stateToPass = {
+      files: assessmentFiles,
+      estimatedPrice: estimatedPrice
     };
 
     if (userToken || userData) {
@@ -112,15 +112,15 @@ const PriceResult = () => {
       <main className="flex-1 flex flex-col items-center px-2 pt-5">
         {/* Step Indicator */}
         <div className="w-full max-w-md mb-8 flex justify-between items-end px-2">
-            <div>
-                <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest mb-1">Step 3 of 4</p>
-                <h1 className="text-xl font-black text-gray-900">Your Quote is Ready!</h1>
-            </div>
-            <div className="flex gap-1.5 mb-1">
-                {[1, 2, 3, 4].map((s) => (
-                    <div key={s} className={`h-1.5 w-5 rounded-full ${s <= 3 ? 'bg-blue-600' : 'bg-gray-200'}`} />
-                ))}
-            </div>
+          <div>
+            <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest mb-1">Step 3 of 4</p>
+            <h1 className="text-xl font-black text-gray-900">Your Quote is Ready!</h1>
+          </div>
+          <div className="flex gap-1.5 mb-1">
+            {[1, 2, 3, 4].map((s) => (
+              <div key={s} className={`h-1.5 w-5 rounded-full ${s <= 3 ? 'bg-blue-600' : 'bg-gray-200'}`} />
+            ))}
+          </div>
         </div>
 
         {/* Main Price Card */}
@@ -156,18 +156,18 @@ const PriceResult = () => {
 
               <div className="grid grid-cols-2 gap-3 mb-8">
                 <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                    <Truck className="w-4 h-4 text-blue-500" />
-                    <span className="text-[10px] font-bold text-gray-600 text-left leading-tight">Free Home Pickup</span>
+                  <Truck className="w-4 h-4 text-blue-500" />
+                  <span className="text-[10px] font-bold text-gray-600 text-left leading-tight">Free Home Pickup</span>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                    <ShieldCheck className="w-4 h-4 text-green-500" />
-                    <span className="text-[10px] font-bold text-gray-600 text-left leading-tight">Secure Payment</span>
+                  <ShieldCheck className="w-4 h-4 text-green-500" />
+                  <span className="text-[10px] font-bold text-gray-600 text-left leading-tight">Secure Payment</span>
                 </div>
               </div>
 
               <button
                 onClick={handleProceed}
-                className="group w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                className="group w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-bold py-5 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 <span className="text-sm uppercase tracking-wider">Confirm My Offer</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
