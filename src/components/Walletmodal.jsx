@@ -101,7 +101,7 @@ const WalletModal = ({ isOpen, onClose }) => {
 
         {/* Header Section */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 relative">
-          <button onClick={handleClose} disabled={isProcessing || isSubmitting} className="absolute top-4 right-4 text-white/80 hover:text-white disabled:opacity-50"><X size={24} /></button>
+          <button onClick={handleClose} disabled={isProcessing || isSubmitting} className="absolute top-4 right-4 text-white/80 hover:text-white disabled:opacity-50 cursor-pointer"><X size={24} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-3 rounded-xl"><Wallet className="text-white" size={28} /></div>
             <div>
@@ -122,7 +122,7 @@ const WalletModal = ({ isOpen, onClose }) => {
               <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircle className="text-green-600" size={40} /></div>
               <h3 className="text-gray-900 font-black text-xl mb-2 uppercase tracking-tight">Success!</h3>
               <p className="text-gray-600 text-sm font-semibold mb-6">Request submitted. Wait for 48 hours.</p>
-              <button onClick={handleClose} className="px-8 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase shadow-lg hover:bg-green-700 transition-colors">Done</button>
+              <button onClick={handleClose} className="px-8 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase shadow-lg hover:bg-green-700 transition-colors cursor-pointer">Done</button>
             </div>
 
           ) : currentView === 'withdraw' ? (
@@ -135,8 +135,8 @@ const WalletModal = ({ isOpen, onClose }) => {
               <input type="text" placeholder="Account Number" required value={withdrawalForm.accountNumber} onChange={(e) => setWithdrawalForm({ ...withdrawalForm, accountNumber: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-green-500 outline-none text-sm font-semibold" />
               <input type="text" placeholder="Bank Name" required value={withdrawalForm.bankName} onChange={(e) => setWithdrawalForm({ ...withdrawalForm, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-green-500 outline-none text-sm font-semibold" />
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setCurrentView('main')} className="flex-1 py-3 border-2 rounded-xl font-bold text-xs uppercase hover:bg-gray-50 transition-colors">Back</button>
-                <button type="submit" disabled={isSubmitting || displayAmount <= 0} className="flex-1 py-3 bg-green-600 text-white rounded-xl font-black text-xs uppercase flex justify-center items-center gap-2 disabled:opacity-50">
+                <button type="button" onClick={() => setCurrentView('main')} className="flex-1 py-3 border-2 rounded-xl font-bold text-xs uppercase hover:bg-gray-50 transition-colors cursor-pointer">Back</button>
+                <button type="submit" disabled={isSubmitting || displayAmount <= 0} className="flex-1 py-3 bg-green-600 text-white rounded-xl font-black text-xs uppercase flex justify-center items-center gap-2 disabled:opacity-50 cursor-pointer">
                   {isSubmitting ? <RefreshCw className="animate-spin" size={14} /> : 'Submit Request'}
                 </button>
               </div>
@@ -148,7 +148,7 @@ const WalletModal = ({ isOpen, onClose }) => {
               <button
                 onClick={() => setCurrentView('withdraw')}
                 disabled={displayAmount <= 0}
-                className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4 disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:bg-white"
+                className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4 disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:bg-white cursor-pointer"
               >
                 <div className="bg-green-100 p-3 rounded-xl group-hover:bg-green-600 transition-colors"><DollarSign className="text-green-600 group-hover:text-white transition-colors" size={22} /></div>
                 <div className="text-left flex-grow">

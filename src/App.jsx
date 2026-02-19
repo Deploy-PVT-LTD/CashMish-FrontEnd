@@ -26,6 +26,7 @@ import Footer from './components/Footer.jsx';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import TermsOfService from './components/TermsOfService.jsx';
 import CookiePolicy from './components/CookiePolicy.jsx';
+import FAQs from './components/FAQs.jsx';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/howitworks" element={<HowItWorks />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
+          <Route path="/faqs" element={<FAQs />} />
 
           {/* Auth Routes */}
           <Route path="/login" element={<Login />} />

@@ -13,9 +13,9 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
   const withBonus = (price + parseFloat(bonus)).toFixed(2);
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-5 relative">
-          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white"><X size={20} /></button>
+          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white cursor-pointer"><X size={20} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2.5 rounded-xl"><Wallet className="text-white" size={24} /></div>
             <div>
@@ -30,7 +30,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
         </div>
         <div className="p-5 space-y-3">
           <p className="text-gray-600 text-xs font-bold text-center uppercase tracking-wide mb-4">How do you want to receive this?</p>
-          <button onClick={onWithdraw} className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4">
+          <button onClick={onWithdraw} className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4 cursor-pointer">
             <div className="bg-green-100 p-3 rounded-xl group-hover:bg-green-600 transition-colors"><DollarSign className="text-green-600 group-hover:text-white transition-colors" size={22} /></div>
             <div className="text-left flex-grow">
               <h3 className="text-gray-900 font-black text-base uppercase tracking-tight cursor-pointer">Withdraw Cash</h3>
@@ -83,7 +83,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-5 relative">
-          <button onClick={onClose} disabled={isSubmitting} className="absolute top-3 right-3 text-white/70 hover:text-white disabled:opacity-40"><X size={20} /></button>
+          <button onClick={onClose} disabled={isSubmitting} className="absolute top-3 right-3 text-white/70 hover:text-white disabled:opacity-40 cursor-pointer"><X size={20} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2.5 rounded-xl"><DollarSign className="text-white" size={22} /></div>
             <div>
@@ -121,8 +121,8 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
                 <input type="text" required value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter bank name" />
               </div>
               <div className="flex gap-3 pt-1">
-                <button type="button" onClick={onClose} disabled={isSubmitting} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 disabled:opacity-50">Back</button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2">
+                <button type="button" onClick={onClose} disabled={isSubmitting} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 disabled:opacity-50 cursor-pointer">Back</button>
+                <button type="submit" disabled={isSubmitting} className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer">
                   {isSubmitting ? <><RefreshCw size={16} className="animate-spin" /> Saving...</> : 'Submit'}
                 </button>
               </div>
@@ -160,7 +160,7 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-5 relative">
-          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white"><X size={20} /></button>
+          <button onClick={onClose} className="absolute top-3 right-3 text-white/70 hover:text-white cursor-pointer"><X size={20} /></button>
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2.5 rounded-xl"><Gift className="text-white" size={22} /></div>
             <div><h2 className="text-white font-black text-lg uppercase">Get Coupons</h2><p className="text-orange-100 text-xs font-semibold">+7% Bonus on your amount</p></div>
@@ -182,8 +182,8 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
               </div>
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-3"><p className="text-blue-900 text-xs font-semibold text-center">📧 Coupons will be sent to your registered email</p></div>
               <div className="flex gap-3">
-                <button onClick={onClose} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50">Back</button>
-                <button onClick={handleConfirm} className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-black text-sm uppercase">Confirm</button>
+                <button onClick={onClose} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 cursor-pointer">Back</button>
+                <button onClick={handleConfirm} className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-black text-sm uppercase cursor-pointer">Confirm</button>
               </div>
             </div>
           )}
@@ -351,7 +351,7 @@ const MobileCart = () => {
                   <p className="text-2xl font-black text-green-800">${walletBalance.toFixed(2)}</p>
                 </div>
               </div>
-              <button onClick={handleOpenWalletPopup} className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black uppercase hover:bg-green-700 transition-all">
+              <button onClick={handleOpenWalletPopup} className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black uppercase hover:bg-green-700 transition-all cursor-pointer">
                 View Wallet
               </button>
             </div>
@@ -414,10 +414,10 @@ const MobileCart = () => {
                             <div className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-200">✓ Bid Accepted</div>
                           ) : (
                             <div className="flex gap-3 w-full md:w-auto">
-                              <button onClick={() => handleUpdateStatus(item.id, 'accepted')} disabled={isItemProcessing} className="flex-1 md:px-6 py-2.5 bg-green-600 text-white text-[11px] font-black uppercase rounded-xl hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 tracking-wider disabled:opacity-50 disabled:cursor-not-allowed">
+                              <button onClick={() => handleUpdateStatus(item.id, 'accepted')} disabled={isItemProcessing} className="flex-1 md:px-6 py-2.5 bg-green-600 text-white text-[11px] font-black uppercase rounded-xl hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 tracking-wider disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                                 {isItemProcessing ? <><RefreshCw size={16} className="animate-spin" /> Processing...</> : <><Check size={16} strokeWidth={3} /> Accept Bid</>}
                               </button>
-                              <button onClick={() => handleUpdateStatus(item.id, 'rejected')} disabled={isItemProcessing} className="flex-1 md:px-6 py-2.5 bg-white border-2 border-red-50 text-red-500 text-[11px] font-black uppercase rounded-xl hover:bg-red-50 active:scale-95 transition-all tracking-wider disabled:opacity-50 disabled:cursor-not-allowed">Reject</button>
+                              <button onClick={() => handleUpdateStatus(item.id, 'rejected')} disabled={isItemProcessing} className="flex-1 md:px-6 py-2.5 bg-white border-2 border-red-50 text-red-500 text-[11px] font-black uppercase rounded-xl hover:bg-red-50 active:scale-95 transition-all tracking-wider disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">Reject</button>
                             </div>
                           )}
                         </div>

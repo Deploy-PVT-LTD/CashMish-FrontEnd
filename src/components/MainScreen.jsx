@@ -37,7 +37,7 @@ const PhoneFlipLanding = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-x-hidden">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 lg:py-4 overflow-hidden">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-12 pb-24 lg:pt-16 lg:pb-32 overflow-hidden">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-14 items-center">
 
           {/* LEFT */}
@@ -87,7 +87,7 @@ const PhoneFlipLanding = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="relative flex justify-center lg:justify-end">
+          <div className="relative flex justify-center lg:justify-end lg:-mt-12">
 
             {/* Verified Badge */}
             <div className="absolute top-8 left-4 lg:left-auto lg:right-[18rem] bg-white rounded-xl shadow-lg px-6 py-3 flex items-center space-x-3 z-10 animate-pulse">
@@ -101,7 +101,7 @@ const PhoneFlipLanding = () => {
             </div>
 
             {/* PHONE CARD WITH ANIMATED BG */}
-            <div className="relative mt-16 lg:mt-0">
+            <div className="relative mt-8 lg:mt-0">
               <div
                 className="rounded-[3rem] p-8 shadow-xl w-72 sm:w-80
              bg-gradient-to-br from-green-500 via-green-900 to-green-600
@@ -116,7 +116,7 @@ const PhoneFlipLanding = () => {
 
 
               {/* Stats */}
-              <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-lg px-6 py-4">
+              <div className="absolute -bottom-2 -right-4 bg-white rounded-xl shadow-lg px-6 py-4">
                 <div className="w-12 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Zap className="w-6 h-6 text-green-600" />
                 </div>

@@ -109,26 +109,16 @@ export default function ContactUs() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-green-800 hover:bg-green-700 text-white font-black uppercase tracking-[0.2em]
-              text-[10px] py-5 rounded-2xl flex items-center justify-center gap-3
-              active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl mt-4"
+              className="w-full bg-green-800 hover:bg-green-700 text-white font-bold uppercase tracking-widest
+              text-xs py-5 rounded-2xl flex items-center justify-center gap-3
+              active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl mt-4 cursor-pointer"
             >
               <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={18} />
             </button>
           </form>
         </div>
       </main>
-
-      <footer className="w-full bg-white border-t border-green-100 px-6 py-4 flex items-center justify-between">
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          © 2026 CASHMISH
-        </p>
-        <div className="flex gap-6">
-          <FooterLink href="https://facebook.com" label="Facebook" />
-          <FooterLink href="https://linkedin.com" label="LinkedIn" />
-        </div>
-      </footer>
     </div>
   );
 }

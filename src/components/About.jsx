@@ -1,10 +1,11 @@
-import React from 'react';
-import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X } from 'lucide-react';
 import Header from "../components/header.jsx";
 import Footer from "../components/Footer.jsx";
 import imgg from "../assets/image-removebg-preview.png";
 
 export default function AboutUs() {
+  const [selectedBlog, setSelectedBlog] = useState(null);
   const stats = [
     { label: 'Successful Auctions', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
     { label: 'Active Sellers', value: '12k+', icon: <Users className="w-4 h-4" /> },
@@ -96,18 +97,126 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Middle Banner */}
-      <section className="py-20 bg-green-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="h-full w-full bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
-        </div>
-        <div className="max-w-5xl mx-auto px-6 text-center relative z-10 space-y-8">
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic">"Your tech doesn't belong in a drawer, it belongs in the economy."</h2>
-          <div className="h-1 lg:w-32 bg-white/30 mx-auto"></div>
+      {/* Blogs Section */}
+      <section className="py-24 px-6 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="space-y-4">
+              <h3 className="text-green-600 text-xs font-black uppercase tracking-[0.2em]">Insights</h3>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter leading-none">
+                From our <br />
+                <span className="text-gray-400">Latest Blogs.</span>
+              </h2>
+            </div>
+            <p className="text-gray-500 font-medium max-w-sm">
+              Discover tips on tech maintenance, market trends, and how to get the most value for your old devices.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "How to maximize your phone's resale value",
+                excerpt: "Learn the essential steps to keep your device in top condition for the highest possible payout.",
+                fullContent: "To get the best price for your old phone, start by keeping the original box and accessories. Scratches and dents significantly reduce value, so using a screen protector and case from day one is crucial. Before selling, perform a factory reset to clear your data, and ensure all accounts like iCloud or Google are removed. A clean, well-maintained device with original parts can fetch up to 20% more than a poorly kept one.",
+                date: "Oct 12, 2024",
+                category: "Tips & Tricks",
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800"
+              },
+              {
+                title: "The future of sustainable tech recycling",
+                excerpt: "Why selling your old devices is more than just about the money — it's about the planet.",
+                fullContent: "Electronic waste is one of the fastest-growing waste streams in the world. By selling your old devices to platforms like CashMish, you contribute to a circular economy. We ensure that devices are either refurbished for a second life or recycled using eco-friendly methods to recover precious metals like gold and copper. This reduces the need for destructive mining and keeps toxic chemicals out of landfills.",
+                date: "Oct 08, 2024",
+                category: "Sustainability",
+                image: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=800"
+              },
+              {
+                title: "E-waste: A goldmine in your drawer",
+                excerpt: "Understanding the hidden value inside your old electronics and how we extract it.",
+                fullContent: "Millions of dollars worth of precious materials are sitting in drawers across the country in the form of old electronics. Beyond the obvious resale value of working phones, even broken devices contain valuable components. Modern recycling technologies allow us to extract these materials efficiently. Selling your 'junk' tech not only nets you some quick cash but also provides the industry with the raw materials needed for next-generation devices.",
+                date: "Sep 25, 2024",
+                category: "Economy",
+                image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800"
+              }
+            ].map((blog, i) => (
+              <div key={i} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+                <div className="aspect-[16/10] overflow-hidden relative">
+                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-green-600 shadow-sm">
+                    {blog.category}
+                  </div>
+                </div>
+                <div className="p-8 space-y-4">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{blog.date}</div>
+                  <h4 className="text-xl font-black text-gray-900 uppercase tracking-tight leading-tight group-hover:text-green-600 transition-colors">
+                    {blog.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 font-medium leading-relaxed line-clamp-2 italic">
+                    "{blog.excerpt}"
+                  </p>
+                  <button
+                    onClick={() => setSelectedBlog(blog)}
+                    className="pt-4 flex items-center gap-2 text-green-600 font-black uppercase text-[10px] tracking-widest group-hover:gap-4 transition-all cursor-pointer"
+                  >
+                    Read More <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* <Footer /> */}
+      {/* Blog Detail Modal */}
+      {selectedBlog && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300">
+            <button
+              onClick={() => setSelectedBlog(null)}
+              className="absolute top-6 right-6 p-2 bg-gray-100 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors z-10 cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+            <div className="overflow-y-auto max-h-[90vh]">
+              <div className="h-64 overflow-hidden">
+                <img src={selectedBlog.image} alt={selectedBlog.title} className="w-full h-full object-cover" />
+              </div>
+              <div className="p-10 space-y-6">
+                <div className="flex items-center gap-3">
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                    {selectedBlog.category}
+                  </span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    {selectedBlog.date}
+                  </span>
+                </div>
+                <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none">
+                  {selectedBlog.title}
+                </h3>
+                <div className="h-1 w-20 bg-green-500 rounded-full"></div>
+                <p className="text-gray-600 leading-relaxed font-medium text-lg">
+                  {selectedBlog.fullContent}
+                </p>
+                <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
+                  <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                    <Zap size={14} className="text-green-500" />
+                    CashMish Insights
+                  </div>
+                  <button
+                    onClick={() => setSelectedBlog(null)}
+                    className="bg-gray-900 text-white px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
+                  >
+                    Close Article
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer is already included in App.jsx */}
     </div>
   );
 }

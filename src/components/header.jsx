@@ -92,10 +92,21 @@ function Header({ simple = false }) {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-6">
-              <a href="/" className="text-sm font-medium text-gray-600 hover:text-green-800">Home</a>
-              <a href="/Howitworks" className="text-sm font-medium text-gray-600 hover:text-green-800">How It Works</a>
-              <a href="/contact" className="text-sm font-medium text-gray-600 hover:text-green-800">Contact Us</a>
+            <div className="hidden md:flex items-center space-x-8">
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'How It Works', path: '/Howitworks' },
+                { name: 'Contact Us', path: '/contact' }
+              ].map((link) => (
+                <a
+                  key={link.name}
+                  href={link.path}
+                  className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2"
+                >
+                  {link.name}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+              ))}
 
               {!simple && (
                 <div className="flex items-center gap-4 ml-4">
