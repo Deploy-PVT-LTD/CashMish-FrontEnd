@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X } from 'lucide-react';
+import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X, Star } from 'lucide-react';
 import Header from "../components/header.jsx";
 import Footer from "../components/Footer.jsx";
 import imgg from "../assets/image-removebg-preview.png";
 
-export default function AboutUs() {
+export default function AboutUs({ isPage = false }) {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const stats = [
     { label: 'Successful Auctions', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
@@ -15,7 +15,7 @@ export default function AboutUs() {
 
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-green-100 selection:text-green-900">
-      {/* <Header /> */}
+      {isPage && <Header />}
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-gray-900 text-white">
@@ -97,18 +97,99 @@ export default function AboutUs() {
         </div>
       </section>
 
+      {/* Reviews Marquee Section */}
+      <section className="py-20 bg-white overflow-hidden border-y border-gray-100 relative group">
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+
+        <div className="flex flex-col gap-8">
+          <div className="flex animate-marquee group-hover:[animation-play-state:paused] gap-12 whitespace-nowrap">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex gap-12 items-center">
+                {[
+                  { name: "John D.", text: "Best price for my iPhone!", platform: "Google" },
+                  { name: "Sarah K.", text: "Instant payment happened as promised.", platform: "Trustpilot" },
+                  { name: "Mike R.", text: "Doorstep service was very professional.", platform: "Facebook" },
+                  { name: "Emily L.", text: "Easiest way to sell tech online.", platform: "Google" },
+                  { name: "David M.", text: "Transparent and honest process.", platform: "Trustpilot" },
+                ].map((review, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 cursor-pointer" onClick={() => window.location.href = '/reviews'}>
+                    <div className="flex gap-1 mb-1">
+                      {[...Array(5)].map((_, starIdx) => <Star key={starIdx} size={10} className="text-yellow-400 fill-yellow-400" />)}
+                    </div>
+                    <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">"{review.text}"</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
+                      <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">{review.platform}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex animate-marquee-reverse group-hover:[animation-play-state:paused] gap-12 whitespace-nowrap">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex gap-12 items-center">
+                {[
+                  { name: "Lisa V.", text: "No more bargaining with random buyers!", platform: "Trustpilot" },
+                  { name: "Alex B.", text: "My MacBook sold in just 5 minutes.", platform: "Google" },
+                  { name: "Tom H.", text: "Safe and secure data wipe confirmed.", platform: "Facebook" },
+                  { name: "Anna S.", text: "Got 15% more than local shops offered.", platform: "Google" },
+                  { name: "Chris P.", text: "The future of tech recycling is here.", platform: "Trustpilot" },
+                ].map((review, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 cursor-pointer" onClick={() => window.location.href = '/reviews'}>
+                    <div className="flex gap-1 mb-1">
+                      {[...Array(5)].map((_, starIdx) => <Star key={starIdx} size={10} className="text-yellow-400 fill-yellow-400" />)}
+                    </div>
+                    <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">"{review.text}"</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
+                      <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">{review.platform}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CSS Animation for Marquee */}
+        <style>{`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          @keyframes marquee-reverse {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+          }
+          .animate-marquee {
+            animation: marquee 30s linear infinite;
+          }
+          .animate-marquee-reverse {
+            animation: marquee-reverse 30s linear infinite;
+          }
+        `}</style>
+      </section>
+
       {/* Blogs Section */}
       <section className="py-24 px-6 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div className="space-y-4">
               <h3 className="text-green-600 text-xs font-black uppercase tracking-[0.2em]">Insights</h3>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter leading-none">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 uppercase tracking-tighter leading-[0.9]">
                 From our <br />
                 <span className="text-gray-400">Latest Blogs.</span>
               </h2>
+              <div className="pt-4">
+                <a href="/blogs" className="group text-[10px] font-black uppercase tracking-widest text-green-600 flex items-center gap-2 transition-all">
+                  View All Articles <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
             </div>
-            <p className="text-gray-500 font-medium max-w-sm">
+            <p className="text-gray-500 font-medium max-w-sm text-sm md:text-base leading-relaxed">
               Discover tips on tech maintenance, market trends, and how to get the most value for your old devices.
             </p>
           </div>

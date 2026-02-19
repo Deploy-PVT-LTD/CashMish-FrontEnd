@@ -136,11 +136,11 @@ const PhoneFlipLanding = () => {
 };
 
 const Feature = ({ icon, text }) => (
-  <div className="flex items-center space-x-3">
-    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-      {React.cloneElement(icon, { className: "w-5 h-5 text-green-600" })}
+  <div className="flex items-center space-x-3 bg-white p-4 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-green-200 group cursor-default">
+    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-600 transition-colors">
+      {React.cloneElement(icon, { className: "w-5 h-5 text-green-600 group-hover:text-white transition-colors" })}
     </div>
-    <span className="text-gray-700 font-medium">{text}</span>
+    <span className="text-gray-700 font-bold text-sm uppercase tracking-tight">{text}</span>
   </div>
 );
 

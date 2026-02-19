@@ -27,6 +27,12 @@ import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import TermsOfService from './components/TermsOfService.jsx';
 import CookiePolicy from './components/CookiePolicy.jsx';
 import FAQs from './components/FAQs.jsx';
+import Reviews from './components/Reviews.jsx';
+import Blogs from './components/Blogs.jsx';
+import SellMobile from './components/SellMobile.jsx';
+import InstantQuote from './components/InstantQuote.jsx';
+import FreePickup from './components/FreePickup.jsx';
+// import BulkSelling from './components/BulkSelling.jsx';
 
 function App() {
   return (
@@ -36,9 +42,15 @@ function App() {
           {/* Public Marketing Routes */}
           <Route path="/" element={<PhoneFlipLanding />} />
           <Route path="/howitworks" element={<HowItWorks />} />
-          <Route path="/about" element={<AboutUs />} />
+          <Route path="/about" element={<AboutUs isPage={true} />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/faqs" element={<FAQs />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/sell-mobile" element={<SellMobile />} />
+          <Route path="/instant-quote" element={<InstantQuote />} />
+          <Route path="/free-pickup" element={<FreePickup />} />
+          {/* <Route path="/bulk-selling" element={<BulkSelling />} /> */}
 
           {/* Auth Routes */}
           <Route path="/login" element={<Login />} />

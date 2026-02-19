@@ -40,10 +40,10 @@ const Footer = () => {
                     <div className="space-y-3">
                         <h4 className="text-white font-black uppercase tracking-widest text-[9px] opacity-40">Quick Links</h4>
                         <ul className="space-y-1.5">
-                            {['Home', 'How It Works', 'About Us', 'Contact', 'FAQs'].map((item) => (
+                            {['Home', 'How It Works', 'About Us', 'Contact', 'FAQs', 'Reviews', 'Blogs'].map((item) => (
                                 <li key={item}>
                                     <Link
-                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
+                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : item === 'Blogs' ? '/blogs' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
                                         className="group flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]"
                                     >
                                         <ArrowRight size={8} className="hidden group-hover:inline opacity-50" />
@@ -58,11 +58,16 @@ const Footer = () => {
                     <div className="space-y-3">
                         <h4 className="text-white font-black uppercase tracking-widest text-[9px] opacity-40">Our Services</h4>
                         <ul className="space-y-1.5">
-                            {['Sell Mobile', 'Instant Quote', 'Free Pickup', 'Bulk Selling'].map((item) => (
-                                <li key={item}>
-                                    <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]">
-                                        {item}
-                                    </a>
+                            {[
+                                { name: 'Sell Mobile', path: '/sell-mobile' },
+                                { name: 'Instant Quote', path: '/instant-quote' },
+                                { name: 'Free Pickup', path: '/free-pickup' },
+                                // { name: 'Bulk Selling', path: '/bulk-selling' }
+                            ].map((item) => (
+                                <li key={item.name}>
+                                    <Link to={item.path} className="flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]">
+                                        {item.name}
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
