@@ -37,7 +37,7 @@ const PhoneFlipLanding = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-x-hidden">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-12 pb-24 lg:pt-16 lg:pb-32 overflow-hidden">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-6 pb-24 lg:pt-8 lg:pb-32 overflow-hidden">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-14 items-center">
 
           {/* LEFT */}
