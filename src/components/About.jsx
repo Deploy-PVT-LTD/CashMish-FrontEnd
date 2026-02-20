@@ -182,7 +182,7 @@ export default function AboutUs({ isPage = false }) {
                 <span className="text-gray-400">Latest Blogs.</span>
               </h2>
               <div className="pt-4">
-                <a href="/blogs" className="group text-[10px] font-black uppercase tracking-widest text-green-600 flex items-center gap-2 transition-all">
+                <a href="/blogs" className="group text-[10px] font-black uppercase tracking-widest text-green-600 flex items-center gap-2 transition-all cursor-pointer">
                   View All Articles <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
@@ -220,7 +220,7 @@ export default function AboutUs({ isPage = false }) {
               }
             ].map((blog, i) => (
               <div key={i} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
-                <div className="aspect-[16/10] overflow-hidden relative">
+                <div className="aspect-[16/10] overflow-hidden relative cursor-pointer">
                   <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-green-600 shadow-sm">
                     {blog.category}

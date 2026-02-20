@@ -125,18 +125,32 @@ export default function ContactUs() {
 
 /* HELPERS */
 
-const ContactInfoItem = ({ icon, label, value }) => (
-  <div className="group flex items-start gap-4">
-    <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center
-      group-hover:bg-green-800 group-hover:text-white transition-all shadow-sm">
-      {icon}
-    </div>
-    <div>
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-      <p className="text-sm font-bold text-green-800">{value}</p>
-    </div>
-  </div>
-);
+const ContactInfoItem = ({ icon, label, value }) => {
+  const getLink = () => {
+    if (label === "Call us") return `tel:${value.replace(/\s+/g, '')}`;
+    if (label === "Email") return `mailto:${value}`;
+    if (label === "Office") return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(value)}`;
+    return "#";
+  };
+
+  return (
+    <a
+      href={getLink()}
+      target={label === "Office" ? "_blank" : undefined}
+      rel={label === "Office" ? "noopener noreferrer" : undefined}
+      className="group flex items-start gap-4 cursor-pointer"
+    >
+      <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center
+        group-hover:bg-green-800 group-hover:text-white transition-all shadow-sm">
+        {icon}
+      </div>
+      <div>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+        <p className="text-sm font-bold text-green-800 group-hover:text-green-600 transition-colors">{value}</p>
+      </div>
+    </a>
+  );
+};
 
 const InputBlock = ({ label, name, type = "text", value, onChange, placeholder, disabled }) => (
   <div className="space-y-2">

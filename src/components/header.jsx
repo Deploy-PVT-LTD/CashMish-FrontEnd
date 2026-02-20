@@ -99,19 +99,50 @@ function Header({ simple = false }) {
   }, [fetchAndUpdateBalance, updateCartCount]);
 
   const handleLogout = () => {
-    localStorage.clear();
-    if (typeof resetWallet === 'function') {
-      resetWallet();
-    }
-    setIsLoggedIn(false);
-    setOpen(false);
-    navigate("/");
+    Swal.fire({
+      title: 'Logout?',
+      text: "Are you sure you want to sign out?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Logout',
+      cancelButtonText: 'Cancel',
+      background: '#fff',
+      customClass: {
+        popup: 'rounded-[2rem]',
+        confirmButton: 'rounded-xl px-6 py-3 font-bold uppercase tracking-widest text-xs',
+        cancelButton: 'rounded-xl px-6 py-3 font-bold uppercase tracking-widest text-xs'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        if (typeof resetWallet === 'function') {
+          resetWallet();
+        }
+        setIsLoggedIn(false);
+        setOpen(false);
+        navigate("/");
+
+        Swal.fire({
+          title: 'Logged Out',
+          text: 'You have been successfully logged out.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          background: '#fff',
+          customClass: {
+            popup: 'rounded-[2rem]'
+          }
+        });
+      }
+    });
   };
 
   const menuCategories = {
     quickLinks: [
       { name: 'About Us', path: '/about' },
-      { name: 'Contact', path: '/contact' },
+      { name: 'Contact Us', path: '/contact' },
       { name: 'FAQs', path: '/faqs' },
       { name: 'Reviews', path: '/reviews' },
       { name: 'Blogs', path: '/blogs' }
@@ -148,23 +179,19 @@ function Header({ simple = false }) {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
-              {/* Quick Links Dropdown */}
+              {/* Our Services Dropdown */}
               <div
                 className="relative group py-2"
-                onMouseEnter={() => setQuickLinksOpen(true)}
-                onMouseLeave={() => setQuickLinksOpen(false)}
+                onMouseEnter={() => setServicesOpen(true)}
+                onMouseLeave={() => setServicesOpen(false)}
               >
                 <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
-                  Quick Links
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${quickLinksOpen ? 'rotate-180 text-green-600' : ''}`} />
+                  Our Services
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-green-600' : ''}`} />
                 </button>
-                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${quickLinksOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-4 min-w-[220px] space-y-1">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 mb-2">
-                      <Link2 size={12} />
-                      Navigation
-                    </div>
-                    {menuCategories.quickLinks.map((link) => (
+                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${servicesOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-3 min-w-[200px] space-y-1">
+                    {menuCategories.services.map((link) => (
                       <a
                         key={link.name}
                         href={link.path}
@@ -178,23 +205,19 @@ function Header({ simple = false }) {
                 </div>
               </div>
 
-              {/* Our Services Dropdown */}
+              {/* Quick Links Dropdown */}
               <div
                 className="relative group py-2"
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
+                onMouseEnter={() => setQuickLinksOpen(true)}
+                onMouseLeave={() => setQuickLinksOpen(false)}
               >
                 <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
-                  Our Services
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-green-600' : ''}`} />
+                  Quick Links
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${quickLinksOpen ? 'rotate-180 text-green-600' : ''}`} />
                 </button>
-                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${servicesOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-4 min-w-[220px] space-y-1">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 mb-2">
-                      <Rocket size={12} />
-                      Primary Services
-                    </div>
-                    {menuCategories.services.map((link) => (
+                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${quickLinksOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-3 min-w-[200px] space-y-1">
+                    {menuCategories.quickLinks.map((link) => (
                       <a
                         key={link.name}
                         href={link.path}
