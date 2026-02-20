@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X, Star } from 'lucide-react';
 import Header from "../components/header.jsx";
 import Footer from "../components/Footer.jsx";
 import imgg from "../assets/image-removebg-preview.png";
+import { BASE_URL } from '../api/api';
 
 export default function AboutUs({ isPage = false }) {
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [marqueeReviews, setMarqueeReviews] = useState([]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/reviews/approved`);
+        if (res.ok) {
+          const data = await res.json();
+          setMarqueeReviews(data);
+        }
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+      }
+    };
+    fetchReviews();
+  }, []);
+
   const stats = [
     { label: 'Successful Auctions', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
     { label: 'Active Sellers', value: '12k+', icon: <Users className="w-4 h-4" /> },
@@ -102,22 +120,18 @@ export default function AboutUs({ isPage = false }) {
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
 
-        <div className="flex flex-col gap-8">
+        {marqueeReviews.length > 0 ? (
           <div className="flex animate-marquee group-hover:[animation-play-state:paused] gap-12 whitespace-nowrap">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex gap-12 items-center">
-                {[
-                  { name: "John D.", text: "Best price for my iPhone!" },
-                  { name: "Sarah K.", text: "Instant payment happened as promised." },
-                  { name: "Mike R.", text: "Doorstep service was very professional." },
-                  { name: "Emily L.", text: "Easiest way to sell tech online." },
-                  { name: "David M.", text: "Transparent and honest process." },
-                ].map((review, idx) => (
-                  <div key={idx} className="flex flex-col gap-1 cursor-pointer" onClick={() => window.location.href = '/reviews'}>
+                {marqueeReviews.map((review, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 cursor-pointer max-w-[280px]" onClick={() => window.location.href = '/reviews'}>
                     <div className="flex gap-1 mb-1">
-                      {[...Array(5)].map((_, starIdx) => <Star key={starIdx} size={10} className="text-yellow-400 fill-yellow-400" />)}
+                      {[...Array(5)].map((_, starIdx) => (
+                        <Star key={starIdx} size={10} className={starIdx < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"} />
+                      ))}
                     </div>
-                    <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">"{review.text}"</p>
+                    <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic whitespace-normal line-clamp-1">"{review.description}"</p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
                     </div>
@@ -126,31 +140,9 @@ export default function AboutUs({ isPage = false }) {
               </div>
             ))}
           </div>
-
-          <div className="flex animate-marquee-reverse group-hover:[animation-play-state:paused] gap-12 whitespace-nowrap">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex gap-12 items-center">
-                {[
-                  { name: "Lisa V.", text: "No more bargaining with random buyers!" },
-                  { name: "Alex B.", text: "My MacBook sold in just 5 minutes." },
-                  { name: "Tom H.", text: "Safe and secure data wipe confirmed." },
-                  { name: "Anna S.", text: "Got 15% more than local shops offered." },
-                  { name: "Chris P.", text: "The future of tech recycling is here." },
-                ].map((review, idx) => (
-                  <div key={idx} className="flex flex-col gap-1 cursor-pointer" onClick={() => window.location.href = '/reviews'}>
-                    <div className="flex gap-1 mb-1">
-                      {[...Array(5)].map((_, starIdx) => <Star key={starIdx} size={10} className="text-yellow-400 fill-yellow-400" />)}
-                    </div>
-                    <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">"{review.text}"</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        ) : (
+          <div className="text-center text-gray-400 text-sm py-4">No reviews yet.</div>
+        )}
 
         {/* CSS Animation for Marquee */}
         <style>{`
@@ -158,15 +150,8 @@ export default function AboutUs({ isPage = false }) {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
           }
-          @keyframes marquee-reverse {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
-          }
           .animate-marquee {
             animation: marquee 30s linear infinite;
-          }
-          .animate-marquee-reverse {
-            animation: marquee-reverse 30s linear infinite;
           }
         `}</style>
       </section>

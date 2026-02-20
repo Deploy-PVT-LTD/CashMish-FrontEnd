@@ -7,6 +7,7 @@ import { BASE_URL } from '../api/api';
 
 const Reviews = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedReview, setSelectedReview] = useState(null);
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(0);
     const [formData, setFormData] = useState({
@@ -102,7 +103,7 @@ const Reviews = () => {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {reviews.map((review, i) => (
-                            <div key={i} className="group bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative flex flex-col h-full">
+                            <div key={i} className="group bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative flex flex-col h-full cursor-pointer" onClick={() => setSelectedReview(review)}>
                                 <div className="absolute -top-4 -right-4 bg-green-500 text-white p-4 rounded-2xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                     <Quote size={20} fill="currentColor" />
                                 </div>
@@ -113,7 +114,7 @@ const Reviews = () => {
                                     ))}
                                 </div>
 
-                                <p className="text-gray-600 font-medium leading-relaxed italic mb-8 flex-grow">
+                                <p className="text-gray-600 font-medium leading-relaxed italic mb-8 flex-grow line-clamp-3">
                                     "{review.description}"
                                 </p>
 
@@ -242,6 +243,52 @@ const Reviews = () => {
                                 <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </button>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Review Detail Modal */}
+            {selectedReview && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedReview(null)}>
+                    <div className="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                        <div className="bg-gray-900 p-8 text-white relative">
+                            <button
+                                onClick={() => setSelectedReview(null)}
+                                className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+                            >
+                                <X size={20} />
+                            </button>
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center text-green-400 font-black text-2xl uppercase">
+                                    {selectedReview.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black uppercase tracking-tight">
+                                        {selectedReview.name}
+                                        <CheckCircle size={14} className="inline-block ml-2 text-green-400" />
+                                    </h3>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{selectedReview.mobileName}</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-1 mt-4">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star key={i} size={18} className={i < selectedReview.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-600"} />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="p-8">
+                            <p className="text-gray-600 font-medium leading-relaxed italic text-lg">
+                                "{selectedReview.description}"
+                            </p>
+                            <div className="mt-8 flex justify-end">
+                                <button
+                                    onClick={() => setSelectedReview(null)}
+                                    className="bg-gray-900 text-white px-8 py-3 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
