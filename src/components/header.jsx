@@ -1,4 +1,4 @@
-import { Menu, X, ShoppingBag, LogOut, Wallet } from "lucide-react";
+import { Menu, X, ShoppingBag, LogOut, Wallet, ChevronDown, Link2, Rocket, ExternalLink } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/deploy-logo.png";
@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 
 function Header({ simple = false }) {
   const [open, setOpen] = useState(false);
+  const [quickLinksOpen, setQuickLinksOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
@@ -106,6 +108,21 @@ function Header({ simple = false }) {
     navigate("/");
   };
 
+  const menuCategories = {
+    quickLinks: [
+      { name: 'About Us', path: '/about' },
+      { name: 'Contact', path: '/contact' },
+      { name: 'FAQs', path: '/faqs' },
+      { name: 'Reviews', path: '/reviews' },
+      { name: 'Blogs', path: '/blogs' }
+    ],
+    services: [
+      { name: 'Sell Mobile', path: '/sell-mobile' },
+      { name: 'Instant Quote', path: '/instant-quote' },
+      { name: 'Free Pickup', path: '/free-pickup' }
+    ]
+  };
+
   return (
     <>
       <header className={`bg-white/90 backdrop-blur-md border-b border-gray-100 fixed top-0 left-0 w-full z-50 transition-all duration-300 transform ${headerVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
@@ -120,21 +137,76 @@ function Header({ simple = false }) {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              {[
-                { name: 'Home', path: '/' },
-                { name: 'How It Works', path: '/Howitworks' },
-                { name: 'Contact Us', path: '/contact' }
-              ].map((link) => (
-                <a
-                  key={link.name}
-                  href={link.path}
-                  className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2"
-                >
-                  {link.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-              ))}
+            <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+              <a href="/" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+                Home
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
+              </a>
+
+              <a href="/Howitworks" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+                How It Works
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
+              </a>
+
+              {/* Quick Links Dropdown */}
+              <div
+                className="relative group py-2"
+                onMouseEnter={() => setQuickLinksOpen(true)}
+                onMouseLeave={() => setQuickLinksOpen(false)}
+              >
+                <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
+                  Quick Links
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${quickLinksOpen ? 'rotate-180 text-green-600' : ''}`} />
+                </button>
+                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${quickLinksOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-4 min-w-[220px] space-y-1">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 mb-2">
+                      <Link2 size={12} />
+                      Navigation
+                    </div>
+                    {menuCategories.quickLinks.map((link) => (
+                      <a
+                        key={link.name}
+                        href={link.path}
+                        className="text-[13px] font-bold text-gray-600 hover:text-green-600 hover:bg-green-50 px-3 py-2 rounded-xl transition-all flex items-center justify-between group/item"
+                      >
+                        {link.name}
+                        <ExternalLink size={12} className="opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Our Services Dropdown */}
+              <div
+                className="relative group py-2"
+                onMouseEnter={() => setServicesOpen(true)}
+                onMouseLeave={() => setServicesOpen(false)}
+              >
+                <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
+                  Our Services
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-green-600' : ''}`} />
+                </button>
+                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${servicesOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-4 min-w-[220px] space-y-1">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 mb-2">
+                      <Rocket size={12} />
+                      Primary Services
+                    </div>
+                    {menuCategories.services.map((link) => (
+                      <a
+                        key={link.name}
+                        href={link.path}
+                        className="text-[13px] font-bold text-gray-600 hover:text-green-600 hover:bg-green-50 px-3 py-2 rounded-xl transition-all flex items-center justify-between group/item"
+                      >
+                        {link.name}
+                        <ExternalLink size={12} className="opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               {!simple && (
                 <div className="flex items-center gap-4 ml-4">
@@ -198,7 +270,27 @@ function Header({ simple = false }) {
               <div className="flex flex-col space-y-4 pt-4">
                 <a href="/" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Home</a>
                 <a href="/Howitworks" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">How It Works</a>
-                <a href="/contact" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Contact Us</a>
+
+                {/* Mobile Categories */}
+                <div className="space-y-4 pt-2">
+                  <div className="border-t border-gray-50 pt-4 px-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Quick Links</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {menuCategories.quickLinks.map((link) => (
+                        <a key={link.name} href={link.path} onClick={() => setOpen(false)} className="text-sm font-bold text-gray-600 hover:text-green-600">{link.name}</a>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-gray-50 pt-4 px-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Our Services</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {menuCategories.services.map((link) => (
+                        <a key={link.name} href={link.path} onClick={() => setOpen(false)} className="text-sm font-bold text-gray-600 hover:text-green-600">{link.name}</a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
                 <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
                   {/* Cart logic: Only show if isLoggedIn is true */}

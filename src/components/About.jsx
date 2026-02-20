@@ -107,11 +107,11 @@ export default function AboutUs({ isPage = false }) {
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex gap-12 items-center">
                 {[
-                  { name: "John D.", text: "Best price for my iPhone!", platform: "Google" },
-                  { name: "Sarah K.", text: "Instant payment happened as promised.", platform: "Trustpilot" },
-                  { name: "Mike R.", text: "Doorstep service was very professional.", platform: "Facebook" },
-                  { name: "Emily L.", text: "Easiest way to sell tech online.", platform: "Google" },
-                  { name: "David M.", text: "Transparent and honest process.", platform: "Trustpilot" },
+                  { name: "John D.", text: "Best price for my iPhone!" },
+                  { name: "Sarah K.", text: "Instant payment happened as promised." },
+                  { name: "Mike R.", text: "Doorstep service was very professional." },
+                  { name: "Emily L.", text: "Easiest way to sell tech online." },
+                  { name: "David M.", text: "Transparent and honest process." },
                 ].map((review, idx) => (
                   <div key={idx} className="flex flex-col gap-1 cursor-pointer" onClick={() => window.location.href = '/reviews'}>
                     <div className="flex gap-1 mb-1">
@@ -120,7 +120,6 @@ export default function AboutUs({ isPage = false }) {
                     <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">"{review.text}"</p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
-                      <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">{review.platform}</span>
                     </div>
                   </div>
                 ))}
@@ -132,11 +131,11 @@ export default function AboutUs({ isPage = false }) {
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex gap-12 items-center">
                 {[
-                  { name: "Lisa V.", text: "No more bargaining with random buyers!", platform: "Trustpilot" },
-                  { name: "Alex B.", text: "My MacBook sold in just 5 minutes.", platform: "Google" },
-                  { name: "Tom H.", text: "Safe and secure data wipe confirmed.", platform: "Facebook" },
-                  { name: "Anna S.", text: "Got 15% more than local shops offered.", platform: "Google" },
-                  { name: "Chris P.", text: "The future of tech recycling is here.", platform: "Trustpilot" },
+                  { name: "Lisa V.", text: "No more bargaining with random buyers!" },
+                  { name: "Alex B.", text: "My MacBook sold in just 5 minutes." },
+                  { name: "Tom H.", text: "Safe and secure data wipe confirmed." },
+                  { name: "Anna S.", text: "Got 15% more than local shops offered." },
+                  { name: "Chris P.", text: "The future of tech recycling is here." },
                 ].map((review, idx) => (
                   <div key={idx} className="flex flex-col gap-1 cursor-pointer" onClick={() => window.location.href = '/reviews'}>
                     <div className="flex gap-1 mb-1">
@@ -145,7 +144,6 @@ export default function AboutUs({ isPage = false }) {
                     <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">"{review.text}"</p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
-                      <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">{review.platform}</span>
                     </div>
                   </div>
                 ))}

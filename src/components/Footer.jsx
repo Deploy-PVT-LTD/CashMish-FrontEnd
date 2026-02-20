@@ -65,7 +65,8 @@ const Footer = () => {
                                 // { name: 'Bulk Selling', path: '/bulk-selling' }
                             ].map((item) => (
                                 <li key={item.name}>
-                                    <Link to={item.path} className="flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]">
+                                    <Link to={item.path} className="group flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]">
+                                        <ArrowRight size={8} className="hidden group-hover:inline opacity-50" />
                                         {item.name}
                                     </Link>
                                 </li>

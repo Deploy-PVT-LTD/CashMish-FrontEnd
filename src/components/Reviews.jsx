@@ -1,9 +1,44 @@
-import React from 'react';
-import { Star, Quote, Heart, CheckCircle, Users, Award } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, Quote, Heart, CheckCircle, Users, Award, X, Send } from 'lucide-react';
 import Header from './header.jsx';
 import Footer from './Footer.jsx';
+import Swal from 'sweetalert2';
 
 const Reviews = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [hover, setHover] = useState(0);
+    const [formData, setFormData] = useState({
+        name: '',
+        mobileName: '',
+        description: ''
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (rating === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please Rate Us',
+                text: 'Select a star rating before submitting!',
+                confirmButtonColor: '#22c55e'
+            });
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Review Submitted!',
+            text: 'Thank you for your valuable feedback. We will review and post it soon!',
+            confirmButtonColor: '#22c55e'
+        });
+
+        setIsModalOpen(false);
+        setRating(0);
+        setHover(0);
+        setFormData({ name: '', mobileName: '', description: '' });
+    };
+
     const reviews = [
         {
             name: "Alex Johnson",
@@ -139,13 +174,104 @@ const Reviews = () => {
                             Sold your device already? Let others know how it went. We value every feedback.
                         </p>
                         <div className="pt-4">
-                            <button className="bg-white text-gray-900 px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-500 hover:text-white transition-all shadow-xl cursor-pointer">
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-white text-gray-900 px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-500 hover:text-white transition-all shadow-xl cursor-pointer"
+                            >
                                 Write a Review
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* Review Submission Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl relative animate-in slide-in-from-bottom-8 duration-500">
+                        {/* Modal Header */}
+                        <div className="bg-gray-900 p-8 text-white relative">
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                            <h3 className="text-3xl font-black uppercase tracking-tighter">Submit <span className="text-green-500">Review</span></h3>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Your Voice Matters</p>
+                        </div>
+
+                        {/* Modal Body */}
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                            {/* Star Rating */}
+                            <div className="text-center space-y-3">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Rate Your Experience</p>
+                                <div className="flex justify-center gap-2">
+                                    {[1, 2, 3, 4, 5].map((index) => (
+                                        <button
+                                            type="button"
+                                            key={index}
+                                            className={`transition-all duration-200 transform hover:scale-125 ${index <= (hover || rating) ? "text-yellow-400" : "text-gray-200"}`}
+                                            onClick={() => setRating(index)}
+                                            onMouseEnter={() => setHover(index)}
+                                            onMouseLeave={() => setHover(rating)}
+                                        >
+                                            <Star
+                                                size={32}
+                                                fill={index <= (hover || rating) ? "currentColor" : "none"}
+                                                strokeWidth={2.5}
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="group relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
+                                        required
+                                        className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl px-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="group relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Mobile Name (Device Model)"
+                                        required
+                                        className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl px-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all"
+                                        value={formData.mobileName}
+                                        onChange={(e) => setFormData({ ...formData, mobileName: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="group relative">
+                                    <textarea
+                                        placeholder="Tell us about your experience..."
+                                        required
+                                        rows="4"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all resize-none"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full h-16 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-green-600/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                            >
+                                Submit Review
+                                <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* <Footer /> */}
         </div>

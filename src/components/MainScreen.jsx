@@ -87,7 +87,7 @@ const PhoneFlipLanding = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="relative flex justify-center lg:justify-end lg:-mt-12">
+          <div className="relative flex justify-center lg:justify-end lg:mt-8">
 
             {/* Verified Badge */}
             <div className="absolute top-8 left-4 lg:left-auto lg:right-[18rem] bg-white rounded-xl shadow-lg px-6 py-3 flex items-center space-x-3 z-10 animate-pulse">
