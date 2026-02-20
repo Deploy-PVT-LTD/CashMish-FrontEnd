@@ -19,6 +19,8 @@ import AboutUs from './components/About';
 import MobileCart from './components/Mobilecart.jsx';
 import CashMishForgotPassword from './components/forgetPassword.jsx'
 import ResetPassword from './components/confirmpassword.jsx'
+import ForgotPassword from './components/ForgotPassword';
+import ResetPasswordNew from './components/ResetPassword';
 import PriceResult from './components/priceresult.jsx'
 import CartLogin from './components/Cartlogin.jsx'
 import { WalletProvider } from './components/Walletcontext.jsx';
@@ -71,6 +73,8 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/forget-password" element={<CashMishForgotPassword />} />
         <Route path='/confirm-password' element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordNew />} />
 
         {/* Trade-in Funnel */}
         <Route path="/brandselection" element={<BrandSelection />} />

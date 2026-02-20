@@ -169,6 +169,16 @@ const LoginCard = () => {
                 ? setSignInData({ ...signInData, password: e.target.value })
                 : setSignUpData({ ...signUpData, password: e.target.value })}
             />
+            {view === 'signin' && (
+              <div className="text-right">
+                <span
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer transition-colors"
+                >
+                  Forgot Password?
+                </span>
+              </div>
+            )}
             <button type="submit" className="w-full h-11 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95">
               {loading ? 'WAIT...' : (view === 'signin' ? 'LOGIN' : 'REGISTER')}
             </button>
