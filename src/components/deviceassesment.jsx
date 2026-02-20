@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/header.jsx';
-import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info } from 'lucide-react';
+
+const photoCategories = [
+  { key: 'front', label: 'Front Side', desc: 'Screen facing camera', icon: <Smartphone size={24} />, color: 'bg-blue-50 text-blue-600 border-blue-200', activeColor: 'border-blue-500 ring-2 ring-blue-200' },
+  { key: 'back', label: 'Back Side', desc: 'Back panel visible', icon: <RotateCcw size={24} />, color: 'bg-purple-50 text-purple-600 border-purple-200', activeColor: 'border-purple-500 ring-2 ring-purple-200' },
+  { key: 'top', label: 'Top Side', desc: 'Top edge of phone', icon: <ArrowUp size={24} />, color: 'bg-orange-50 text-orange-600 border-orange-200', activeColor: 'border-orange-500 ring-2 ring-orange-200' },
+  { key: 'bottom', label: 'Bottom Side', desc: 'Charging port area', icon: <ArrowDown size={24} />, color: 'bg-green-50 text-green-600 border-green-200', activeColor: 'border-green-500 ring-2 ring-green-200' },
+  { key: 'about', label: 'About Phone', desc: 'Settings > About screenshot', icon: <Info size={24} />, color: 'bg-gray-50 text-gray-600 border-gray-200', activeColor: 'border-gray-500 ring-2 ring-gray-200' },
+];
 
 const DeviceAssessmentForm = () => {
   const navigate = useNavigate();
@@ -14,6 +22,10 @@ const DeviceAssessmentForm = () => {
 
   const [imagePreviews, setImagePreviews] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showUploadGuide, setShowUploadGuide] = useState(false);
+  const [photoSlots, setPhotoSlots] = useState({});
+  const [activeSlot, setActiveSlot] = useState(null);
+  const slotInputRef = useRef(null);
 
   const screenConditions = [
     { value: 'perfect', label: 'Perfect', description: 'No scratches or marks', color: 'green' },
@@ -37,21 +49,71 @@ const DeviceAssessmentForm = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(prev => [...prev, ...files]);
+  const handleSlotUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeSlot) return;
 
-    const newPreviews = files.map(file => ({
-      preview: URL.createObjectURL(file),
-      name: file.name
-    }));
-    setImagePreviews(prev => [...prev, ...newPreviews]);
+    const preview = URL.createObjectURL(file);
+
+    setPhotoSlots(prev => {
+      const oldSlot = prev[activeSlot];
+      // Revoke old preview URL to avoid memory leak
+      if (oldSlot?.preview) URL.revokeObjectURL(oldSlot.preview);
+      return { ...prev, [activeSlot]: { file, preview } };
+    });
+
+    // Update main arrays for form submission
+    setSelectedFiles(prev => {
+      const oldSlot = photoSlots[activeSlot];
+      if (oldSlot) {
+        return [...prev.filter(f => f !== oldSlot.file), file];
+      }
+      return [...prev, file];
+    });
+    setImagePreviews(prev => {
+      const oldSlot = photoSlots[activeSlot];
+      if (oldSlot) {
+        return [...prev.filter(p => p.preview !== oldSlot.preview), { preview, name: file.name }];
+      }
+      return [...prev, { preview, name: file.name }];
+    });
+
+    setActiveSlot(null);
+    e.target.value = '';
+  };
+
+  const handleSlotClick = (key) => {
+    setActiveSlot(key);
+    setTimeout(() => slotInputRef.current?.click(), 100);
+  };
+
+  const removeSlotPhoto = (key) => {
+    const slot = photoSlots[key];
+    if (!slot) return;
+    setPhotoSlots(prev => {
+      const updated = { ...prev };
+      delete updated[key];
+      return updated;
+    });
+    setSelectedFiles(prev => prev.filter(f => f !== slot.file));
+    setImagePreviews(prev => prev.filter(p => p.preview !== slot.preview));
   };
 
   const removeImage = (index) => {
+    const removedPreview = imagePreviews[index];
+    const matchingSlotKey = Object.keys(photoSlots).find(k => photoSlots[k]?.preview === removedPreview?.preview);
+    if (matchingSlotKey) {
+      setPhotoSlots(prev => {
+        const updated = { ...prev };
+        delete updated[matchingSlotKey];
+        return updated;
+      });
+    }
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
+
+  const uploadedCount = Object.keys(photoSlots).length;
 
   const isFormValid = () => {
     return formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0;
@@ -75,7 +137,6 @@ const DeviceAssessmentForm = () => {
       };
       localStorage.setItem("assessmentSummary", JSON.stringify(assessmentSummary));
 
-      // ✅ Har condition mein PriceResult hi jayega
       navigate("/priceresult", { state: { files: selectedFiles } });
     }
   };
@@ -129,11 +190,18 @@ const DeviceAssessmentForm = () => {
               <span className="ml-1 text-[12px] text-red-500 font-black uppercase tracking-widest">*</span>
             </div>
 
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <div
+              onClick={() => setShowUploadGuide(true)}
+              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+            >
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
-              <p className="text-sm text-gray-500">Upload photos to show condition</p>
-              <input type="file" className="hidden" multiple accept="image/*" onChange={handleImageUpload} />
-            </label>
+              <p className="text-sm text-gray-500">
+                {uploadedCount > 0 ? `${uploadedCount}/5 photos uploaded — tap to add more` : 'Upload photos to show condition'}
+              </p>
+            </div>
+
+            {/* Hidden input for slot uploads */}
+            <input ref={slotInputRef} type="file" className="hidden" accept="image/*" onChange={handleSlotUpload} />
 
             {imagePreviews.length > 0 && (
               <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
@@ -159,6 +227,101 @@ const DeviceAssessmentForm = () => {
           </button>
         </form>
       </div>
+
+      {/* Photo Upload Guide Modal */}
+      {showUploadGuide && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-[2rem] overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="bg-gray-900 p-6 text-white relative shrink-0">
+              <button
+                onClick={() => setShowUploadGuide(false)}
+                className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+              <div className="flex items-center gap-3 mb-1">
+                <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
+                  <Camera size={20} className="text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black uppercase tracking-tight">Upload <span className="text-green-400">Photos</span></h3>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{uploadedCount}/5 Uploaded — Tap each to add</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 space-y-4 overflow-y-auto flex-1">
+              <p className="text-sm text-gray-500 font-medium text-center">
+                Tap each card below to upload that photo from your gallery:
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {photoCategories.map((item) => {
+                  const uploaded = photoSlots[item.key];
+                  return (
+                    <div
+                      key={item.key}
+                      onClick={() => handleSlotClick(item.key)}
+                      className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${uploaded ? item.activeColor : item.color}`}
+                    >
+                      {uploaded ? (
+                        <>
+                          <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md relative">
+                            <img src={uploaded.preview} alt={item.label} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                              <Check size={20} className="text-white drop-shadow-lg" />
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-green-600">✓ {item.label}</span>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); removeSlotPhoto(item.key); }}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 shadow cursor-pointer hover:bg-red-600"
+                          >
+                            <X size={10} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white shadow-sm">
+                            {item.icon}
+                          </div>
+                          <span className="text-xs font-black uppercase tracking-wider">{item.label}</span>
+                          <span className="text-[10px] text-gray-400 font-medium text-center">{item.desc}</span>
+                          <span className="text-[9px] font-bold text-gray-300 uppercase">Tap to upload</span>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-3 flex items-start gap-2">
+                <span className="text-yellow-500 text-lg">💡</span>
+                <p className="text-[11px] font-semibold text-yellow-700">
+                  Better photos = more accurate price! Make sure photos are well-lit and show the actual condition clearly.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowUploadGuide(false)}
+                className={`w-full py-3.5 font-black uppercase tracking-widest text-xs rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer ${uploadedCount > 0
+                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-600/20'
+                    : 'bg-gray-200 text-gray-500'
+                  }`}
+              >
+                {uploadedCount > 0 ? (
+                  <><Check size={16} /> Done — {uploadedCount} Photo{uploadedCount > 1 ? 's' : ''} Added</>
+                ) : (
+                  'Upload at least 1 photo'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
