@@ -31,6 +31,7 @@ import CookiePolicy from './components/CookiePolicy.jsx';
 import FAQs from './components/FAQs.jsx';
 import Reviews from './components/Reviews.jsx';
 import Blogs from './components/Blogs.jsx';
+import BlogDetail from './components/BlogDetail.jsx';
 import SellMobile from './components/SellMobile.jsx';
 import InstantQuote from './components/InstantQuote.jsx';
 import FreePickup from './components/FreePickup.jsx';
@@ -64,6 +65,7 @@ function AppContent() {
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs/:id" element={<BlogDetail />} />
         <Route path="/sell-mobile" element={<SellMobile />} />
         <Route path="/instant-quote" element={<InstantQuote />} />
         <Route path="/free-pickup" element={<FreePickup />} />
