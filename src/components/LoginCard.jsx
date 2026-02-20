@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // 1. useLocation add kiya
-import SI from '../assets/signin.svg';
-import SU from '../assets/signup.png';
-import logo from '../assets/deploy-logo.png';
-import logogoogle from '../assets/google.png';
+import React, { useState } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Mail, Lock, User, ArrowRight, Smartphone, ShieldCheck, Zap, Heart } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/api';
-
+import logo from '../assets/deploy-logo.png';
+import logogoogle from '../assets/google.png';
 
 const LoginCard = () => {
   const [view, setView] = useState('signin');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // 2. Hook to catch state
+  const location = useLocation();
 
-  // 🔥 Pichle page se aayi hui images ko pakad ke rakhein
+  // Catch pending files from assessment
   const pendingFiles = location.state?.files || [];
 
   const [signInData, setSignInData] = useState({ email: '', password: '' });
   const [signUpData, setSignUpData] = useState({ name: '', email: '', password: '' });
 
-  // Common function to navigate after login/signup
   const proceedToNextStep = () => {
-    // Agar images hain toh userdata par bhejo, warna home par
     if (pendingFiles.length > 0) {
       navigate('/userdata', { state: { files: pendingFiles } });
     } else {
@@ -38,14 +34,11 @@ const LoginCard = () => {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         window.removeEventListener("message", receiveMessage);
-
-        // ✅ Success: Forward with images
         proceedToNextStep();
       }
     };
     window.addEventListener("message", receiveMessage);
     window.open(`${BASE_URL}/api/auth/google`, 'google-login', `width=500,height=600`);
-    //  window.open(`${BASE_URL}/api/auth/google`, 'google-login', `width=500,height=600`);
   };
 
   const handleSignIn = async (e) => {
@@ -53,7 +46,6 @@ const LoginCard = () => {
     setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/api/auth/login`, {
-        // const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signInData),
@@ -62,18 +54,18 @@ const LoginCard = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-
-        // ✅ Success: Forward with images
         proceedToNextStep();
       } else {
         Swal.fire({
           icon: "error",
           title: data.message || "Login failed",
           text: "Please check your credentials",
+          background: '#fff',
+          customClass: { popup: 'rounded-[2rem]' }
         });
       }
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Oops...", text: "Network Error" });
+      Swal.fire({ icon: "error", title: "Oops...", text: "Network Error", background: '#fff', customClass: { popup: 'rounded-[2rem]' } });
     } finally { setLoading(false); }
   };
 
@@ -82,119 +74,192 @@ const LoginCard = () => {
     setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/api/auth/signup`, {
-        // const response = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...signUpData, role: 'user' }),
       });
       const data = await response.json();
       if (response.ok) {
-        // Option: Auto login after signup or just switch to signin
-        Swal.fire("Registration Successful!", "Please sign in now.", "success");
+        Swal.fire({
+          title: "Registration Successful!",
+          text: "Please sign in now.",
+          icon: "success",
+          background: '#fff',
+          customClass: { popup: 'rounded-[2rem]' }
+        });
         setView('signin');
       } else {
-        alert(data.message || "Signup failed");
+        Swal.fire({ icon: "error", title: "Signup Failed", text: data.message || "Something went wrong", background: '#fff', customClass: { popup: 'rounded-[2rem]' } });
       }
-    } catch (err) { alert('Network error'); } finally { setLoading(false); }
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Oops...", text: "Network Error", background: '#fff', customClass: { popup: 'rounded-[2rem]' } });
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-[#212531] grid place-items-center p-4 font-['Poppins']">
-      {/* Visual Indicator: Jab images carry ho rahi hon */}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans selection:bg-green-100 selection:text-green-900 overflow-hidden relative">
+      {/* Decorative Blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-green-500/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-green-600/5 rounded-full blur-[120px] translate-x-1/4 translate-y-1/4"></div>
+
+      {/* Assessment Status Indicator */}
       {pendingFiles.length > 0 && (
-        <div className="fixed top-5 bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-bold animate-bounce shadow-lg z-50">
-          📸 {pendingFiles.length} Photos ready to be saved after login
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-md border border-green-100 px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 animate-in slide-in-from-top-4 duration-500">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-900">
+            {pendingFiles.length} Photos Ready for Assessment
+          </span>
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row w-full max-w-[800px] min-h-[500px] bg-[#1a1d26] rounded-2xl overflow-hidden shadow-xl border border-white/5">
+      <div className="max-w-[800px] w-full min-h-[400px] bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col md:flex-row relative z-10 border border-gray-100">
 
-        {/* Sidebar */}
-        <div className="w-full md:w-[110px] bg-[#15181f] flex md:flex-col items-center py-6 md:py-10 border-b md:border-b-0 md:border-r border-white/5 relative">
-          <img src={logo} alt="logo" className="h-10 md:h-12 lg:h-14 mb-6 md:mb-14 px-2 object-contain" />
+        {/* LEFT: Hero/Sidebar */}
+        <div className="w-full md:w-[40%] bg-gray-900 p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-[80px]"></div>
 
-          <div className="flex md:flex-col gap-8 md:gap-12 w-full justify-center md:justify-start">
-            <button
-              onClick={() => setView('signin')}
-              className={`flex flex-col items-center gap-2 w-full transition-all relative ${view === 'signin' ? 'text-blue-500' : 'text-gray-600 hover:text-gray-400'}`}
-            >
-              {view === 'signin' && <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-[4px] h-12 bg-blue-500 rounded-r-lg" />}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
-              <span className="text-[10px] font-bold tracking-widest uppercase">Sign In</span>
-            </button>
+          <div className="relative z-10">
+            <Link to="/" className="inline-flex items-center gap-2 group mb-8">
+              <div className="bg-green-600 p-2 rounded-xl group-hover:rotate-12 transition-transform shadow-lg shadow-green-600/20">
+                <Smartphone className="text-white" size={24} />
+              </div>
+              <span className="text-2xl font-black text-white uppercase tracking-tighter">
+                Cash<span className="text-green-500">Mish</span>
+              </span>
+            </Link>
 
-            <button
-              onClick={() => setView('signup')}
-              className={`flex flex-col items-center gap-2 w-full transition-all relative ${view === 'signup' ? 'text-blue-500' : 'text-gray-600 hover:text-gray-400'}`}
-            >
-              {view === 'signup' && <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-[4px] h-12 bg-blue-500 rounded-r-lg" />}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" /></svg>
-              <span className="text-[10px] font-bold tracking-widest uppercase">Sign Up</span>
-            </button>
+            <div className="space-y-6">
+              <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none">
+                {view === 'signin' ? "Welcome \nBack." : "Start your \nJourney."}
+              </h2>
+              <p className="text-gray-400 font-medium text-lg leading-relaxed max-w-[200px]">
+                {view === 'signin' ? "Good to see you again! Log in to continue." : "Join the smartest way to sell tech."}
+              </p>
+            </div>
+          </div>
+
+          <div className="relative z-10 mt-8 grid grid-cols-1 gap-3">
+            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-sm">
+              <ShieldCheck className="text-green-500" size={20} />
+              <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">100% Secure Access</span>
+            </div>
+            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-sm">
+              <Zap className="text-green-500" size={20} />
+              <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Instant Valuations</span>
+            </div>
           </div>
         </div>
 
-        {/* Hero Section */}
-        <div className="hidden md:flex flex-1 bg-blue-600 p-8 flex-col justify-center items-center text-white text-center rounded-xl">
-          <h2 className="text-2xl font-bold mb-2">{view === 'signin' ? 'Welcome Back' : 'Join Us'}</h2>
-          <img src={view === 'signin' ? SI : SU} className="w-48 h-48 object-contain mt-4" alt="hero" />
-        </div>
+        {/* RIGHT: Form Section */}
+        <div className="flex-1 p-6 md:p-8 lg:p-10 flex flex-col justify-center">
+          <div className="mb-6 flex items-center justify-between border-b border-gray-100 pb-2">
+            <div className="flex gap-8">
+              <button
+                onClick={() => setView('signin')}
+                className={`pb-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all relative ${view === 'signin' ? 'text-green-600' : 'text-gray-400 hover:text-gray-600 cursor-pointer'}`}
+              >
+                Sign In
+                {view === 'signin' && <div className="absolute bottom-[-1px] left-0 w-full h-0.5 bg-green-600"></div>}
+              </button>
+              <button
+                onClick={() => setView('signup')}
+                className={`pb-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all relative ${view === 'signup' ? 'text-green-600' : 'text-gray-400 hover:text-gray-600 cursor-pointer'}`}
+              >
+                Create Account
+                {view === 'signup' && <div className="absolute bottom-[-1px] left-0 w-full h-0.5 bg-green-600"></div>}
+              </button>
+            </div>
+          </div>
 
-        {/* Form Section */}
-        <div className="flex-1 p-8">
-          <h3 className="text-white text-xl font-bold mb-6">{view === 'signin' ? 'Sign In' : 'Sign Up'}</h3>
-
-          <form onSubmit={view === 'signin' ? handleSignIn : handleSignUp} className="space-y-4">
+          <form onSubmit={view === 'signin' ? handleSignIn : handleSignUp} className="space-y-6">
             {view === 'signup' && (
-              <input
-                type="text" placeholder="Full Name" required
-                className="w-full h-11 bg-[#252a36] border border-white/10 rounded-lg px-4 text-white focus:outline-none focus:border-blue-500"
-                value={signUpData.name}
-                onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
-              />
-            )}
-            <input
-              type="email" placeholder="Email" required
-              className="w-full h-11 bg-[#252a36] border border-white/10 rounded-lg px-4 text-white focus:outline-none focus:border-blue-500"
-              value={view === 'signin' ? signInData.email : signUpData.email}
-              onChange={(e) => view === 'signin'
-                ? setSignInData({ ...signInData, email: e.target.value })
-                : setSignUpData({ ...signUpData, email: e.target.value })}
-            />
-            <input
-              type="password" placeholder="Password" required
-              className="w-full h-11 bg-[#252a36] border border-white/10 rounded-lg px-4 text-white focus:outline-none focus:border-blue-500"
-              value={view === 'signin' ? signInData.password : signUpData.password}
-              onChange={(e) => view === 'signin'
-                ? setSignInData({ ...signInData, password: e.target.value })
-                : setSignUpData({ ...signUpData, password: e.target.value })}
-            />
-            {view === 'signin' && (
-              <div className="text-right">
-                <span
-                  onClick={() => navigate('/forgot-password')}
-                  className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer transition-colors"
-                >
-                  Forgot Password?
-                </span>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                <div className="relative group">
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" size={20} />
+                  <input
+                    type="text" placeholder="John Doe" required
+                    className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl pl-14 pr-6 font-bold text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all text-sm"
+                    value={signUpData.name}
+                    onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
+                  />
+                </div>
               </div>
             )}
-            <button type="submit" className="w-full h-11 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-bold rounded-lg transition-all active:scale-95">
-              {loading ? 'WAIT...' : (view === 'signin' ? 'LOGIN' : 'REGISTER')}
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" size={20} />
+                <input
+                  type="email" placeholder="hello@cashmish.com" required
+                  className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl pl-14 pr-6 font-bold text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all text-sm"
+                  value={view === 'signin' ? signInData.email : signUpData.email}
+                  onChange={(e) => view === 'signin'
+                    ? setSignInData({ ...signInData, email: e.target.value })
+                    : setSignUpData({ ...signUpData, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label>
+              <div className="relative group">
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" size={20} />
+                <input
+                  type="password" placeholder="••••••••" required
+                  className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl pl-14 pr-6 font-bold text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all text-sm"
+                  value={view === 'signin' ? signInData.password : signUpData.password}
+                  onChange={(e) => view === 'signin'
+                    ? setSignInData({ ...signInData, password: e.target.value })
+                    : setSignUpData({ ...signUpData, password: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {view === 'signin' && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-[11px] font-black text-green-600 uppercase tracking-widest hover:text-green-700 cursor-pointer transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-green-600/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 group cursor-pointer disabled:opacity-50"
+            >
+              {loading ? 'Processing...' : (view === 'signin' ? 'Sign In Now' : 'Create Account')}
+              {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
             </button>
           </form>
 
-          <div className="flex items-center gap-3 my-6 text-gray-600 text-xs">
-            <div className="flex-1 h-px bg-white/10"></div>
-            <span>OR</span>
-            <div className="flex-1 h-px bg-white/10"></div>
+          <div className="flex items-center gap-4 my-6">
+            <div className="flex-1 h-px bg-gray-100"></div>
+            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Alternative</span>
+            <div className="flex-1 h-px bg-gray-100"></div>
           </div>
 
-          <div className="flex gap-3">
-            <button onClick={handleGoogleLogin} type="button" className="flex-1 h-11 bg-white rounded-lg flex items-center justify-center gap-2 border hover:bg-gray-100 transition-all active:scale-95 cursor-pointer">
-              <img src={logogoogle} alt="Google" className="w-5 h-5 object-contain" />
+          <div className="flex gap-4">
+            <button
+              onClick={handleGoogleLogin}
+              type="button"
+              className="flex-1 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95 cursor-pointer shadow-sm"
+            >
+              <img src={logogoogle} alt="Google" className="w-5 h-5" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-600">Google Login</span>
             </button>
           </div>
+
+          <p className="mt-6 text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em] text-center leading-relaxed">
+            By continuing, you agree to CashMish's <br />
+            <Link to="/terms" className="text-gray-900 hover:text-green-600">Terms of Service</Link> & <Link to="/privacy" className="text-gray-900 hover:text-green-600">Privacy Policy</Link>
+          </p>
         </div>
       </div>
     </div>

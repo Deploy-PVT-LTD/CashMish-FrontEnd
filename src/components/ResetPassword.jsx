@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import Header from './header';
 import Footer from './Footer';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/api';
-import { Loader2, Lock, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Lock, Eye, EyeOff, Smartphone, ShieldCheck, ArrowRight } from 'lucide-react';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
@@ -22,7 +22,9 @@ const ResetPassword = () => {
                 icon: 'error',
                 title: 'Passwords mismatch',
                 text: 'The passwords you entered do not match.',
-                confirmButtonColor: '#2563eb'
+                confirmButtonColor: '#16a34a',
+                background: '#fff',
+                customClass: { popup: 'rounded-[2rem]' }
             });
             return;
         }
@@ -32,7 +34,9 @@ const ResetPassword = () => {
                 icon: 'error',
                 title: 'Password too weak',
                 text: 'Password must be at least 6 characters long.',
-                confirmButtonColor: '#2563eb'
+                confirmButtonColor: '#16a34a',
+                background: '#fff',
+                customClass: { popup: 'rounded-[2rem]' }
             });
             return;
         }
@@ -53,7 +57,9 @@ const ResetPassword = () => {
                     icon: 'success',
                     title: 'Password Reset Successful!',
                     text: 'You can now log in with your new password.',
-                    confirmButtonColor: '#2563eb'
+                    confirmButtonColor: '#16a34a',
+                    background: '#fff',
+                    customClass: { popup: 'rounded-[2rem]' }
                 }).then(() => {
                     navigate('/login');
                 });
@@ -62,7 +68,9 @@ const ResetPassword = () => {
                     icon: 'error',
                     title: 'Reset Failed',
                     text: data.message || 'The reset link is invalid or expired.',
-                    confirmButtonColor: '#2563eb'
+                    confirmButtonColor: '#16a34a',
+                    background: '#fff',
+                    customClass: { popup: 'rounded-[2rem]' }
                 });
             }
         } catch (error) {
@@ -70,7 +78,9 @@ const ResetPassword = () => {
                 icon: 'error',
                 title: 'Network Error',
                 text: 'Please check your connection and try again.',
-                confirmButtonColor: '#2563eb'
+                confirmButtonColor: '#16a34a',
+                background: '#fff',
+                customClass: { popup: 'rounded-[2rem]' }
             });
         } finally {
             setLoading(false);
@@ -78,54 +88,60 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="min-h-screen flex flex-col bg-gray-50 selection:bg-green-100">
             <Header />
 
-            <div className="flex-1 flex items-center justify-center p-4">
-                <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl border border-gray-100">
-                    <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Lock className="w-8 h-8 text-blue-600" />
+            <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+                {/* Decorative Blobs */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-green-500/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-green-600/5 rounded-full blur-[120px] translate-x-1/4 translate-y-1/4"></div>
+
+                <div className="bg-white w-full max-w-md p-8 md:p-10 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-gray-100 relative z-10">
+                    <div className="text-center mb-10">
+                        <div className="w-20 h-20 bg-green-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-sm shadow-green-100">
+                            <Lock className="w-10 h-10 text-green-600" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Set New Password</h2>
-                        <p className="text-gray-500 text-sm">
-                            Your new password must be different from previously used passwords.
+                        <h2 className="text-3xl font-black text-gray-900 mb-3 uppercase tracking-tighter">Set New Password</h2>
+                        <p className="text-gray-500 font-medium text-sm leading-relaxed px-4">
+                            Choose a strong password to secure your account.
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                                <div className="relative">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">New Password</label>
+                                <div className="relative group">
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" size={20} />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full h-12 px-4 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                        className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl pl-14 pr-12 font-bold text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-mono"
                                         placeholder="Min. 6 characters"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-600 cursor-pointer"
                                     >
                                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                     </button>
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                                <div className="relative">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Confirm Password</label>
+                                <div className="relative group">
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" size={20} />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         required
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="w-full h-12 px-4 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                                        placeholder="Re-enter password"
+                                        className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl pl-14 pr-12 font-bold text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-mono"
+                                        placeholder="Repeat new password"
                                     />
                                 </div>
                             </div>
@@ -134,15 +150,18 @@ const ResetPassword = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20"
+                            className="w-full h-14 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-green-600/20 transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed group cursor-pointer"
                         >
                             {loading ? (
                                 <>
                                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                    Updating Password...
+                                    Updating...
                                 </>
                             ) : (
-                                'Reset Password'
+                                <>
+                                    Reset Password
+                                    <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                </>
                             )}
                         </button>
                     </form>
