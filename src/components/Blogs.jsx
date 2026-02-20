@@ -49,8 +49,8 @@ const Blogs = () => {
             <section className="py-20 px-6 max-w-7xl mx-auto">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {allBlogs.map(blog => (
-                        <div key={blog.id} className="group border border-gray-100 rounded-[2rem] p-6 hover:shadow-2xl transition-all">
-                            <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-6">
+                        <div key={blog.id} className="group border border-gray-100 rounded-[2rem] p-6 hover:shadow-2xl transition-all cursor-pointer">
+                            <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-6 cursor-pointer">
                                 <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             </div>
                             <div className="space-y-4">

@@ -161,7 +161,7 @@ const Reviews = () => {
             {/* Review Submission Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl relative animate-in slide-in-from-bottom-8 duration-500">
+                    <div className="bg-white w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl relative animate-in slide-in-from-bottom-8 duration-500">
                         {/* Modal Header */}
                         <div className="bg-gray-900 p-8 text-white relative">
                             <button
@@ -175,22 +175,22 @@ const Reviews = () => {
                         </div>
 
                         {/* Modal Body */}
-                        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             {/* Star Rating */}
-                            <div className="text-center space-y-3">
+                            <div className="text-center space-y-2">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Rate Your Experience</p>
                                 <div className="flex justify-center gap-2">
                                     {[1, 2, 3, 4, 5].map((index) => (
                                         <button
                                             type="button"
                                             key={index}
-                                            className={`transition-all duration-200 transform hover:scale-125 ${index <= (hover || rating) ? "text-yellow-400" : "text-gray-200"}`}
+                                            className={`transition-all duration-200 transform hover:scale-125 cursor-pointer ${index <= (hover || rating) ? "text-yellow-400" : "text-gray-200"}`}
                                             onClick={() => setRating(index)}
                                             onMouseEnter={() => setHover(index)}
                                             onMouseLeave={() => setHover(rating)}
                                         >
                                             <Star
-                                                size={32}
+                                                size={28}
                                                 fill={index <= (hover || rating) ? "currentColor" : "none"}
                                                 strokeWidth={2.5}
                                             />
@@ -199,13 +199,13 @@ const Reviews = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 <div className="group relative">
                                     <input
                                         type="text"
                                         placeholder="Full Name"
                                         required
-                                        className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl px-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all"
+                                        className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl px-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
@@ -216,7 +216,7 @@ const Reviews = () => {
                                         type="text"
                                         placeholder="Mobile Name (Device Model)"
                                         required
-                                        className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl px-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all"
+                                        className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl px-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all"
                                         value={formData.mobileName}
                                         onChange={(e) => setFormData({ ...formData, mobileName: e.target.value })}
                                     />
@@ -226,8 +226,8 @@ const Reviews = () => {
                                     <textarea
                                         placeholder="Tell us about your experience..."
                                         required
-                                        rows="4"
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-6 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all resize-none"
+                                        rows="2"
+                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all resize-none"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     ></textarea>
@@ -236,7 +236,7 @@ const Reviews = () => {
 
                             <button
                                 type="submit"
-                                className="w-full h-16 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-green-600/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                                className="w-full h-14 bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-green-600/20 transition-all active:scale-95 flex items-center justify-center gap-3 group cursor-pointer"
                             >
                                 Submit Review
                                 <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

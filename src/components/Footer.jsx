@@ -29,7 +29,7 @@ const Footer = () => {
                         </p>
                         <div className="flex items-center gap-2">
                             {[Facebook, Instagram, Twitter, Linkedin].map((Icon, idx) => (
-                                <a key={idx} href="#" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300">
+                                <a key={idx} href="#" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
                                     <Icon size={14} />
                                 </a>
                             ))}
@@ -40,10 +40,10 @@ const Footer = () => {
                     <div className="space-y-3">
                         <h4 className="text-white font-black uppercase tracking-widest text-[9px] opacity-40">Quick Links</h4>
                         <ul className="space-y-1.5">
-                            {['Home', 'How It Works', 'About Us', 'Contact', 'FAQs', 'Reviews', 'Blogs'].map((item) => (
+                            {['Home', 'How It Works', 'About Us', 'Contact Us', 'FAQs', 'Reviews', 'Blogs'].map((item) => (
                                 <li key={item}>
                                     <Link
-                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : item === 'Blogs' ? '/blogs' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
+                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : item === 'Contact Us' ? '/contact' : item === 'Blogs' ? '/blogs' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
                                         className="group flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]"
                                     >
                                         <ArrowRight size={8} className="hidden group-hover:inline opacity-50" />
@@ -98,9 +98,9 @@ const Footer = () => {
                                 <input
                                     type="email"
                                     placeholder="Get updates"
-                                    className="flex-1 min-w-0 bg-gray-800/50 border border-gray-700 rounded-md px-2 py-1.5 text-[10px] font-semibold focus:outline-none focus:border-green-500 transition-all placeholder:text-gray-600"
+                                    className="flex-1 min-w-0 bg-gray-800/50 border border-gray-700 rounded-md px-2 py-1.5 text-[10px] font-semibold focus:outline-none focus:border-green-500 transition-all placeholder:text-gray-600 cursor-pointer"
                                 />
-                                <button className="bg-green-600 hover:bg-green-700 text-white p-1.5 rounded-md transition-all">
+                                <button className="bg-green-600 hover:bg-green-700 text-white p-1.5 rounded-md transition-all cursor-pointer">
                                     <Send size={12} />
                                 </button>
                             </form>
