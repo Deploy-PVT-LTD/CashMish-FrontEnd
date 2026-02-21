@@ -285,6 +285,9 @@ const MobileCart = () => {
 
       setCartItems(prev => prev.map(item => item.id === id ? { ...item, status: newStatus } : item));
 
+      // ✅ Clear processing BEFORE loadUserCart so button stops spinning instantly
+      setProcessingOrders(prev => { const s = new Set(prev); s.delete(id); return s; });
+
       if (newStatus === 'accepted') {
         const freshBidPrice = parseFloat(updatedForm.bidPrice) || 0;
         if (freshBidPrice > 0) {
@@ -297,7 +300,6 @@ const MobileCart = () => {
       loadUserCart();
     } catch (e) {
       Swal.fire('Connection Error', `Backend check karo: ${BASE_URL}`, 'error');
-    } finally {
       setProcessingOrders(prev => { const s = new Set(prev); s.delete(id); return s; });
     }
   };
