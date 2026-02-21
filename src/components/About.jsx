@@ -51,7 +51,7 @@ export default function AboutUs({ isPage = false }) {
             We are <span className="text-green-500">CashMish.</span>
           </h1>
           <p className="text-gray-400 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
-            Reimagining the device lifecycle. We turn your old tech into instant cash through AI-driven valuations and a seamless logistics network.
+            Unlock the true market value of your devices with an instant, data-driven valuation and enjoy a seamless, hassle-free pickup and payment experience.
           </p>
         </div>
       </section>
@@ -85,19 +85,19 @@ export default function AboutUs({ isPage = false }) {
             </div>
 
             <p className="text-gray-500 text-lg font-medium leading-relaxed">
-              At CashMish, we believe every device has a story and a value. Our mission is to ensure you receive the most accurate valuation, without the headache of negotiation.
+              At CashMish, we believe every device has a unique story and value. Our mission is to provide you with the most accurate quote without the hassle of negotiation.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">
                 <Zap className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
                 <h4 className="font-black text-gray-900 mb-2 text-sm tracking-tight">Instant Action</h4>
-                <p className="text-xs text-gray-400 font-medium">Valuations in seconds. Payments in minutes. We value your time as much as we value your tech.</p>
+                <p className="text-xs text-gray-400 font-medium">Valuations in seconds. Payments in minutes. We value your time as much as we value your tech. </p>
               </div>
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">
                 <ShieldCheck className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
                 <h4 className="font-black text-gray-900 mb-2 text-sm tracking-tight">Privacy</h4>
-                <p className="text-xs text-gray-400 font-medium">Your data security is paramount. We ensure every device is securely wiped before processing.</p>
+                <p className="text-xs text-gray-400 font-medium">Your data security is fully protected. We ensure every device is securely wiped before processing.</p>
               </div>
             </div>
           </div>

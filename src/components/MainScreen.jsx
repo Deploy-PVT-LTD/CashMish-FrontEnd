@@ -47,7 +47,7 @@ const PhoneFlipLanding = () => {
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-              Get instant AI-powered price predictions for your device. Enjoy quick doorstep pickup and guaranteed instant payment.
+              Get instant Real-time market-based valuation for your device. Enjoy quick doorstep pickup and guaranteed payment.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2">
