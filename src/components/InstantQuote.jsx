@@ -8,13 +8,13 @@ const InstantQuote = () => {
         <div className="min-h-screen bg-white selection:bg-green-100 selection:text-green-900">
             <Header />
 
-            <section className="pt-32 pb-24 px-6 bg-green-600 text-white relative overflow-hidden">
+            <section className="pt-24 md:pt-32 pb-16 md:pb-24 px-6 bg-green-600 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
                 <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest">
                         <Clock size={12} /> Zero Waiting Time
                     </div>
-                    <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.85] md:leading-none">
                         Instant <br /> <span className="text-green-900/40">Evaluation.</span>
                     </h1>
                     <p className="text-green-50 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
@@ -28,8 +28,8 @@ const InstantQuote = () => {
                 </div>
             </section>
 
-            <section className="py-24 px-6 max-w-7xl mx-auto">
-                <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
+                <div className="grid lg:grid-cols-2 gap-12 md:gap-20 items-center">
                     <div className="space-y-12">
                         <div className="space-y-4">
                             <h3 className="text-green-600 text-xs font-black uppercase tracking-widest">How it works</h3>
@@ -56,7 +56,7 @@ const InstantQuote = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-[3rem] p-12 border border-gray-100 relative">
+                    <div className="bg-gray-50 rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 border border-gray-100 relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         <div className="space-y-8 relative z-10">
                             <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">AI Appraisal Model v4.2</h3>
