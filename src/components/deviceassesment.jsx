@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/header.jsx';
-import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info } from 'lucide-react';
+import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const photoCategories = [
-  { key: 'front', label: 'Front Side', desc: 'Screen facing camera', icon: <Smartphone size={24} />, color: 'bg-blue-50 text-blue-600 border-blue-200', activeColor: 'border-blue-500 ring-2 ring-blue-200' },
-  { key: 'back', label: 'Back Side', desc: 'Back panel visible', icon: <RotateCcw size={24} />, color: 'bg-purple-50 text-purple-600 border-purple-200', activeColor: 'border-purple-500 ring-2 ring-purple-200' },
-  { key: 'top', label: 'Top Side', desc: 'Top edge of phone', icon: <ArrowUp size={24} />, color: 'bg-orange-50 text-orange-600 border-orange-200', activeColor: 'border-orange-500 ring-2 ring-orange-200' },
-  { key: 'bottom', label: 'Bottom Side', desc: 'Charging port area', icon: <ArrowDown size={24} />, color: 'bg-green-50 text-green-600 border-green-200', activeColor: 'border-green-500 ring-2 ring-green-200' },
-  { key: 'about', label: 'About Phone', desc: 'Settings > About screenshot', icon: <Info size={24} />, color: 'bg-gray-50 text-gray-600 border-gray-200', activeColor: 'border-gray-500 ring-2 ring-gray-200' },
+  { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <Smartphone size={32} />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
+  { key: 'back', label: 'Back Side', desc: 'Flip your phone and capture the back panel clearly', icon: <RotateCcw size={32} />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
+  { key: 'top', label: 'Top Side', desc: 'Capture the top edge of your phone', icon: <ArrowUp size={32} />, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', activeBorder: 'border-orange-500' },
+  { key: 'bottom', label: 'Bottom Side', desc: 'Capture the bottom edge showing charging port', icon: <ArrowDown size={32} />, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', activeBorder: 'border-green-500' },
+  { key: 'about', label: 'About Phone', desc: 'Go to Settings > About Phone and take a screenshot', icon: <Info size={32} />, color: 'text-gray-600', bg: 'bg-gray-100', border: 'border-gray-200', activeBorder: 'border-gray-500' },
 ];
 
 const DeviceAssessmentForm = () => {
@@ -24,6 +24,7 @@ const DeviceAssessmentForm = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showUploadGuide, setShowUploadGuide] = useState(false);
   const [photoSlots, setPhotoSlots] = useState({});
+  const [currentStep, setCurrentStep] = useState(0);
   const [activeSlot, setActiveSlot] = useState(null);
   const slotInputRef = useRef(null);
 
@@ -57,12 +58,10 @@ const DeviceAssessmentForm = () => {
 
     setPhotoSlots(prev => {
       const oldSlot = prev[activeSlot];
-      // Revoke old preview URL to avoid memory leak
       if (oldSlot?.preview) URL.revokeObjectURL(oldSlot.preview);
       return { ...prev, [activeSlot]: { file, preview } };
     });
 
-    // Update main arrays for form submission
     setSelectedFiles(prev => {
       const oldSlot = photoSlots[activeSlot];
       if (oldSlot) {
@@ -78,12 +77,18 @@ const DeviceAssessmentForm = () => {
       return [...prev, { preview, name: file.name }];
     });
 
+    // Auto-advance to next step after upload
+    if (currentStep < photoCategories.length - 1) {
+      setTimeout(() => setCurrentStep(prev => prev + 1), 400);
+    }
+
     setActiveSlot(null);
     e.target.value = '';
   };
 
-  const handleSlotClick = (key) => {
-    setActiveSlot(key);
+  const handleUploadClick = () => {
+    const cat = photoCategories[currentStep];
+    setActiveSlot(cat.key);
     setTimeout(() => slotInputRef.current?.click(), 100);
   };
 
@@ -114,6 +119,8 @@ const DeviceAssessmentForm = () => {
   };
 
   const uploadedCount = Object.keys(photoSlots).length;
+  const currentCategory = photoCategories[currentStep];
+  const currentUploaded = photoSlots[currentCategory?.key];
 
   const isFormValid = () => {
     return formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0;
@@ -148,6 +155,11 @@ const DeviceAssessmentForm = () => {
       red: selected ? 'bg-red-100 border-red-500 text-red-700' : 'border-red-200 hover:border-red-400'
     };
     return colors[color];
+  };
+
+  const openGuide = () => {
+    setCurrentStep(0);
+    setShowUploadGuide(true);
   };
 
   return (
@@ -191,7 +203,7 @@ const DeviceAssessmentForm = () => {
             </div>
 
             <div
-              onClick={() => setShowUploadGuide(true)}
+              onClick={openGuide}
               className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
             >
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
@@ -228,96 +240,153 @@ const DeviceAssessmentForm = () => {
         </form>
       </div>
 
-      {/* Photo Upload Guide Modal */}
-      {showUploadGuide && (
+      {/* Step-by-Step Photo Upload Modal */}
+      {showUploadGuide && currentCategory && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-[2rem] overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="bg-white w-full max-w-md rounded-[2rem] overflow-hidden shadow-2xl">
             {/* Header */}
-            <div className="bg-gray-900 p-6 text-white relative shrink-0">
+            <div className="bg-gray-900 p-6 text-white relative">
               <button
                 onClick={() => setShowUploadGuide(false)}
                 className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
-              <div className="flex items-center gap-3 mb-1">
+              <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
                   <Camera size={20} className="text-green-400" />
                 </div>
                 <div>
                   <h3 className="text-lg font-black uppercase tracking-tight">Upload <span className="text-green-400">Photos</span></h3>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{uploadedCount}/5 Uploaded — Tap each to add</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Step {currentStep + 1} of {photoCategories.length}</p>
                 </div>
+              </div>
+              {/* Progress bar */}
+              <div className="flex gap-1.5 mt-3">
+                {photoCategories.map((cat, i) => (
+                  <div
+                    key={cat.key}
+                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${photoSlots[cat.key] ? 'bg-green-400' : i === currentStep ? 'bg-white' : 'bg-white/20'
+                      }`}
+                  />
+                ))}
               </div>
             </div>
 
-            {/* Body */}
-            <div className="p-5 space-y-4 overflow-y-auto flex-1">
-              <p className="text-sm text-gray-500 font-medium text-center">
-                Tap each card below to upload that photo from your gallery:
-              </p>
-
-              <div className="grid grid-cols-2 gap-3">
-                {photoCategories.map((item) => {
-                  const uploaded = photoSlots[item.key];
-                  return (
-                    <div
-                      key={item.key}
-                      onClick={() => handleSlotClick(item.key)}
-                      className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${uploaded ? item.activeColor : item.color}`}
-                    >
-                      {uploaded ? (
-                        <>
-                          <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md relative">
-                            <img src={uploaded.preview} alt={item.label} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
-                              <Check size={20} className="text-white drop-shadow-lg" />
-                            </div>
-                          </div>
-                          <span className="text-[10px] font-black uppercase tracking-wider text-green-600">✓ {item.label}</span>
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); removeSlotPhoto(item.key); }}
-                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 shadow cursor-pointer hover:bg-red-600"
-                          >
-                            <X size={10} />
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white shadow-sm">
-                            {item.icon}
-                          </div>
-                          <span className="text-xs font-black uppercase tracking-wider">{item.label}</span>
-                          <span className="text-[10px] text-gray-400 font-medium text-center">{item.desc}</span>
-                          <span className="text-[9px] font-bold text-gray-300 uppercase">Tap to upload</span>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
+            {/* Step Content */}
+            <div className="p-6">
+              {/* Step dots */}
+              <div className="flex justify-center gap-2 mb-6">
+                {photoCategories.map((cat, i) => (
+                  <button
+                    key={cat.key}
+                    type="button"
+                    onClick={() => setCurrentStep(i)}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all cursor-pointer ${photoSlots[cat.key]
+                        ? 'bg-green-100 text-green-600 border-2 border-green-400'
+                        : i === currentStep
+                          ? 'bg-gray-900 text-white scale-110'
+                          : 'bg-gray-100 text-gray-400 border border-gray-200'
+                      }`}
+                  >
+                    {photoSlots[cat.key] ? <Check size={14} /> : i + 1}
+                  </button>
+                ))}
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-3 flex items-start gap-2">
-                <span className="text-yellow-500 text-lg">💡</span>
+              {/* Current step card */}
+              <div className={`rounded-2xl border-2 ${currentUploaded ? currentCategory.activeBorder : currentCategory.border} ${currentCategory.bg} p-6 text-center transition-all`}>
+                {currentUploaded ? (
+                  <div className="space-y-3">
+                    <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden shadow-lg relative">
+                      <img src={currentUploaded.preview} alt={currentCategory.label} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-green-500/10" />
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <Check size={16} className="text-green-600" />
+                      <span className="text-sm font-black uppercase tracking-wider text-green-600">{currentCategory.label} Uploaded!</span>
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        type="button"
+                        onClick={handleUploadClick}
+                        className="text-xs font-bold text-gray-500 underline cursor-pointer hover:text-gray-700"
+                      >
+                        Replace Photo
+                      </button>
+                      <span className="text-gray-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => removeSlotPhoto(currentCategory.key)}
+                        className="text-xs font-bold text-red-500 underline cursor-pointer hover:text-red-700"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center bg-white shadow-md ${currentCategory.color}`}>
+                      {currentCategory.icon}
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-black uppercase tracking-tight text-gray-900">{currentCategory.label}</h4>
+                      <p className="text-sm text-gray-500 font-medium mt-1">{currentCategory.desc}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleUploadClick}
+                      className={`w-full py-3.5 ${currentCategory.bg} border-2 ${currentCategory.border} ${currentCategory.color} font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer hover:shadow-md`}
+                    >
+                      <Camera size={16} /> Tap to Upload
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Tip */}
+              <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-3 flex items-start gap-2 mt-4">
+                <span className="text-yellow-500 text-base">💡</span>
                 <p className="text-[11px] font-semibold text-yellow-700">
-                  Better photos = more accurate price! Make sure photos are well-lit and show the actual condition clearly.
+                  Better photos = more accurate price! Well-lit, clear photos help us assess your device correctly.
                 </p>
               </div>
 
-              <button
-                onClick={() => setShowUploadGuide(false)}
-                className={`w-full py-3.5 font-black uppercase tracking-widest text-xs rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer ${uploadedCount > 0
-                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-600/20'
-                    : 'bg-gray-200 text-gray-500'
-                  }`}
-              >
-                {uploadedCount > 0 ? (
-                  <><Check size={16} /> Done — {uploadedCount} Photo{uploadedCount > 1 ? 's' : ''} Added</>
-                ) : (
-                  'Upload at least 1 photo'
+              {/* Navigation buttons */}
+              <div className="flex gap-3 mt-5">
+                {currentStep > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(prev => prev - 1)}
+                    className="flex-1 py-3 bg-gray-100 text-gray-600 font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
+                  >
+                    <ChevronLeft size={14} /> Back
+                  </button>
                 )}
-              </button>
+                {currentStep < photoCategories.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(prev => prev + 1)}
+                    className={`flex-1 py-3 font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer ${currentUploaded
+                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
+                        : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                      }`}
+                  >
+                    {currentUploaded ? 'Next' : 'Skip'} <ChevronRight size={14} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowUploadGuide(false)}
+                    className={`flex-1 py-3 font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer ${uploadedCount > 0
+                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
+                        : 'bg-gray-200 text-gray-500'
+                      }`}
+                  >
+                    <Check size={14} /> Done — {uploadedCount} Photo{uploadedCount !== 1 ? 's' : ''}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
