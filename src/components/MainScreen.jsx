@@ -47,7 +47,7 @@ const PhoneFlipLanding = () => {
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-              Get instant AI-powered price predictions for your device. Quick doorstep pickup and instant payment guaranteed.
+              Get instant AI-powered price predictions for your device. Enjoy quick doorstep pickup and guaranteed instant payment.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2">
@@ -80,9 +80,9 @@ const PhoneFlipLanding = () => {
             </div>
 
             <div className="grid sm:grid-cols-3 gap-6 pt-8">
-              <Feature icon={<Zap />} text="Instant Price Quote" />
-              <Feature icon={<Shield />} text="Secure Transaction" />
-              <Feature icon={<Smartphone />} text="Multiple Brands Accepted" />
+              <Feature icon={<Zap />} text="Instant price quote" />
+              <Feature icon={<Shield />} text="Secure transaction" />
+              <Feature icon={<Smartphone />} text="Multiple brands accepted" />
             </div>
           </div>
 
@@ -140,7 +140,7 @@ const Feature = ({ icon, text }) => (
     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-600 transition-colors">
       {React.cloneElement(icon, { className: "w-5 h-5 text-green-600 group-hover:text-white transition-colors" })}
     </div>
-    <span className="text-gray-700 font-bold text-sm uppercase tracking-tight">{text}</span>
+    <span className="text-gray-700 font-bold text-sm tracking-tight">{text}</span>
   </div>
 );
 

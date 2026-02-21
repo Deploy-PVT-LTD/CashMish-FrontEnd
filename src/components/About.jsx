@@ -15,7 +15,7 @@ export default function AboutUs({ isPage = false }) {
         const res = await fetch(`${BASE_URL}/api/reviews/approved`);
         if (res.ok) {
           const data = await res.json();
-          setMarqueeReviews(data);
+          setMarqueeReviews(data.slice(0, 8));
         }
       } catch (err) {
         console.error('Error fetching reviews:', err);
@@ -25,9 +25,9 @@ export default function AboutUs({ isPage = false }) {
   }, []);
 
   const stats = [
-    { label: 'Successful Auctions', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
-    { label: 'Active Sellers', value: '12k+', icon: <Users className="w-4 h-4" /> },
-    { label: 'Countries Covered', value: '1', icon: <Rocket className="w-4 h-4" /> },
+    { label: 'Successful auctions', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
+    { label: 'Active sellers', value: '12k+', icon: <Users className="w-4 h-4" /> },
+    { label: 'Country covered', value: '1', icon: <Rocket className="w-4 h-4" /> },
     { label: 'Rating', value: '4.9/5', icon: <Award className="w-4 h-4" /> },
   ];
 
@@ -43,15 +43,15 @@ export default function AboutUs({ isPage = false }) {
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black uppercase tracking-widest mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black tracking-widest mb-8">
             <Heart size={12} fill="currentColor" />
             Trusted by thousands
           </div>
-          <h1 className="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tighter leading-none">
+          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-none">
             We are <span className="text-green-500">CashMish.</span>
           </h1>
           <p className="text-gray-400 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
-            Reimagining the device lifecycle. We turn your old tech into instant capital through AI-driven valuations and a seamless logistics network.
+            Reimagining the device lifecycle. We turn your old tech into instant cash through AI-driven valuations and a seamless logistics network.
           </p>
         </div>
       </section>
@@ -65,7 +65,7 @@ export default function AboutUs({ isPage = false }) {
               <div key={i} className="flex flex-col items-center lg:items-start space-y-2">
                 <div className="text-green-600 mb-2">{stat.icon}</div>
                 <div className="text-3xl font-black text-gray-900 tracking-tight">{stat.value}</div>
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</div>
+                <div className="text-[10px] font-bold text-gray-400 tracking-widest">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -77,27 +77,27 @@ export default function AboutUs({ isPage = false }) {
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
-              <h3 className="text-green-600 text-xs font-black uppercase tracking-[0.2em]">Our Values</h3>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter leading-[0.9]">
+              <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Our Values</h3>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter leading-[0.9]">
                 Transparency is <br />
                 <span className="text-gray-400">Our strongest currency.</span>
               </h2>
             </div>
 
             <p className="text-gray-500 text-lg font-medium leading-relaxed">
-              At CashMish, we believe every device has a story and a value. Our mission is to ensure you get the most accurate valuation without the headache of negotiation.
+              At CashMish, we believe every device has a story and a value. Our mission is to ensure you receive the most accurate valuation, without the headache of negotiation.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">
                 <Zap className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h4 className="font-black text-gray-900 mb-2 uppercase text-sm tracking-tight">Instant Action</h4>
-                <p className="text-xs text-gray-400 font-medium">Valuations in seconds, payments in minutes. We value your time as much as your tech.</p>
+                <h4 className="font-black text-gray-900 mb-2 text-sm tracking-tight">Instant Action</h4>
+                <p className="text-xs text-gray-400 font-medium">Valuations in seconds. Payments in minutes. We value your time as much as we value your tech.</p>
               </div>
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">
                 <ShieldCheck className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h4 className="font-black text-gray-900 mb-2 uppercase text-sm tracking-tight">Military Privacy</h4>
-                <p className="text-xs text-gray-400 font-medium">Your data security is paramount. We ensure every device is wiped before processing.</p>
+                <h4 className="font-black text-gray-900 mb-2 text-sm tracking-tight">Privacy</h4>
+                <p className="text-xs text-gray-400 font-medium">Your data security is paramount. We ensure every device is securely wiped before processing.</p>
               </div>
             </div>
           </div>
@@ -121,9 +121,9 @@ export default function AboutUs({ isPage = false }) {
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
 
         {marqueeReviews.length > 0 ? (
-          <div className="flex animate-marquee group-hover:[animation-play-state:paused] gap-12 whitespace-nowrap">
+          <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] whitespace-nowrap">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex gap-12 items-center">
+              <div key={i} className="flex gap-12 items-center pr-12">
                 {marqueeReviews.map((review, idx) => (
                   <div key={idx} className="flex flex-col gap-1 cursor-pointer max-w-[280px]" onClick={() => window.location.href = '/reviews'}>
                     <div className="flex gap-1 mb-1">
@@ -131,9 +131,9 @@ export default function AboutUs({ isPage = false }) {
                         <Star key={starIdx} size={10} className={starIdx < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"} />
                       ))}
                     </div>
-                    <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic whitespace-normal line-clamp-1">"{review.description}"</p>
+                    <p className="text-sm font-black text-gray-900 tracking-tight italic whitespace-normal line-clamp-1">"{review.description}"</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">— {review.name}</span>
+                      <span className="text-[10px] font-bold text-gray-400 tracking-widest">— {review.name}</span>
                     </div>
                   </div>
                 ))}
@@ -161,13 +161,13 @@ export default function AboutUs({ isPage = false }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div className="space-y-4">
-              <h3 className="text-green-600 text-xs font-black uppercase tracking-[0.2em]">Insights</h3>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 uppercase tracking-tighter leading-[0.9]">
+              <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Insights</h3>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 tracking-tighter leading-[0.9]">
                 From our <br />
                 <span className="text-gray-400">Latest Blogs.</span>
               </h2>
               <div className="pt-4">
-                <a href="/blogs" className="group text-[10px] font-black uppercase tracking-widest text-green-600 flex items-center gap-2 transition-all cursor-pointer">
+                <a href="/blogs" className="group text-[10px] font-black tracking-widest text-green-600 flex items-center gap-2 transition-all cursor-pointer">
                   View All Articles <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
@@ -207,13 +207,13 @@ export default function AboutUs({ isPage = false }) {
               <div key={i} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
                 <div className="aspect-[16/10] overflow-hidden relative cursor-pointer">
                   <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-green-600 shadow-sm">
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-green-600 shadow-sm">
                     {blog.category}
                   </div>
                 </div>
                 <div className="p-8 space-y-4">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{blog.date}</div>
-                  <h4 className="text-xl font-black text-gray-900 uppercase tracking-tight leading-tight group-hover:text-green-600 transition-colors">
+                  <div className="text-[10px] font-bold text-gray-400 tracking-widest">{blog.date}</div>
+                  <h4 className="text-xl font-black text-gray-900 tracking-tight leading-tight group-hover:text-green-600 transition-colors">
                     {blog.title}
                   </h4>
                   <p className="text-sm text-gray-500 font-medium leading-relaxed line-clamp-2 italic">
@@ -221,7 +221,7 @@ export default function AboutUs({ isPage = false }) {
                   </p>
                   <button
                     onClick={() => setSelectedBlog(blog)}
-                    className="pt-4 flex items-center gap-2 text-green-600 font-black uppercase text-[10px] tracking-widest group-hover:gap-4 transition-all cursor-pointer"
+                    className="pt-4 flex items-center gap-2 text-green-600 font-black text-[10px] tracking-widest group-hover:gap-4 transition-all cursor-pointer"
                   >
                     Read More <ArrowRight size={14} />
                   </button>
@@ -248,14 +248,14 @@ export default function AboutUs({ isPage = false }) {
               </div>
               <div className="p-10 space-y-6">
                 <div className="flex items-center gap-3">
-                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest">
                     {selectedBlog.category}
                   </span>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-gray-400 tracking-widest">
                     {selectedBlog.date}
                   </span>
                 </div>
-                <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none">
+                <h3 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">
                   {selectedBlog.title}
                 </h3>
                 <div className="h-1 w-20 bg-green-500 rounded-full"></div>
@@ -263,13 +263,13 @@ export default function AboutUs({ isPage = false }) {
                   {selectedBlog.fullContent}
                 </p>
                 <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold tracking-widest">
                     <Zap size={14} className="text-green-500" />
                     CashMish Insights
                   </div>
                   <button
                     onClick={() => setSelectedBlog(null)}
-                    className="bg-gray-900 text-white px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
+                    className="bg-gray-900 text-white px-6 py-3 rounded-xl font-black text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
                   >
                     Close Article
                   </button>

@@ -13,7 +13,7 @@ const HowItWorks = () => {
       icon: <Target size={24} />,
       iconBg: "bg-green-100 text-green-700",
       title: "Doorstep Inspection",
-      description: "Our expert visits your location at a time convenient for you to verify your device condition.",
+      description: "Our expert visits your location at a time convenient for you to verify your device’s condition.",
       detail: "Usually within 24–48 hours",
       fullContent: "Once you schedule an appointment through our platform, a certified CashMish technician will visit your home or office. We perform a comprehensive 20-point diagnostic check to verify everything from screen functionality to battery health. This process ensures both the buyer and seller are on the same page, leading to a fair and transparent final valuation."
     },
@@ -22,7 +22,7 @@ const HowItWorks = () => {
       icon: <ShieldCheck size={24} />,
       iconBg: "bg-green-100 text-green-700",
       title: "Final Bid",
-      description: "Receive your final offer based on physical inspection with zero hidden deductions.",
+      description: "Receive your final offer based on a physical inspection, with zero hidden deductions.",
       detail: "Instant quote on the spot",
       fullContent: "After the inspection, our technician will provide an instant final bid. This price is calculated using our AI-driven market data, ensuring you get the most competitive value. There are no hidden fees or surprise deductions; the price we quote is exactly what you receive. You are under no obligation to accept the offer until you are completely satisfied."
     },
@@ -60,11 +60,11 @@ const HowItWorks = () => {
         <section className="text-center px-6 py-16 md:py-24 bg-gray-900 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-green-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
           <div className="relative z-10">
-            <h1 className="text-4xl md:text-6xl font-black mb-6 uppercase tracking-tighter leading-none">
+            <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-none">
               How <span className="text-green-500">{displayText}</span> Works
             </h1>
             <p className="text-gray-400 max-w-2xl mx-auto text-base md:text-xl font-medium leading-relaxed">
-              Sell your device in just three simple steps with full transparency
+              Sell your device in just three simple steps, with full transparency
               and secure payment processing.
             </p>
           </div>
@@ -82,7 +82,7 @@ const HowItWorks = () => {
 
                 {/* Top */}
                 <div className="flex items-center justify-between mb-8">
-                  <span className="text-xs font-black text-gray-300 uppercase tracking-widest">
+                  <span className="text-xs font-black text-gray-300 tracking-widest">
                     Step {step.number}
                   </span>
                   <div
@@ -93,19 +93,19 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-2xl font-black text-gray-900 mb-4 uppercase tracking-tight group-hover:text-green-600 transition-colors">
+                <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight group-hover:text-green-600 transition-colors">
                   {step.title}
                 </h3>
                 <p className="text-gray-500 font-medium leading-relaxed mb-6 italic">
                   "{step.description}"
                 </p>
                 <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-50">
-                  <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full">
+                  <span className="text-[10px] font-bold text-green-700 tracking-widest bg-green-50 px-3 py-1 rounded-full">
                     {step.detail}
                   </span>
                   <button
                     onClick={() => setSelectedStep(step)}
-                    className="flex items-center gap-2 text-green-600 font-black text-[10px] uppercase tracking-widest hover:gap-4 transition-all cursor-pointer"
+                    className="flex items-center gap-2 text-green-600 font-black text-[10px] tracking-widest hover:gap-4 transition-all cursor-pointer"
                   >
                     Read More <ArrowRight size={14} />
                   </button>
@@ -132,8 +132,8 @@ const HowItWorks = () => {
                   {selectedStep.icon}
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Step {selectedStep.number}</span>
-                  <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none">{selectedStep.title}</h3>
+                  <span className="text-[10px] font-black text-gray-400 tracking-widest">Step {selectedStep.number}</span>
+                  <h3 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">{selectedStep.title}</h3>
                 </div>
               </div>
               <div className="h-1 w-20 bg-green-500 rounded-full"></div>
@@ -141,13 +141,13 @@ const HowItWorks = () => {
                 {selectedStep.fullContent}
               </p>
               <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-                <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold tracking-widest">
                   <Zap size={14} className="text-green-500" />
                   CashMish Process
                 </div>
                 <button
                   onClick={() => setSelectedStep(null)}
-                  className="bg-gray-900 text-white px-8 py-3 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
+                  className="bg-gray-900 text-white px-8 py-3 rounded-xl font-black text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
                 >
                   Got It
                 </button>
