@@ -70,7 +70,8 @@ const PriceResult = () => {
         }
       }, duration / steps);
 
-      const gaugePercentage = Math.min(((estimatedPrice - 100) / 1500) * 100, 100);
+      // Calculate percentage: 0% at $0, 100% at $1500 or more
+      const gaugePercentage = Math.min(Math.max((estimatedPrice / 1500) * 100, 0), 100);
       const targetOffset = 251 - (gaugePercentage / 100) * 251;
       setGaugeOffset(targetOffset);
 

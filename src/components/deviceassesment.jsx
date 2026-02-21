@@ -23,6 +23,8 @@ const DeviceAssessmentForm = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showUploadGuide, setShowUploadGuide] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [photoSlots, setPhotoSlots] = useState({});
   const [currentStep, setCurrentStep] = useState(0);
   const [activeSlot, setActiveSlot] = useState(null);
@@ -123,7 +125,7 @@ const DeviceAssessmentForm = () => {
   const currentUploaded = photoSlots[currentCategory?.key];
 
   const isFormValid = () => {
-    return formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0;
+    return formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0 && acceptedTerms;
   };
 
   const handleSubmit = (e) => {
@@ -229,13 +231,31 @@ const DeviceAssessmentForm = () => {
             )}
           </div>
 
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex items-start gap-3">
+              <div className="pt-1">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 cursor-pointer"
+                  required
+                />
+              </div>
+              <label htmlFor="terms" className="text-sm font-medium text-gray-700 leading-relaxed cursor-pointer">
+                I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-green-600 font-bold hover:underline">Terms and Conditions</button> regarding the sale of my device.
+              </label>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={!isFormValid()}
             className={`w-full py-4 rounded-xl font-bold text-white text-lg transition-all ${isFormValid() ? "bg-green-800 hover:bg-green-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
               }`}
           >
-            {isFormValid() ? "Save & Continue" : !selectedFiles.length && isFormValid() === false && formData.screenCondition && formData.bodyCondition && formData.batteryCondition ? "Please Upload Photos" : "Complete Assessment"}
+            {isFormValid() ? "Save & Continue" : !acceptedTerms && formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0 ? "Accept Terms to Continue" : !selectedFiles.length && isFormValid() === false && formData.screenCondition && formData.bodyCondition && formData.batteryCondition ? "Please Upload Photos" : "Complete Assessment"}
           </button>
         </form>
       </div>
@@ -283,10 +303,10 @@ const DeviceAssessmentForm = () => {
                     type="button"
                     onClick={() => setCurrentStep(i)}
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all cursor-pointer ${photoSlots[cat.key]
-                        ? 'bg-green-100 text-green-600 border-2 border-green-400'
-                        : i === currentStep
-                          ? 'bg-gray-900 text-white scale-110'
-                          : 'bg-gray-100 text-gray-400 border border-gray-200'
+                      ? 'bg-green-100 text-green-600 border-2 border-green-400'
+                      : i === currentStep
+                        ? 'bg-gray-900 text-white scale-110'
+                        : 'bg-gray-100 text-gray-400 border border-gray-200'
                       }`}
                   >
                     {photoSlots[cat.key] ? <Check size={14} /> : i + 1}
@@ -368,8 +388,8 @@ const DeviceAssessmentForm = () => {
                     type="button"
                     onClick={() => setCurrentStep(prev => prev + 1)}
                     className={`flex-1 py-3 font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer ${currentUploaded
-                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
-                        : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                      ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
+                      : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
                       }`}
                   >
                     {currentUploaded ? 'Next' : 'Skip'} <ChevronRight size={14} />
@@ -379,8 +399,8 @@ const DeviceAssessmentForm = () => {
                     type="button"
                     onClick={() => setShowUploadGuide(false)}
                     className={`flex-1 py-3 font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer ${uploadedCount > 0
-                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
-                        : 'bg-gray-200 text-gray-500'
+                      ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
+                      : 'bg-gray-200 text-gray-500'
                       }`}
                   >
                     <Check size={14} /> Done — {uploadedCount} Photo{uploadedCount !== 1 ? 's' : ''}
@@ -389,6 +409,98 @@ const DeviceAssessmentForm = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {/* Terms and Conditions Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col max-h-[95vh] animate-in zoom-in-95 duration-300">
+            {/* Modal Header */}
+            <div className="bg-gray-900 p-8 text-white relative">
+              <button
+                type="button"
+                onClick={() => setShowTermsModal(false)}
+                className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center">
+                  <Shield size={24} className="text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black uppercase tracking-tight">Terms & <span className="text-green-400">Conditions</span></h3>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">United States Edition</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-8 overflow-y-auto custom-scrollbar">
+              <div className="prose prose-sm max-w-none space-y-6">
+                <p className="text-gray-600 font-medium italic">
+                  Cashmish.com - Complete Terms and Conditions (United States)
+                </p>
+
+                {[
+                  { title: "1. Introduction", content: "These Terms and Conditions govern all transactions between Cashmish.com and customers selling devices through our platform within the United States. By submitting a device for sale, you agree to be bound by these Terms." },
+                  { title: "2. Eligibility", content: "You must be at least 18 years old and the legal owner of the device being sold." },
+                  { title: "3. Customer Representations", content: "By submitting a device, you confirm the device is legally owned, not lost or stolen, free from financial obligations, and that all personal data has been removed." },
+                  { title: "4. Accuracy of Information", content: "Customers must provide accurate information including model, storage, carrier status, functional condition, cosmetic condition, repair history, and any damage. The estimated price shown is based solely on the provided information." },
+                  { title: "5. Inspection & Verification", content: "All devices undergo professional lab testing and physical inspection upon receipt. If the device does not match the submitted details, Cashmish.com reserves the right to revise the offer price." },
+                  { title: "6. Revised Offer Process", content: "If a revised offer is necessary, customers will be notified and may accept or decline. If declined, the device will be returned subject to return shipping fees if discrepancies resulted from incorrect information." },
+                  { title: "7. Payment Processing", content: "Payments are processed within 1–2 business days after final offer acceptance and inspection clearance. Cashmish.com is not responsible for delays caused by third-party payment providers." },
+                  { title: "8. Stolen or Fraudulent Devices", content: "Devices identified as stolen, blacklisted, activation locked, or associated with fraud may be rejected. Cashmish.com reserves the right to cooperate with law enforcement and report device details when necessary." },
+                  { title: "9. Data Responsibility", content: "Customers are solely responsible for removing personal data and disabling activation locks before shipping devices." },
+                  { title: "10. Shipping & Risk of Loss", content: "Risk of loss remains with the customer until the device is received and confirmed by Cashmish.com. Return shipping costs apply when applicable." },
+                  { title: "11. Limitation of Liability", content: "To the fullest extent permitted by law, Cashmish.com's liability shall not exceed the final agreed purchase price of the device. Cashmish.com is not liable for indirect or consequential damages." },
+                  { title: "12. Right to Refuse Service", content: "Cashmish.com reserves the right to refuse service, cancel offers, or return devices at its discretion in cases of policy violations, fraud suspicion, or misrepresentation." },
+                  { title: "13. Dispute Resolution & Governing Law", content: "These Terms are governed by the laws of the United States and the state of registration of Cashmish.com. Disputes shall first be resolved through good faith negotiation and, if unresolved, binding arbitration. Customers waive participation in class-action lawsuits." },
+                  { title: "14. Modifications", content: "Cashmish.com reserves the right to update these Terms at any time. Continued use of the platform constitutes acceptance of revised Terms." }
+                ].map((section, idx) => (
+                  <div key={idx} className="space-y-2">
+                    <h4 className="text-gray-900 font-black uppercase text-xs tracking-widest flex items-center gap-2">
+                      <div className="w-1 h-4 bg-green-500 rounded-full"></div>
+                      {section.title}
+                    </h4>
+                    <p className="text-gray-500 leading-relaxed text-sm font-medium">
+                      {section.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-8 border-t border-gray-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setAcceptedTerms(true);
+                  setShowTermsModal(false);
+                }}
+                className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-green-700 transition-all shadow-xl shadow-green-600/20 cursor-pointer active:scale-95"
+              >
+                I Understand & Agree
+              </button>
+            </div>
+          </div>
+          <style>{`
+            .custom-scrollbar::-webkit-scrollbar {
+              width: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+              background: #f1f1f1;
+              border-radius: 10px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+              background: #ddd;
+              border-radius: 10px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+              background: #ccc;
+            }
+          `}</style>
         </div>
       )}
     </div>
