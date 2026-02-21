@@ -439,7 +439,7 @@ const DeviceAssessmentForm = () => {
             <div className="p-8 overflow-y-auto custom-scrollbar">
               <div className="prose prose-sm max-w-none space-y-6">
                 <p className="text-gray-600 font-medium italic">
-                  Cashmish.com - Complete Terms and Conditions (United States)
+                  {/* Cashmish.com - Complete Terms and Conditions (United States) */}
                 </p>
 
                 {[
