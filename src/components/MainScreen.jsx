@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import phoneMockup from "../assets/image-removebg-preview.png";
+import mobileimg from "../assets/iphones-cashmish-png.png"
 import { Smartphone, Shield, Zap } from "lucide-react";
 import Header from "../components/header.jsx";
 import AboutUs from "./About.jsx";
@@ -37,7 +38,7 @@ const PhoneFlipLanding = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-x-hidden">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-6 pb-24 lg:pt-8 lg:pb-32 overflow-hidden">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-6 pb-24 lg:pt-8 lg:pb-32">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-14 items-center">
 
           {/* LEFT */}
@@ -55,7 +56,7 @@ const PhoneFlipLanding = () => {
                 href="/brandselection"
                 className="bg-green-800 text-white px-4 py-2 lg:py-3 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-green-700 transition-colors"
               >
-                Get Your Price
+                Sell Your Device
                 <svg
                   className="w-4 h-4 ml-1"
                   fill="none"
@@ -87,10 +88,11 @@ const PhoneFlipLanding = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="relative flex justify-center lg:justify-end lg:mt-8">
+          <div className="relative flex justify-center lg:mt-8">
 
             {/* Verified Badge */}
-            <div className="absolute top-8 left-4 lg:left-auto lg:right-[18rem] bg-white rounded-xl shadow-lg px-6 py-3 flex items-center space-x-3 z-10 animate-pulse">
+            <div className="absolute top-6 -left-2 lg:left-8 bg-white rounded-xl shadow-lg px-4 py-3 flex items-center space-x-3 z-20 animate-pulse">
+              {/* Maine 'top-8' ko badal kar 'top-2' kar diya hai taake ye upar chala jaye */}
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <Shield className="w-6 h-6 text-green-600" />
               </div>
@@ -101,22 +103,32 @@ const PhoneFlipLanding = () => {
             </div>
 
             {/* PHONE CARD WITH ANIMATED BG */}
-            <div className="relative mt-8 lg:mt-0">
+            {/* PHONE CARD SECTION */}
+            {/* flex-center hata kar lg:justify-start kiya hai taake left side pe alignment ho jaye */}
+            <div className="relative mt-16 lg:mt-0 flex justify-center items-center lg:translate-x-8">
+
+              {/* Green Card */}
               <div
-                className="rounded-[3rem] p-8 shadow-xl w-72 sm:w-80
-             bg-gradient-to-br from-green-500 via-green-900 to-green-600
+                className="relative rounded-[3rem] shadow-2xl
+             w-52 sm:w-72 lg:w-80
+             h-[340px] sm:h-[400px] lg:h-[480px]
+             bg-gradient-to-br from-green-600 via-green-900 to-green-800
              animate-phone-card"
               >
-                <div className="text-center">
-                  <img src={phoneMockup} alt="phone" />
+                {/* Image — overflow-visible so it pops out of the card */}
+                <div className="absolute inset-0 flex items-center justify-center" style={{ overflow: 'visible' }}>
+                  <img
+                    src={mobileimg}
+                    alt="phones spread"
+                    className="w-[170%] sm:w-[140%] lg:w-[170%] max-w-none h-auto
+                 transform lg:translate-x-8 -translate-y-4 lg:-translate-y-6
+                 transition-all duration-500 hover:scale-105"
+                  />
                 </div>
               </div>
 
-
-
-
               {/* Stats */}
-              <div className="absolute -bottom-2 -right-4 bg-white rounded-xl shadow-lg px-6 py-4">
+              <div className="absolute -bottom-12 -right-4 bg-white rounded-xl shadow-lg px-6 py-4">
                 <div className="w-12 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Zap className="w-6 h-6 text-green-600" />
                 </div>

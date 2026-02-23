@@ -5,6 +5,7 @@ import logo from "../assets/deploy-logo.png";
 import { useWallet } from '../components/Walletcontext';
 import WalletModal from '../components/Walletmodal';
 import Swal from 'sweetalert2';
+import cashmishlogo from "../assets/cashmish-logo.svg"
 
 function Header({ simple = false }) {
   const [open, setOpen] = useState(false);
@@ -19,29 +20,29 @@ function Header({ simple = false }) {
 
   // Smart Header Visibility Logic
   useEffect(() => {
+    let internalLastScrollY = window.scrollY;
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollThreshold = 10;
 
       if (currentScrollY < 50) {
-        // Always show at the top
         setHeaderVisible(true);
-      } else if (Math.abs(currentScrollY - lastScrollY) > scrollThreshold) {
-        if (currentScrollY > lastScrollY) {
-          // Scrolling Down -> Hide Header
+      } else if (Math.abs(currentScrollY - internalLastScrollY) > scrollThreshold) {
+        if (currentScrollY > internalLastScrollY) {
           setHeaderVisible(false);
         } else {
-          // Scrolling Up -> Show Header
           setHeaderVisible(true);
         }
       }
 
+      internalLastScrollY = currentScrollY;
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const walletContext = useWallet() || {};
   const {
@@ -162,8 +163,8 @@ function Header({ simple = false }) {
 
             <div className="flex items-center flex-shrink-0">
               <a href="/" className="flex items-center gap-2 group">
-                <img src={logo} alt="Logo" className="w-10 h-10 group-hover:scale-105 transition-transform" />
-                <span className="text-xl font-bold text-gray-900 tracking-tight">CashMish</span>
+                <img src={cashmishlogo} alt="Logo" className="w-45 h-35 group-hover:scale-105 transition-transform" />
+                {/* <span className="text-xl font-bold text-gray-900 tracking-tight">CashMish</span> */}
               </a>
             </div>
 

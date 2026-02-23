@@ -30,7 +30,15 @@ const BrandSelection = ({ onSelectBrand }) => {
         if (Array.isArray(allMobiles)) {
           // Unique brands extract karna
           const uniqueBrandNames = [...new Set(allMobiles.map(item => item.brand))];
-          setBrands(uniqueBrandNames);
+          // Sort: Apple first, Samsung second, rest alphabetically
+          const priority = { 'Apple': 0, 'Samsung': 1 };
+          const sorted = uniqueBrandNames.sort((a, b) => {
+            const pa = priority[a] ?? 99;
+            const pb = priority[b] ?? 99;
+            if (pa !== pb) return pa - pb;
+            return a.localeCompare(b);
+          });
+          setBrands(sorted);
         } else {
           console.error("API response is not an array:", allMobiles);
           setBrands([]); // Set an empty array or handle accordingly

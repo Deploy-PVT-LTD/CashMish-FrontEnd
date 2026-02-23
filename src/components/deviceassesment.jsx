@@ -3,12 +3,18 @@ import { useNavigate } from "react-router-dom";
 import Header from '../components/header.jsx';
 import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft } from 'lucide-react';
 
+import frontImg from '../assets/front.webp';
+import backImg from '../assets/back.webp';
+import leftImg from '../assets/left.webp';
+import rightImg from '../assets/right.webp';
+import batteryImg from '../assets/battery-health.webp';
+
 const photoCategories = [
-  { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <Smartphone size={32} />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
-  { key: 'back', label: 'Back Side', desc: 'Flip your phone and capture the back panel clearly', icon: <RotateCcw size={32} />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
-  { key: 'top', label: 'Top Side', desc: 'Capture the top edge of your phone', icon: <ArrowUp size={32} />, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', activeBorder: 'border-orange-500' },
-  { key: 'bottom', label: 'Bottom Side', desc: 'Capture the bottom edge showing charging port', icon: <ArrowDown size={32} />, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', activeBorder: 'border-green-500' },
-  { key: 'about', label: 'About Phone', desc: 'Go to Settings > About Phone and take a screenshot', icon: <Info size={32} />, color: 'text-gray-600', bg: 'bg-gray-100', border: 'border-gray-200', activeBorder: 'border-gray-500' },
+  { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <img src={frontImg} alt="Front" className="w-20 h-50 object-contain" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
+  { key: 'back', label: 'Back Side', desc: 'Flip your phone and capture the back panel clearly', icon: <img src={backImg} alt="Back" className="w-20 h-50 object-contain" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
+  { key: 'left', label: 'Left Side', desc: 'Capture the left edge showing volume buttons', icon: <img src={leftImg} alt="Left" className="w-20 h-50 object-contain" />, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', activeBorder: 'border-orange-500' },
+  { key: 'right', label: 'Right Side', desc: 'Capture the right edge showing power button', icon: <img src={rightImg} alt="Right" className="w-20 h-50 object-contain" />, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', activeBorder: 'border-green-500' },
+  { key: 'battery', label: 'Battery Health', desc: 'Go to Settings > Battery > Battery Health and take a Picture', icon: <img src={batteryImg} alt="Battery" className="w-20 h-50 object-contain" />, color: 'text-gray-600', bg: 'bg-gray-100', border: 'border-gray-200', activeBorder: 'border-gray-500' },
 ];
 
 const DeviceAssessmentForm = () => {
@@ -314,52 +320,69 @@ const DeviceAssessmentForm = () => {
                 ))}
               </div>
 
-              {/* Current step card */}
-              <div className={`rounded-2xl border-2 ${currentUploaded ? currentCategory.activeBorder : currentCategory.border} ${currentCategory.bg} p-6 text-center transition-all`}>
+              {/* Current step card — 2-column split layout */}
+              <div className={`rounded-2xl border-2 overflow-hidden transition-all ${currentUploaded ? currentCategory.activeBorder : currentCategory.border}`}>
                 {currentUploaded ? (
-                  <div className="space-y-3">
-                    <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden shadow-lg relative">
-                      <img src={currentUploaded.preview} alt={currentCategory.label} className="w-full h-full object-cover" />
+                  /* Uploaded: left = image preview, right = info + controls */
+                  <div className="flex min-h-[200px]">
+                    {/* Left: Image Preview */}
+                    <div className="w-1/2 relative bg-gray-100">
+                      <img
+                        src={currentUploaded.preview}
+                        alt={currentCategory.label}
+                        className="w-full h-full object-cover"
+                        style={{ minHeight: '180px' }}
+                      />
                       <div className="absolute inset-0 bg-green-500/10" />
+                      <div className="absolute top-2 left-2 bg-green-500 text-white rounded-full p-1">
+                        <Check size={12} />
+                      </div>
                     </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <Check size={16} className="text-green-600" />
-                      <span className="text-sm font-black uppercase tracking-wider text-green-600">{currentCategory.label} Uploaded!</span>
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        type="button"
-                        onClick={handleUploadClick}
-                        className="text-xs font-bold text-gray-500 underline cursor-pointer hover:text-gray-700"
-                      >
-                        Replace Photo
-                      </button>
-                      <span className="text-gray-300">|</span>
-                      <button
-                        type="button"
-                        onClick={() => removeSlotPhoto(currentCategory.key)}
-                        className="text-xs font-bold text-red-500 underline cursor-pointer hover:text-red-700"
-                      >
-                        Remove
-                      </button>
+                    {/* Right: Content */}
+                    <div className={`w-1/2 ${currentCategory.bg} p-4 flex flex-col justify-between`}>
+                      <div>
+                        <h4 className="text-sm font-black uppercase tracking-tight text-gray-900">{currentCategory.label}</h4>
+                        <p className="text-xs text-gray-500 font-medium mt-1">{currentCategory.desc}</p>
+                      </div>
+                      <div className="space-y-2 mt-3">
+                        <button
+                          type="button"
+                          onClick={handleUploadClick}
+                          className={`w-full py-2 border-2 ${currentCategory.border} ${currentCategory.color} font-black uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer hover:shadow-md bg-white`}
+                        >
+                          <Camera size={12} /> Tap to Upload
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeSlotPhoto(currentCategory.key)}
+                          className="w-full text-[10px] font-bold text-red-500 underline cursor-pointer hover:text-red-700"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center bg-white shadow-md ${currentCategory.color}`}>
+                  /* Not uploaded: left = reference image, right = upload prompt */
+                  <div className="flex min-h-[200px]">
+                    {/* Left: Reference Image */}
+                    <div className={`w-1/2 ${currentCategory.bg} flex items-center justify-center`}>
                       {currentCategory.icon}
                     </div>
-                    <div>
-                      <h4 className="text-lg font-black uppercase tracking-tight text-gray-900">{currentCategory.label}</h4>
-                      <p className="text-sm text-gray-500 font-medium mt-1">{currentCategory.desc}</p>
+                    {/* Right: Upload Prompt */}
+                    <div className="w-1/2 bg-white p-4 flex flex-col justify-between border-l border-gray-100">
+                      <div>
+                        <h4 className="text-sm font-black uppercase tracking-tight text-gray-900">{currentCategory.label}</h4>
+                        <p className="text-xs text-gray-500 font-medium mt-1">{currentCategory.desc}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleUploadClick}
+                        className={`mt-3 w-full py-2.5 ${currentCategory.bg} border-2 ${currentCategory.border} ${currentCategory.color} font-black uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer hover:shadow-md`}
+                      >
+                        <Camera size={12} /> Tap to Upload
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleUploadClick}
-                      className={`w-full py-3.5 ${currentCategory.bg} border-2 ${currentCategory.border} ${currentCategory.color} font-black uppercase tracking-widest text-xs rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer hover:shadow-md`}
-                    >
-                      <Camera size={16} /> Tap to Upload
-                    </button>
                   </div>
                 )}
               </div>

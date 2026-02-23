@@ -5,7 +5,7 @@ import { Zap, Clock, Smartphone, Target, ArrowRight } from 'lucide-react';
 
 const InstantQuote = () => {
     return (
-        <div className="min-h-screen bg-white selection:bg-green-100 selection:text-green-900">
+        <div className="min-h-screen bg-white selection:bg-green-100 selection:text-green-900 overflow-x-hidden">
             <Header />
 
             <section className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 bg-green-600 text-white relative overflow-hidden">
@@ -14,7 +14,7 @@ const InstantQuote = () => {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest">
                         <Clock size={12} /> Zero Waiting Time
                     </div>
-                    <h1 className="text-3xl sm:text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.85] md:leading-none">
+                    <h1 className="text-[clamp(1.75rem,8vw,6rem)] font-black uppercase tracking-tighter leading-[0.85] md:leading-none break-words">
                         Instant <br /> <span className="text-green-900/40">Evaluation.</span>
                     </h1>
                     <p className="text-green-50 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
@@ -33,7 +33,7 @@ const InstantQuote = () => {
                     <div className="space-y-12">
                         <div className="space-y-4">
                             <h3 className="text-green-600 text-xs font-black uppercase tracking-widest">How it works</h3>
-                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter leading-[0.9]">
+                            <h2 className="text-[clamp(1.5rem,7vw,3.5rem)] font-black text-gray-900 uppercase tracking-tighter leading-[0.9] break-words">
                                 Smart Pricing <br />
                                 <span className="text-gray-400">Zero Negotiation.</span>
                             </h2>
