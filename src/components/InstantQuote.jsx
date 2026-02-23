@@ -18,8 +18,7 @@ const InstantQuote = () => {
                         Instant <br /> <span className="text-green-900/40">Evaluation.</span>
                     </h1>
                     <p className="text-green-50 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
-                        Say goodbye to "I'll get back to you." Our AI instantly calculates the most accurate market price for your phone based on 100+ parameters.
-                    </p>
+                        We provide a free, trackable prepaid shipping label so you can send your item(s) to us at no cost.                    </p>
                     <div className="pt-4">
                         <a href="/brandselection" className="bg-gray-900 text-white px-10 py-5 rounded-3xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-2xl inline-block cursor-pointer">
                             Start Appraisal

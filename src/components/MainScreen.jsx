@@ -48,7 +48,8 @@ const PhoneFlipLanding = () => {
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-              Get instant Real-time market-based valuation for your device. Enjoy quick doorstep pickup and guaranteed payment.
+Get an instant, real-time market valuation for your device.
+Ship your phone directly to us and receive fast, secure payment.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2">
@@ -110,8 +111,8 @@ const PhoneFlipLanding = () => {
               {/* Green Card */}
               <div
                 className="relative rounded-[3rem] shadow-2xl
-             w-52 sm:w-72 lg:w-80
-             h-[340px] sm:h-[400px] lg:h-[480px]
+             w-48 sm:w-72 lg:w-80
+             h-[300px] sm:h-[400px] lg:h-[480px]
              bg-gradient-to-br from-green-600 via-green-900 to-green-800
              animate-phone-card"
               >

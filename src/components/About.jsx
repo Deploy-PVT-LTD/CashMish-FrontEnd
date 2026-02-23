@@ -85,8 +85,7 @@ export default function AboutUs({ isPage = false }) {
             </div>
 
             <p className="text-gray-500 text-lg font-medium leading-relaxed">
-              At CashMish, we believe every device has a unique story and value. Our mission is to provide you with the most accurate quote without the hassle of negotiation.
-            </p>
+At CashMish, we believe every device has a unique story and value. Our mission is to provide you with the most accurate quote without the hassle of negotiation.            </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">

@@ -12,8 +12,8 @@ const HowItWorks = () => {
       number: "01",
       icon: <Target size={24} />,
       iconBg: "bg-green-100 text-green-700",
-      title: "Doorstep Inspection",
-      description: "Our expert visits your location at a time convenient for you to verify your device’s condition.",
+      title: "Submit Details & Ship Your Device",
+      description: "Enter your device information, download your prepaid shipping label, and securely send your phone to our provided address.",
       detail: "Usually within 24–48 hours",
       fullContent: "Once you schedule an appointment through our platform, a certified CashMish technician will visit your home or office. We perform a comprehensive 20-point diagnostic check to verify everything from screen functionality to battery health. This process ensures both the buyer and seller are on the same page, leading to a fair and transparent final valuation."
     },
@@ -21,8 +21,8 @@ const HowItWorks = () => {
       number: "02",
       icon: <ShieldCheck size={24} />,
       iconBg: "bg-green-100 text-green-700",
-      title: "Final Bid",
-      description: "Receive your final offer based on a physical inspection, with zero hidden deductions.",
+      title: "Device Inspection",
+      description: "Once received, our team carefully inspects your device to verify its condition and ensure it matches the submitted details.",
       detail: "Instant quote on the spot",
       fullContent: "After the inspection, our technician will provide an instant final bid. This price is calculated using our AI-driven market data, ensuring you get the most competitive value. There are no hidden fees or surprise deductions; the price we quote is exactly what you receive. You are under no obligation to accept the offer until you are completely satisfied."
     },
@@ -30,8 +30,8 @@ const HowItWorks = () => {
       number: "03",
       icon: <DollarSign size={24} />,
       iconBg: "bg-green-100 text-green-700",
-      title: "Instant Payment",
-      description: "Accept the offer and get paid immediately via bank transfer or cash.",
+      title: "Fast Online Payment",
+      description: "After successful inspection, payment is promptly issued via your selected online payment method.",
       detail: "Secure & Reliable",
       fullContent: "The moment you accept our final bid, we initiate the payment process. We offer multiple payout methods including instant bank transfers and digital wallets. While 'instant' usually means within minutes for digital platforms, bank transfers may take a few hours depending on your bank's processing. We also provide a digital receipt for every transaction, ensuring a paper trail for your records."
     },

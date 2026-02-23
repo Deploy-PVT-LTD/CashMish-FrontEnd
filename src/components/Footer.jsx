@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Smartphone, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter, ArrowRight, Send } from 'lucide-react';
+import { Smartphone, Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight, Send } from 'lucide-react';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -28,11 +28,15 @@ const Footer = () => {
                             secure pickups, and lightning-fast payouts.
                         </p>
                         <div className="flex items-center gap-2">
-                            {[Facebook, Instagram, Twitter, Linkedin].map((Icon, idx) => (
-                                <a key={idx} href="#" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
-                                    <Icon size={14} />
-                                </a>
-                            ))}
+                            <a href="https://www.facebook.com/cashmishofficial/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
+                                <Facebook size={14} />
+                            </a>
+                            <a href="https://www.instagram.com/cashmishofficial/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
+                                <Instagram size={14} />
+                            </a>
+                            <a href="https://www.youtube.com/@CashMishOfficial" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
+                                <Youtube size={14} />
+                            </a>
                         </div>
                     </div>
 

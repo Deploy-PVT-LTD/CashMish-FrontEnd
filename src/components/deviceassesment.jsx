@@ -9,12 +9,17 @@ import leftImg from '../assets/left.webp';
 import rightImg from '../assets/right.webp';
 import batteryImg from '../assets/battery-health.webp';
 
+import top from '../assets/top.webp';
+import bottom from '../assets/bottom.webp';
+
 const photoCategories = [
   { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <img src={frontImg} alt="Front" className="w-20 h-50 object-contain" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
   { key: 'back', label: 'Back Side', desc: 'Flip your phone and capture the back panel clearly', icon: <img src={backImg} alt="Back" className="w-20 h-50 object-contain" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
   { key: 'left', label: 'Left Side', desc: 'Capture the left edge showing volume buttons', icon: <img src={leftImg} alt="Left" className="w-20 h-50 object-contain" />, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', activeBorder: 'border-orange-500' },
   { key: 'right', label: 'Right Side', desc: 'Capture the right edge showing power button', icon: <img src={rightImg} alt="Right" className="w-20 h-50 object-contain" />, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', activeBorder: 'border-green-500' },
   { key: 'battery', label: 'Battery Health', desc: 'Go to Settings > Battery > Battery Health and take a Picture', icon: <img src={batteryImg} alt="Battery" className="w-20 h-50 object-contain" />, color: 'text-gray-600', bg: 'bg-gray-100', border: 'border-gray-200', activeBorder: 'border-gray-500' },
+  { key: 'top', label: 'Top Side', desc: 'Capture the top edge of the phone clearly', icon: <img src={top} alt="Top" className="w-20 h-50 object-contain" />, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200', activeBorder: 'border-sky-500' },
+  { key: 'bottom', label: 'Bottom Side', desc: 'Capture the bottom edge showing the charging port', icon: <img src={bottom} alt="Bottom" className="w-20 h-50 object-contain" />, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', activeBorder: 'border-rose-500' },
 ];
 
 const DeviceAssessmentForm = () => {

@@ -15,10 +15,10 @@ const SellMobile = () => {
                             <Smartphone size={12} /> Sell with confidence
                         </div>
                         <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">
-                            Get the Highest <span className="text-green-500">Value</span> For Your Phone.
+                            Get the Best  <span className="text-green-500">Value</span> For Your Phone.
                         </h1>
                         <p className="text-gray-400 text-lg md:text-xl font-medium leading-relaxed max-w-xl">
-                            We use real-time market data to ensure you get the best price for your old smartphone, with instant payment and free doorstep pickup.
+                           We use real-time market data to ensure you get the best price for your smartphone, with instant payment and convenient doorstep pickup.
                         </p>
                         <div className="pt-4">
                             <a href="/brandselection" className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-xl inline-block cursor-pointer">
@@ -53,9 +53,9 @@ const SellMobile = () => {
                 </div>
                 <div className="grid md:grid-cols-3 gap-12">
                     {[
-                        { icon: <Zap />, title: "Instant Valuation", desc: "No waiting for buyers. Get an AI-predicted price in seconds based on your device's condition." },
-                        { icon: <DollarSign />, title: "Highest Payouts", desc: "Our network of refurbishers allows us to pay up to 20% more than local buy-back shops." },
-                        { icon: <Shield />, title: "Secure Data Wipe", desc: "Military-grade data destruction ensures your personal information is cleared forever." }
+                        { icon: <Zap />, title: "Instant Price Estimate", desc: "Accurate valuation in seconds." },
+                        { icon: <DollarSign />, title: "Highest Market Offers", desc: "We maximize your payout." },
+                        { icon: <Shield />, title: "Fast & Hassle-Free Payment", desc: "No delays. No complications. " }
                     ].map((feat, i) => (
                         <div key={i} className="space-y-6 p-8 rounded-[2rem] border border-gray-100 hover:shadow-2xl transition-all group">
                             <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
