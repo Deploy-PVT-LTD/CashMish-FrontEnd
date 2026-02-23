@@ -157,8 +157,8 @@ function Header({ simple = false }) {
   return (
     <>
       <header className={`bg-white/90 backdrop-blur-md border-b border-gray-100 fixed top-0 left-0 w-full z-50 transition-all duration-300 transform ${headerVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full overflow-hidden">
+          <div className="flex items-center justify-between h-16 w-full">
 
             <div className="flex items-center flex-shrink-0">
               <a href="/" className="flex items-center gap-2 group">
