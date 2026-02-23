@@ -4,15 +4,17 @@ import Header from '../components/header.jsx';
 import first from '../assets/first.png'
 import second from '../assets/second.png'
 import third from '../assets/third.png'
+import fourth from '../assets/fourth.png'
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
 
   const conditions = [
     { name: 'Mint', description: 'Like new, no scratches', icon: <img src={first} alt="" />, color: 'green' },
-    { name: 'Good', description: 'Minor signs of use', icon:  <img src={second} alt="" />, color: 'blue' },
-    { name: 'Fair', description: 'Visible wear & tear', icon:  <img src={third} alt="" />, color: 'orange' }
+    { name: 'Good', description: 'Minor signs of use', icon: <img src={second} alt="" />, color: 'blue' },
+    { name: 'Fair', description: 'Visible wear & tear', icon: <img src={third} alt="" />, color: 'orange' },
+    { name: 'Broken', description: 'Cracks (regardless of size)', icon: <img src={fourth} alt="" />, color: 'red' },
   ];
-  
+
   const onBack = () => {
     navigate("/ModelSelection");
   };
@@ -25,43 +27,42 @@ const ConditionSelection = ({ onSelectCondition }) => {
 
       {/* Main */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
-  {/* Progress Tracker */}
-          <div className="mb-10 sm:mb-16 flex justify-center">
-  <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-    {[1, 2, 3, 4].map((step, i) => {
-      const isCompleted = step === 1 || step ===2; // first step completed
-      const isActive = step === 3;    // second step active
+        {/* Progress Tracker */}
+        <div className="mb-10 sm:mb-16 flex justify-center">
+          <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
+            {[1, 2, 3, 4].map((step, i) => {
+              const isCompleted = step === 1 || step === 2; // first step completed
+              const isActive = step === 3;    // second step active
 
-      return (
-        <React.Fragment key={step}>
-          <div className="flex flex-col items-center">
-            <div
-              className={`rounded-full flex items-center justify-center font-semibold mb-2
-                ${
-                  isCompleted
-                    ? 'bg-green-800 text-white'
-                    : isActive
-                    ? 'bg-green-800 text-white'
-                    : 'bg-gray-200 text-gray-500'
-                }
+              return (
+                <React.Fragment key={step}>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`rounded-full flex items-center justify-center font-semibold mb-2
+                ${isCompleted
+                          ? 'bg-green-800 text-white'
+                          : isActive
+                            ? 'bg-green-800 text-white'
+                            : 'bg-gray-200 text-gray-500'
+                        }
                 w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
               `}
-            >
-              {isCompleted ? "✓" : step}
-            </div>
-            <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-              {["Brand", "Model", "Condition", "Storage"][i]}
-            </span>
-          </div>
+                    >
+                      {isCompleted ? "✓" : step}
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+                      {["Brand", "Model", "Condition", "Storage"][i]}
+                    </span>
+                  </div>
 
-          {step !== 4 && (
-            <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
-          )}
-        </React.Fragment>
-      );
-    })}
-  </div>
-</div>
+                  {step !== 4 && (
+                    <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
 
 
         {/* Back */}
@@ -83,7 +84,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
             Be honest — it helps us give you an accurate price
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 max-w-5xl mx-auto">
             {conditions.map((condition) => (
               <button
                 key={condition.name}
@@ -94,15 +95,16 @@ const ConditionSelection = ({ onSelectCondition }) => {
                   navigate("/Storageselection");
                 }}
                 className="bg-white border-2 border-gray-200 rounded-xl
-                           p-6 sm:p-8 hover:border-green-800 hover:shadow-lg transition cursor-pointer"
+                           p-4 sm:p-6 hover:border-green-800 hover:shadow-lg transition cursor-pointer"
               >
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-4 rounded-full
                   flex items-center justify-center text-2xl sm:text-3xl
                   ${condition.color === 'green' ? 'bg-green-50' :
-                    condition.color === 'blue' ? 'bg-blue-50' : 'bg-orange-50'}`}>
+                    condition.color === 'blue' ? 'bg-blue-50' :
+                      condition.color === 'red' ? 'bg-red-50' : 'bg-orange-50'}`}>
                   {condition.icon}
                 </div>
-                <div className="text-base sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">
+                <div className="text-sm sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
                   {condition.name}
                 </div>
                 <div className="text-xs sm:text-sm text-gray-600">
