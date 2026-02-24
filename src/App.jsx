@@ -1,42 +1,46 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-// import { GoogleOAuthProvider } from '@react-oauth/google';
-import PhoneFlipLanding from './components/MainScreen';
-import Login from './components/LoginCard';
-import BrandSelection from './components/BrandSelection';
-import ModelSelection from './components/ModelSelection'
-import ConditionSelection from './components/Conditionselection';
-import Storageselection from './components/Storageselection';
-import HowItWorks from './components/HowItWork';
-import Userdata from './components/form';
-import DeviceAssessmentForm from './components/deviceassesment';
-import PendingPage from './components/pending';
-import OfferAcceptancePage from './components/acceptRejectOffer';
-import NotFound from './components/NotFound';
-import RejectionPage from './components/NotAccepted';
-import CarrierSelection from './components/Phonecarrier';
-import ContactUs from './components/contactus.jsx';
-import AboutUs from './components/About';
-import MobileCart from './components/Mobilecart.jsx';
-import CashMishForgotPassword from './components/forgetPassword.jsx'
-import ResetPassword from './components/confirmpassword.jsx'
-import ForgotPassword from './components/ForgotPassword';
-import ResetPasswordNew from './components/ResetPassword';
-import PriceResult from './components/priceresult.jsx'
-import CartLogin from './components/Cartlogin.jsx'
-import { WalletProvider } from './components/Walletcontext.jsx';
-import Footer from './components/Footer.jsx';
-import PrivacyPolicy from './components/PrivacyPolicy.jsx';
-import TermsOfService from './components/TermsOfService.jsx';
-import CookiePolicy from './components/CookiePolicy.jsx';
-import FAQs from './components/FAQs.jsx';
-import Reviews from './components/Reviews.jsx';
-import Blogs from './components/Blogs.jsx';
-import BlogDetail from './components/BlogDetail.jsx';
-import SellMobile from './components/SellMobile.jsx';
-import InstantQuote from './components/InstantQuote.jsx';
-import FreePickup from './components/FreePickup.jsx';
-// import BulkSelling from './components/BulkSelling.jsx';
-import ScrollToTop from './components/ScrollToTop.jsx';
+
+// Pages
+import PhoneFlipLanding from './pages/MainScreen';
+import Login from './pages/LoginCard';
+import BrandSelection from './pages/BrandSelection';
+import ModelSelection from './pages/ModelSelection';
+import ConditionSelection from './pages/Conditionselection';
+import Storageselection from './pages/Storageselection';
+import HowItWorks from './pages/HowItWork';
+import Userdata from './pages/form';
+import DeviceAssessmentForm from './pages/deviceassesment';
+import PendingPage from './pages/pending';
+import OfferAcceptancePage from './pages/acceptRejectOffer';
+import NotFound from './pages/NotFound';
+import RejectionPage from './pages/NotAccepted';
+import CarrierSelection from './pages/Phonecarrier';
+import ContactUs from './pages/contactus';
+import AboutUs from './pages/About';
+import MobileCart from './pages/Mobilecart';
+import CashMishForgotPassword from './pages/forgetPassword';
+import ResetPassword from './pages/confirmpassword';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPasswordNew from './pages/ResetPassword';
+import PriceResult from './pages/priceresult';
+import CartLogin from './pages/Cartlogin';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import CookiePolicy from './pages/CookiePolicy';
+import FAQs from './pages/FAQs';
+import Reviews from './pages/Reviews';
+import Blogs from './pages/Blogs';
+import BlogDetail from './pages/BlogDetail';
+import SellMobile from './pages/SellMobile';
+import InstantQuote from './pages/InstantQuote';
+import FreePickup from './pages/FreePickup';
+
+// Layout Components
+import Footer from './components/layout/Footer';
+import ScrollToTop from './components/layout/ScrollToTop';
+
+// Context
+import { WalletProvider } from './contexts/Walletcontext';
 
 function App() {
   return (
