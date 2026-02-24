@@ -129,7 +129,7 @@ const PhoneFlipLanding = () => {
               </div>
 
               {/* Stats */}
-              <div className="absolute -bottom-12 -right-4 bg-white rounded-xl shadow-lg px-6 py-4">
+              <div className="absolute -bottom-12 -right-4 bg-white rounded-xl shadow-lg px-6 py-4 space-x-3 z-20 animate-pulse">
                 <div className="w-12 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Zap className="w-6 h-6 text-green-600" />
                 </div>

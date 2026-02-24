@@ -80,7 +80,7 @@ export default function AboutUs({ isPage = false }) {
               <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Our Values</h3>
               <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter leading-[0.9]">
                 Transparency is <br />
-                <span className="text-gray-400">Our strongest currency.</span>
+                <span className="text-gray-400">Our Strongest Currency.</span>
               </h2>
             </div>
 
