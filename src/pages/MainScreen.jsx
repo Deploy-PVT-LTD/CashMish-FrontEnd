@@ -135,7 +135,7 @@ const PhoneFlipLanding = () => {
                 </div>
                 <div>
                   <div className="text-xl font-bold text-gray-900">$45,000+</div>
-                  <div className="text-xs text-gray-600">Phones Sold</div>
+                  <div className="text-xs text-gray-600">Successfull Deals</div>
                 </div>
               </div>
             </div>
