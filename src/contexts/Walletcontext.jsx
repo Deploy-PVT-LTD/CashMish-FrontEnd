@@ -107,7 +107,10 @@ export const WalletProvider = ({ children }) => {
           accountNumber: formData.accountNumber,
           bankName: formData.bankName,
           amount: parseFloat(amount || 0),
-          status: 'pending'
+          status: 'pending',
+          payoutMethod: formData.payoutMethod || 'bank',
+          zelleContact: formData.zelleContact,
+          zelleContactType: formData.zelleContactType,
         })
       });
 

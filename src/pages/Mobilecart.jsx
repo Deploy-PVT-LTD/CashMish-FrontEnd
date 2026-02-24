@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Trash2, Clock, DollarSign, Check, Smartphone, RefreshCw, X, Gift, Wallet, AlertCircle } from 'lucide-react';
+import { Trash2, Landmark, Zap, ArrowLeft, Clock, DollarSign, Check, Smartphone, RefreshCw, X, Gift, Wallet, AlertCircle } from 'lucide-react';
 import Header from '../components/layout/header.jsx';
 import Swal from 'sweetalert2';
 import { useWallet } from '../contexts/Walletcontext';
@@ -46,30 +46,37 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
 
 // 鈹€鈹€鈹€ Withdraw Form Modal 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
-  // clearWalletAfterPayout ko hum context se nikal rahe hain
   const { withdrawCash, clearWalletAfterPayout, setWalletBalance } = useWallet();
-  const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '' });
+  const [step, setStep] = useState('select'); // 'select' | 'form' | 'success'
+  const [payoutMethod, setPayoutMethod] = useState(''); // 'bank' | 'zelle'
+  const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '', zelleContact: '', zelleContactType: 'email' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [apiError, setApiError] = useState('');
 
   useEffect(() => {
-    if (isOpen) { setForm({ name: '', accountNumber: '', bankName: '' }); setSubmitted(false); setApiError(''); }
+    if (isOpen) {
+      setStep('select');
+      setPayoutMethod('');
+      setForm({ name: '', accountNumber: '', bankName: '', zelleContact: '', zelleContactType: 'email' });
+      setApiError('');
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.accountNumber || !form.bankName) return;
+    if (!form.name) return;
+    if (payoutMethod === 'bank' && (!form.accountNumber || !form.bankName)) return;
+    if (payoutMethod === 'zelle' && !form.zelleContact) return;
+
     setIsSubmitting(true);
     setApiError('');
     try {
-      const result = await withdrawCash(form, amount);
-
+      const result = await withdrawCash({ ...form, payoutMethod }, amount);
       if (result.success) {
         clearWalletAfterPayout(orderId);
-        setSubmitted(true);
+        setStep('success');
         setTimeout(() => { onSuccess?.(); }, 2000);
       } else {
         setApiError(result.error || 'Withdrawal failed');
@@ -82,6 +89,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ animation: 'popupIn 0.25s cubic-bezier(0.34,1.56,0.64,1)' }}>
+        {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-5 relative">
           <button onClick={onClose} disabled={isSubmitting} className="absolute top-3 right-3 text-white/70 hover:text-white disabled:opacity-40 cursor-pointer"><X size={20} /></button>
           <div className="flex items-center gap-3">
@@ -92,41 +100,124 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
             </div>
           </div>
         </div>
+
         <div className="p-5">
-          {submitted ? (
-            <div className="text-center py-6">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"><Check className="text-green-600" size={32} /></div>
-              <h3 className="text-gray-900 font-black text-lg mb-2 uppercase">Request Submitted!</h3>
-              <p className="text-gray-600 text-sm font-semibold mb-1">You will receive payment within 48 hours.</p>
-              <p className="text-gray-400 text-xs">Bank details saved successfully.</p>
+          {/* Step 1: Method Selection */}
+          {step === 'select' && (
+            <div className="space-y-4">
+              <p className="text-gray-600 text-sm font-semibold text-center">Choose your payout method</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => { setPayoutMethod('bank'); setStep('form'); }}
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer group"
+                >
+                  <div className="bg-blue-100 group-hover:bg-blue-200 p-3 rounded-full transition-colors">
+                    <Landmark className="text-blue-600" size={24} />
+                  </div>
+                  <span className="text-sm font-bold text-gray-800">Bank Account</span>
+                </button>
+                <button
+                  onClick={() => { setPayoutMethod('zelle'); setStep('form'); }}
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition-all cursor-pointer group"
+                >
+                  <div className="bg-purple-100 group-hover:bg-purple-200 p-3 rounded-full transition-colors">
+                    <Zap className="text-purple-600" size={24} />
+                  </div>
+                  <span className="text-sm font-bold text-gray-800">Zelle</span>
+                </button>
+              </div>
             </div>
-          ) : (
+          )}
+
+          {/* Step 2: Form (Bank or Zelle) */}
+          {step === 'form' && (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Method Badge + Back */}
+              <div className="flex items-center gap-2 mb-1">
+                <button type="button" onClick={() => setStep('select')} className="text-gray-400 hover:text-gray-600 cursor-pointer"><ArrowLeft size={18} /></button>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${payoutMethod === 'bank' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+                  {payoutMethod === 'bank' ? 'Bank Account' : 'Zelle'}
+                </span>
+              </div>
+
               {apiError && (
                 <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl p-3">
                   <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
                   <p className="text-red-700 text-xs font-semibold break-words">{apiError}</p>
                 </div>
               )}
+
+              {/* Name (common) */}
               <div>
-                <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Account Holder Name</label>
-                <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter account holder name" />
+                <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Full Name</label>
+                <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter your full name" />
               </div>
-              <div>
-                <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Account Number</label>
-                <input type="text" required value={form.accountNumber} onChange={(e) => setForm({ ...form, accountNumber: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter account number" />
-              </div>
-              <div>
-                <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Bank Name</label>
-                <input type="text" required value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter bank name" />
-              </div>
+
+              {/* Bank Fields */}
+              {payoutMethod === 'bank' && (
+                <>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Account Number</label>
+                    <input type="text" required value={form.accountNumber} onChange={(e) => setForm({ ...form, accountNumber: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter account number" />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Bank Name</label>
+                    <input type="text" required value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter bank name" />
+                  </div>
+                </>
+              )}
+
+              {/* Zelle Fields */}
+              {payoutMethod === 'zelle' && (
+                <>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Contact Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button type="button" onClick={() => setForm({ ...form, zelleContactType: 'email', zelleContact: '' })}
+                        className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${form.zelleContactType === 'email' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        Email
+                      </button>
+                      <button type="button" onClick={() => setForm({ ...form, zelleContactType: 'phone', zelleContact: '' })}
+                        className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${form.zelleContactType === 'phone' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        Phone
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">
+                      {form.zelleContactType === 'email' ? 'Zelle Email' : 'Zelle Phone Number'}
+                    </label>
+                    <input
+                      type={form.zelleContactType === 'email' ? 'email' : 'tel'}
+                      required
+                      value={form.zelleContact}
+                      onChange={(e) => setForm({ ...form, zelleContact: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none text-sm font-semibold"
+                      placeholder={form.zelleContactType === 'email' ? 'your@email.com' : '(555) 123-4567'}
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="flex gap-3 pt-1">
-                <button type="button" onClick={onClose} disabled={isSubmitting} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 disabled:opacity-50 cursor-pointer">Back</button>
+                <button type="button" onClick={() => setStep('select')} disabled={isSubmitting} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 disabled:opacity-50 cursor-pointer">Back</button>
                 <button type="submit" disabled={isSubmitting} className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer">
                   {isSubmitting ? <><RefreshCw size={16} className="animate-spin" /> Saving...</> : 'Submit'}
                 </button>
               </div>
             </form>
+          )}
+
+          {/* Step 3: Success */}
+          {step === 'success' && (
+            <div className="text-center py-6">
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"><Check className="text-green-600" size={32} /></div>
+              <h3 className="text-gray-900 font-black text-lg mb-2 uppercase">Request Submitted!</h3>
+              <p className="text-gray-600 text-sm font-semibold mb-1">You will receive payment within 48 hours.</p>
+              <p className="text-gray-400 text-xs">
+                {payoutMethod === 'bank' ? 'Bank details saved successfully.' : 'Zelle details saved successfully.'}
+              </p>
+            </div>
           )}
         </div>
       </div>

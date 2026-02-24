@@ -175,7 +175,7 @@ const WalletModal = ({ isOpen, onClose }) => {
                         <div className="flex justify-between items-start">
                           <div className="flex-grow">
                             <div className="flex items-center justify-between mb-1">
-                              <p className="text-[11px] font-black text-gray-900 uppercase">{item.bankName}</p>
+                              <p className="text-[11px] font-black text-gray-900 uppercase">{(item.payoutMethod === 'zelle') ? 'Zelle' : (item.bankName || 'Withdrawal')}</p>
                               <p className="text-sm font-black text-green-700">${(item.amount || 0).toFixed(2)}</p>
                             </div>
                             <div className="flex items-center justify-between">
