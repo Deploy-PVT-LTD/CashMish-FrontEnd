@@ -171,7 +171,7 @@ function Header({ simple = false }) {
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
               <a href="/" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
-                Home
+                Sell Your Device
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
@@ -187,10 +187,14 @@ function Header({ simple = false }) {
                 onMouseLeave={() => setServicesOpen(false)}
               >
                 <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
-                  Our Services
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-green-600' : ''}`} />
+
+                  <a href="/contact" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+                    Support
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
+                  </a>
+                  {/* <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-green-600' : ''}`} /> */}
                 </button>
-                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${servicesOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                {/* <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${servicesOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                   <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-3 min-w-[200px] space-y-1">
                     {menuCategories.services.map((link) => (
                       <a
@@ -203,7 +207,7 @@ function Header({ simple = false }) {
                       </a>
                     ))}
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Quick Links Dropdown */}
@@ -212,11 +216,11 @@ function Header({ simple = false }) {
                 onMouseEnter={() => setQuickLinksOpen(true)}
                 onMouseLeave={() => setQuickLinksOpen(false)}
               >
-                <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
+                {/* <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
                   Quick Links
                   <ChevronDown size={14} className={`transition-transform duration-300 ${quickLinksOpen ? 'rotate-180 text-green-600' : ''}`} />
-                </button>
-                <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${quickLinksOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                </button> */}
+                {/* <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${quickLinksOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
                   <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-3 min-w-[200px] space-y-1">
                     {menuCategories.quickLinks.map((link) => (
                       <a
@@ -229,7 +233,7 @@ function Header({ simple = false }) {
                       </a>
                     ))}
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {!simple && (
@@ -261,8 +265,8 @@ function Header({ simple = false }) {
                   )}
 
                   {!isLoggedIn && (
-                    <a href="/login" className="bg-green-800 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition-all shadow-md">
-                      Sign Up
+                    <a href="/login" className="bg-green-800 text-white px-8 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition-all shadow-md">
+                      Login
                     </a>
                   )}
                 </div>

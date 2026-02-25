@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // useLocation add kiya
-import { ShoppingCart, Shield, CheckCircle } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ShoppingCart, CheckCircle } from 'lucide-react';
 import logogoogle from '../assets/google.png';
 import Header from '../components/layout/header';
 import { BASE_URL } from '../lib/api';
@@ -9,9 +9,8 @@ const CartLogin = () => {
   const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Location hook for state
+  const location = useLocation();
 
-  // 馃敟 Pichle page se aayi hui images ko save karke rakhein
   const pendingFiles = location.state?.files || [];
 
   const [loginForm, setLoginForm] = useState({
@@ -54,8 +53,6 @@ const CartLogin = () => {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         window.removeEventListener("message", receiveMessage);
-
-        // 鉁?Login ke baad images ko userdata par bhej rahe hain
         navigate('/userdata', { state: { files: pendingFiles } });
       }
     };
@@ -76,8 +73,6 @@ const CartLogin = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-
-        // 鉁?Yahan bhi files forward karni hain
         navigate('/userdata', { state: { files: pendingFiles } });
       } else {
         alert(data.message);
@@ -94,10 +89,13 @@ const CartLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex flex-col">
       <Header />
-      <div className="max-w-7xl mt-10 mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-2 gap-8">
+
+      {/* ✅ Vertically & Horizontally center kiya */}
+      <div className="flex-1 flex items-center justify-center px-4 py-6 sm:py-8 mt-18 sm:mt-0">        <div className="w-full max-w-5xl">
+        <div className="grid lg:grid-cols-2 gap-6">
+
           {/* Login Section */}
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <div className="text-center mb-6">
@@ -106,19 +104,47 @@ const CartLogin = () => {
             </div>
 
             <form onSubmit={handleLoginSubmit} className="space-y-4">
-              <input type="email" name="email" value={loginForm.email} onChange={handleLoginChange} className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl" placeholder="Email Address" required />
-              <input type="password" name="password" value={loginForm.password} onChange={handleLoginChange} className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl" placeholder="Password" required />
-              <button type="submit" disabled={loading} className="w-full bg-green-600 text-white py-3 rounded-xl font-bold cursor-pointer hover:bg-green-700 transition">
+              <input
+                type="email"
+                name="email"
+                value={loginForm.email}
+                onChange={handleLoginChange}
+                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-500"
+                placeholder="Email Address"
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                value={loginForm.password}
+                onChange={handleLoginChange}
+                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-500"
+                placeholder="Password"
+                required
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-green-600 text-white py-3 rounded-xl font-bold cursor-pointer hover:bg-green-700 transition"
+              >
                 {loading ? 'WAIT...' : 'Sign In'}
               </button>
             </form>
 
             <div className="relative my-5">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
-              <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-gray-500">Or continue with</span></div>
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500">Or continue with</span>
+              </div>
             </div>
 
-            <button onClick={handleGoogleLogin} type="button" className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition font-semibold">
+            <button
+              onClick={handleGoogleLogin}
+              type="button"
+              className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition font-semibold"
+            >
               <img src={logogoogle} alt="Google" className="w-5 h-5" />
               <span>Continue with Google</span>
             </button>
@@ -129,24 +155,33 @@ const CartLogin = () => {
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3 mb-5">
               <ShoppingCart className="w-7 h-7 text-green-600" /> Your Cart
             </h2>
-            {cartData.map((item, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <h3 className="font-bold">{item.name}</h3>
-                <p className="text-xs text-gray-500">{item.description}</p>
-                <div className="grid grid-cols-2 gap-2 mt-2 text-xs font-semibold">
-                  <span>Storage: {item.storage}</span>
-                  <span>Condition: {item.condition}</span>
-                </div>
-                {/* Visual indicator that images are attached */}
-                {pendingFiles.length > 0 && (
-                  <div className="mt-3 text-xs text-green-600 flex items-center gap-1">
-                    <CheckCircle size={14} /> {pendingFiles.length} photos attached
+
+            {cartData.length > 0 ? (
+              cartData.map((item, index) => (
+                <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <h3 className="font-bold text-gray-800">{item.name}</h3>
+                  <p className="text-xs text-gray-500 mt-1">{item.description}</p>
+                  <div className="grid grid-cols-2 gap-2 mt-2 text-xs font-semibold text-gray-600">
+                    <span>Storage: {item.storage}</span>
+                    <span>Condition: {item.condition}</span>
+                    <span>Screen: {item.screenCondition}</span>
+                    <span>Body: {item.bodyCondition}</span>
+                    <span>Battery: {item.batteryCondition}</span>
                   </div>
-                )}
-              </div>
-            ))}
+                  {pendingFiles.length > 0 && (
+                    <div className="mt-3 text-xs text-green-600 flex items-center gap-1">
+                      <CheckCircle size={14} /> {pendingFiles.length} photos attached
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-400 text-sm text-center mt-10">No items in cart.</p>
+            )}
           </div>
+
         </div>
+      </div>
       </div>
     </div>
   );

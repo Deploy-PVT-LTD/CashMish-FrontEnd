@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Smartphone, Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight, Send } from 'lucide-react';
-import cashmishLogo from '../../assets/cashmish-logo.svg';
+import cashmishLogo from '../../assets/cashmish-logo-dark.svg';
 
 
 
@@ -53,7 +53,7 @@ const Footer = () => {
                     <div className="space-y-3">
                         <h4 className="text-white font-black uppercase tracking-widest text-[9px] opacity-40">Quick Links</h4>
                         <ul className="space-y-1.5">
-                            {['Home', 'How It Works', 'About Us', 'Contact Us', 'FAQs', 'Reviews', 'Blogs'].map((item) => (
+                            {['Home', 'How It Works', 'About Us', 'Support', 'FAQs', 'Reviews', 'Blogs'].map((item) => (
                                 <li key={item}>
                                     <Link
                                         to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : item === 'Contact Us' ? '/contact' : item === 'Blogs' ? '/blogs' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
@@ -68,7 +68,7 @@ const Footer = () => {
                     </div>
 
                     {/* Column 3: Services */}
-                    <div className="space-y-3">
+                    {/* <div className="space-y-3">
                         <h4 className="text-white font-black uppercase tracking-widest text-[9px] opacity-40">Our Services</h4>
                         <ul className="space-y-1.5">
                             {[
@@ -85,7 +85,7 @@ const Footer = () => {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
 
                     {/* Column 4: Get In Touch */}
                     <div className="space-y-3">
