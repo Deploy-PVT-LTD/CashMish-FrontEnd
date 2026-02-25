@@ -5,6 +5,31 @@ import Header from "../components/layout/header.jsx";
 import axios from "axios";
 import { BASE_URL } from '../lib/api';
 
+// ✅ Version score calculator
+const getVersionScore = (name) => {
+  if (!name) return 0;
+
+  const versionMatch = name.match(/(\d+(\.\d+)?)/);
+  const version = versionMatch ? parseFloat(versionMatch[1]) : 0;
+
+  const nameLower = name.toLowerCase();
+  let variantScore = 0;
+  if (nameLower.includes("pro max")) variantScore = 4;
+  else if (nameLower.includes("pro")) variantScore = 3;
+  else if (nameLower.includes("plus")) variantScore = 2;
+  else if (nameLower.includes("air")) variantScore = 1;
+  else variantScore = 0;
+
+  return version * 100 + variantScore;
+};
+
+// ✅ Sort models in descending order
+const sortModels = (data) => {
+  return [...data].sort((a, b) => {
+    return getVersionScore(b.phoneModel) - getVersionScore(a.phoneModel);
+  });
+};
+
 const ModelSelection = () => {
   const navigate = useNavigate();
   const [models, setModels] = useState([]);
@@ -20,22 +45,20 @@ const ModelSelection = () => {
       }
       try {
         setLoading(true);
-        // API call se data fetch kiya
         const response = await axios.get(`${BASE_URL}/api/mobiles/brand`, {
           params: { brand },
         });
 
-        // --- DEBUG LOGS START ---
         console.log("Full API Response:", response.data);
         if (response.data && response.data.length > 0) {
-          // Check karein ke image field mein base64 string aa rahi hai ya nahi
           console.log("First Item Image Data:", response.data[0].image);
         } else {
           console.warn("No data found for this brand.");
         }
-        // --- DEBUG LOGS END ---
 
-        setModels(response.data);
+        // ✅ Sort karo pehle, phir set karo
+        const sortedModels = sortModels(response.data);
+        setModels(sortedModels);
       } catch (error) {
         console.error("Fetch Error:", error.message);
       } finally {
@@ -69,24 +92,24 @@ const ModelSelection = () => {
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
             {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step === 1; // first step completed
-              const isActive = step === 2;    // second step active
+              const isCompleted = step === 1;
+              const isActive = step === 2;
 
               return (
                 <React.Fragment key={step}>
                   <div className="flex flex-col items-center">
                     <div
                       className={`rounded-full flex items-center justify-center font-semibold mb-2
-                ${isCompleted
+                        ${isCompleted
                           ? 'bg-green-800 text-white'
                           : isActive
                             ? 'bg-green-800 text-white'
                             : 'bg-gray-200 text-gray-500'
                         }
-                w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
-              `}
+                        w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
+                      `}
                     >
-                      {isCompleted ? "\u2713" : step}
+                      {isCompleted ? "✓" : step}
                     </div>
                     <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
                       {["Brand", "Model", "Condition", "Storage"][i]}
@@ -102,16 +125,18 @@ const ModelSelection = () => {
           </div>
         </div>
 
-
         {/* Header Actions */}
         <div className="text-center mb-8">
-          <button onClick={onBack} className="text-green-800 cursor-pointer hover:underline text-sm font-medium mb-4 inline-block">
+          <button
+            onClick={onBack}
+            className="text-green-800 cursor-pointer hover:underline text-sm font-medium mb-4 inline-block"
+          >
             ← Back to Brands
           </button>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900">
             Select Your <span className="text-green-800 uppercase">{brand}</span> Model
           </h1>
-          <p className="text-gray-500 mt-2">We Offer Bst Price for your Mobile Phones.</p>
+          <p className="text-gray-500 mt-2">We Offer Best Price for your Mobile Phones.</p>
         </div>
 
         {loading ? (

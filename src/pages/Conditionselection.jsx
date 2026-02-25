@@ -78,10 +78,10 @@ const ConditionSelection = ({ onSelectCondition }) => {
         {/* Condition Cards */}
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Mobile Overall Condition?
+            Select Your Phone’s Condition
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
-            Be honest — it helps us give you an accurate price
+            Accurate details help us offer the best price.
           </p>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 max-w-5xl mx-auto">

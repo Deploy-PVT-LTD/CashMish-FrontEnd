@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Smartphone, Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight, Send } from 'lucide-react';
+import cashmishLogo from '../../assets/cashmish-logo.svg';
+
+
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -16,17 +19,23 @@ const Footer = () => {
                     {/* Column 1: Brand & About */}
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 group cursor-default">
-                            <div className="bg-green-600 p-1 rounded-lg group-hover:rotate-12 transition-transform duration-300">
+                            {/* <div className="bg-green-600 p-1 rounded-lg group-hover:rotate-12 transition-transform duration-300">
                                 <Smartphone className="text-white" size={18} />
-                            </div>
-                            <span className="text-lg font-black text-white uppercase tracking-tighter">
-                                Cash<span className="text-green-500">Mish</span>
-                            </span>
+                            </div> */}
+
+                            <img
+                                src={cashmishLogo}
+                                alt="CashMish Logo"
+                                className="h-[20px] w-auto object-contain"
+                            />
                         </div>
                         <p className="text-[10px] leading-relaxed text-gray-400 font-medium max-w-xs">
                             The smartest way to sell your old devices. Instant valuations,
                             secure pickups, and lightning-fast payouts.
                         </p>
+
+
+
                         <div className="flex items-center gap-2">
                             <a href="https://www.facebook.com/cashmishofficial/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
                                 <Facebook size={14} />

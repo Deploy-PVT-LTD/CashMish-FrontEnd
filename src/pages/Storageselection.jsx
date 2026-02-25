@@ -72,10 +72,10 @@ const StorageSelection = ({
         {/* Storage Selection */}
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Storage Capacity
+            Select Your Device Storage
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-10">
-            Select your device's storage size
+            Select the storage option that matches your device.
           </p>
 
           {/* Options */}
@@ -111,7 +111,7 @@ const StorageSelection = ({
             className="w-44 sm:w-48 bg-green-800 text-white py-2.5 rounded-lg
                        font-semibold hover:bg-green-700 transition cursor-pointer"
           >
-            Add Data →
+            Continue →
           </button>
         </div>
       </main>

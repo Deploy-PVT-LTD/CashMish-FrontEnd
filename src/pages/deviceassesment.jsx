@@ -42,21 +42,21 @@ const DeviceAssessmentForm = () => {
   const slotInputRef = useRef(null);
 
   const screenConditions = [
-    { value: 'perfect', label: 'Perfect', description: 'No scratches or marks', color: 'green' },
-    { value: 'scratched', label: 'Scratched', description: 'Minor scratches visible', color: 'yellow' },
-    { value: 'cracked', label: 'Cracked', description: 'Visible cracks or damage', color: 'red' }
+    { value: 'perfect', label: 'Perfect', description: 'No scratches, cracks, or visible marks', color: 'green' },
+    { value: 'scratched', label: 'Scratched', description: 'Minor surface scratches visible', color: 'yellow' },
+    { value: 'cracked', label: 'Cracked', description: 'Visible cracks, chips, or display damage', color: 'red' }
   ];
 
   const bodyConditions = [
-    { value: 'perfect', label: 'Perfect', description: 'Like new condition', color: 'green' },
-    { value: 'scratched', label: 'Scratched', description: 'Minor wear and tear', color: 'yellow' },
-    { value: 'damaged', label: 'Damaged', description: 'Visible dents or damage', color: 'red' }
+    { value: 'perfect', label: 'Perfect', description: 'Like new with no visible wear', color: 'green' },
+    { value: 'scratched', label: 'Scratched', description: 'Minor scratches or light wear', color: 'yellow' },
+    { value: 'damaged', label: 'Damaged', description: 'Visible dents, cracks, or structural damage', color: 'red' }
   ];
 
   const batteryConditions = [
-    { value: 'good', label: 'Good (80%+)', description: 'Battery health excellent', color: 'green' },
-    { value: 'average', label: 'Average (60-80%)', description: 'Normal battery wear', color: 'yellow' },
-    { value: 'poor', label: 'Poor (<60%)', description: 'Significant degradation', color: 'red' }
+    { value: 'good', label: 'Good (80%+)', description: 'Battery health 80% or higher', color: 'green' },
+    { value: 'average', label: 'Average (60-80%)', description: 'Battery health between 60%–79%', color: 'yellow' },
+    { value: 'poor', label: 'Poor (<60%)', description: 'Battery health below 60%', color: 'red' }
   ];
 
   const handleConditionSelect = (field, value) => {
@@ -179,12 +179,12 @@ const DeviceAssessmentForm = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-4xl mx-auto p-4 md:p-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Device Assessment</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">Device Condition Assessment</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {[
-            { title: 'Screen Condition', icon: <Smartphone />, field: 'screenCondition', options: screenConditions },
-            { title: 'Body Condition', icon: <Shield />, field: 'bodyCondition', options: bodyConditions },
+            { title: 'Screen Condition (Front Display)', icon: <Smartphone />, field: 'screenCondition', options: screenConditions },
+            { title: 'Back & Frame Condition', icon: <Shield />, field: 'bodyCondition', options: bodyConditions },
             { title: 'Battery Health', icon: <Battery />, field: 'batteryCondition', options: batteryConditions }
           ].map((section) => (
             <div key={section.field} className="bg-white rounded-2xl shadow-lg p-6">
@@ -221,7 +221,7 @@ const DeviceAssessmentForm = () => {
             >
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
               <p className="text-sm text-gray-500">
-                {uploadedCount > 0 ? `${uploadedCount}/5 photos uploaded — tap to add more` : 'Upload photos to show condition'}
+                {uploadedCount > 0 ? `${uploadedCount}/7 photos uploaded — tap to add more` : 'Upload photos to show condition'}
               </p>
             </div>
 
@@ -266,7 +266,7 @@ const DeviceAssessmentForm = () => {
             className={`w-full py-4 rounded-xl font-bold text-white text-lg transition-all ${isFormValid() ? "bg-green-800 hover:bg-green-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
               }`}
           >
-            {isFormValid() ? "Save & Continue" : !acceptedTerms && formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0 ? "Accept Terms to Continue" : !selectedFiles.length && isFormValid() === false && formData.screenCondition && formData.bodyCondition && formData.batteryCondition ? "Please Upload Photos" : "Complete Assessment"}
+            {isFormValid() ? "Get My Offer" : !acceptedTerms && formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0 ? "Accept Terms to Continue" : !selectedFiles.length && isFormValid() === false && formData.screenCondition && formData.bodyCondition && formData.batteryCondition ? "Please Upload Photos" : "Get My Offer"}
           </button>
         </form>
       </div>
@@ -395,7 +395,9 @@ const DeviceAssessmentForm = () => {
               <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-3 flex items-start gap-2 mt-4">
                 <span className="text-yellow-500 text-base">💡</span>
                 <p className="text-[11px] font-semibold text-yellow-700">
-                  Better photos = more accurate price! Well-lit, clear photos help us assess your device correctly.
+                  Clear photos mean a more accurate offer.<br></br>
+                  Please upload well-lit images of the front, back, and sides of your device.
+
                 </p>
               </div>
 
