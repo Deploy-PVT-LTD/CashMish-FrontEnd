@@ -90,9 +90,19 @@ const BlogDetail = () => {
                     <p className="text-lg font-semibold text-green-700 mb-6 italic">
                         {blog.excerpt}
                     </p>
-                    <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed whitespace-pre-line text-base">
-                        {blog.content || blog.excerpt}
-                    </div>
+                    <div
+                        className="prose prose-gray max-w-none text-gray-700 leading-relaxed text-base
+                            [&_h1]:text-3xl [&_h1]:font-black [&_h1]:mb-4 [&_h1]:text-gray-900
+                            [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:text-gray-800
+                            [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:text-gray-700
+                            [&_p]:mb-3 [&_p]:leading-relaxed
+                            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3
+                            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3
+                            [&_li]:mb-1
+                            [&_a]:text-green-600 [&_a]:underline [&_a]:hover:text-green-700
+                            [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through"
+                        dangerouslySetInnerHTML={{ __html: blog.content || `<p>${blog.excerpt}</p>` }}
+                    />
                 </div>
 
                 <div className="mt-12 text-center">
