@@ -129,7 +129,7 @@ export default function AboutUs({ isPage = false }) {
       </section>
 
       {/* Reviews Marquee Section */}
-      <section className="py-20 bg-white overflow-hidden border-y border-gray-100 relative group">
+      {/* <section className="py-20 bg-white overflow-hidden border-y border-gray-100 relative group">
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
 
@@ -155,10 +155,10 @@ export default function AboutUs({ isPage = false }) {
           </div>
         ) : (
           <div className="text-center text-gray-400 text-sm py-4">No reviews yet.</div>
-        )}
+        )} */}
 
-        {/* CSS Animation for Marquee */}
-        <style>{`
+      {/* CSS Animation for Marquee */}
+      {/* <style>{`
           @keyframes marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -167,7 +167,7 @@ export default function AboutUs({ isPage = false }) {
             animation: marquee 30s linear infinite;
           }
         `}</style>
-      </section>
+      </section> */}
 
       {/* Blogs Section */}
       <section className="py-24 px-6 bg-gray-50">
