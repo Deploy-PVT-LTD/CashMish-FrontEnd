@@ -328,15 +328,14 @@ const DeviceAssessmentForm = () => {
               {/* Current step card — 2-column split layout */}
               <div className={`rounded-2xl border-2 overflow-hidden transition-all ${currentUploaded ? currentCategory.activeBorder : currentCategory.border}`}>
                 {currentUploaded ? (
-                  /* Uploaded: left = image preview, right = info + controls */
-                  <div className="flex min-h-[200px]">
-                    {/* Left: Image Preview */}
-                    <div className="w-1/2 relative bg-gray-100">
+                  /* Uploaded: left = image preview (fixed height), right = info + controls */
+                  <div className="flex h-[200px]">
+                    {/* Left: Image Preview — fixed size, never grows */}
+                    <div className="w-1/2 relative bg-gray-100 overflow-hidden">
                       <img
                         src={currentUploaded.preview}
                         alt={currentCategory.label}
-                        className="w-full h-full object-cover"
-                        style={{ minHeight: '180px' }}
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-green-500/10" />
                       <div className="absolute top-2 left-2 bg-green-500 text-white rounded-full p-1">
@@ -369,9 +368,9 @@ const DeviceAssessmentForm = () => {
                   </div>
                 ) : (
                   /* Not uploaded: left = reference image, right = upload prompt */
-                  <div className="flex min-h-[200px]">
+                  <div className="flex h-[200px]">
                     {/* Left: Reference Image */}
-                    <div className={`w-1/2 ${currentCategory.bg} flex items-center justify-center`}>
+                    <div className={`w-1/2 ${currentCategory.bg} flex items-center justify-center overflow-hidden`}>
                       {currentCategory.icon}
                     </div>
                     {/* Right: Upload Prompt */}

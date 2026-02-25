@@ -1,35 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { X, Wallet, DollarSign, Gift, CheckCircle, RefreshCw } from 'lucide-react';
+import { X, Wallet, DollarSign, Gift, CheckCircle, RefreshCw, Landmark, Zap, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useWallet } from '../../contexts/Walletcontext';
 
 const WalletModal = ({ isOpen, onClose }) => {
-  // Context se functions aur state nikaali
   const {
     walletBalance,
     isProcessing,
     pendingOrders,
     fetchUserBankDetails,
     clearWalletAfterPayout,
-    withdrawCash // Context wala withdraw use karenge crash se bachne ke liye
+    withdrawCash
   } = useWallet();
 
+  // 'main' | 'select' | 'form' | 'success'
   const [currentView, setCurrentView] = useState('main');
-  const [withdrawalForm, setWithdrawalForm] = useState({ name: '', accountNumber: '', bankName: '' });
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [withdrawError, setWithdrawError] = useState('');
+  const [payoutMethod, setPayoutMethod] = useState(''); // 'zelle' | 'bank'
+  const [form, setForm] = useState({ name: '', accountNumber: '', bankName: '', zelleContact: '', zelleContactType: 'email' });
+  const [apiError, setApiError] = useState('');
   const [bankDetailsList, setBankDetailsList] = useState([]);
   const [loadingBankDetails, setLoadingBankDetails] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const displayAmount = walletBalance || 0;
 
-  // Modal khulne par state reset aur history load karo
   useEffect(() => {
     if (isOpen) {
       setCurrentView('main');
-      setShowSuccess(false);
-      setWithdrawError('');
-      setWithdrawalForm({ name: '', accountNumber: '', bankName: '' });
+      setPayoutMethod('');
+      setApiError('');
+      setForm({ name: '', accountNumber: '', bankName: '', zelleContact: '', zelleContactType: 'email' });
       loadBankDetails();
     }
   }, [isOpen]);
@@ -46,43 +45,32 @@ const WalletModal = ({ isOpen, onClose }) => {
   const handleClose = () => {
     if (!isProcessing && !isSubmitting) {
       setCurrentView('main');
-      setShowSuccess(false);
-      setWithdrawError('');
+      setApiError('');
       onClose();
     }
   };
 
-  // ── Withdrawal Logic (Yahan state 0 hogi) ────────────────────────────────
   const handleWithdrawSubmit = async (e) => {
     e.preventDefault();
-    setWithdrawError('');
+    if (!form.name) return;
+    if (payoutMethod === 'bank' && (!form.accountNumber || !form.bankName)) return;
+    if (payoutMethod === 'zelle' && !form.zelleContact) return;
+
+    setApiError('');
     setIsSubmitting(true);
-
     try {
-      // Context ke main withdraw function ko call kiya
-      const result = await withdrawCash(withdrawalForm, displayAmount);
-
+      const result = await withdrawCash({ ...form, payoutMethod }, displayAmount);
       if (result.success) {
-        // Success hote hi WalletContext.jsx ka clearWalletAfterPayout chal chuka hai
-        // Isliye balance ab state mein 0 ho chuka hai
-        setShowSuccess(true);
+        setCurrentView('success');
         loadBankDetails();
       } else {
-        setWithdrawError(result.error || 'Withdrawal failed');
+        setApiError(result.error || 'Withdrawal failed');
       }
     } catch (err) {
-      setWithdrawError(err.message || 'Something went wrong.');
+      setApiError(err.message || 'Something went wrong.');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // ── Coupon Logic (Yahan bhi state 0 hogi) ────────────────────────────────
-  const handleCouponConfirm = () => {
-    const orderId = pendingOrders?.[0]?.orderId || null;
-    // Foran state 0 karo aur success screen dikhao
-    clearWalletAfterPayout(orderId);
-    setShowSuccess(true);
   };
 
   const StatusBadge = ({ status }) => {
@@ -99,7 +87,7 @@ const WalletModal = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
 
-        {/* Header Section */}
+        {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 relative">
           <button onClick={handleClose} disabled={isProcessing || isSubmitting} className="absolute top-4 right-4 text-white/80 hover:text-white disabled:opacity-50 cursor-pointer"><X size={24} /></button>
           <div className="flex items-center gap-3">
@@ -117,47 +105,148 @@ const WalletModal = ({ isOpen, onClose }) => {
 
         <div className="p-6 max-h-[65vh] overflow-y-auto">
 
-          {showSuccess ? (
+          {/* SUCCESS VIEW */}
+          {currentView === 'success' && (
             <div className="text-center py-6">
               <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircle className="text-green-600" size={40} /></div>
-              <h3 className="text-gray-900 font-black text-xl mb-2 uppercase tracking-tight">Success!</h3>
-              <p className="text-gray-600 text-sm font-semibold mb-6">Request submitted. Wait for 48 hours.</p>
+              <h3 className="text-gray-900 font-black text-xl mb-2 uppercase tracking-tight">Request Submitted!</h3>
+              <p className="text-gray-600 text-sm font-semibold mb-1">You will receive payment within 48 hours.</p>
+              <p className="text-gray-400 text-xs mb-6">{payoutMethod === 'zelle' ? 'Zelle details saved successfully.' : 'Bank details saved successfully.'}</p>
               <button onClick={handleClose} className="px-8 py-3 bg-green-600 text-white rounded-xl font-black text-sm uppercase shadow-lg hover:bg-green-700 transition-colors cursor-pointer">Done</button>
             </div>
+          )}
 
-          ) : currentView === 'withdraw' ? (
+          {/* METHOD SELECTION VIEW */}
+          {currentView === 'select' && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <button type="button" onClick={() => setCurrentView('main')} className="text-gray-400 hover:text-gray-600 cursor-pointer"><ArrowLeft size={18} /></button>
+                <p className="text-gray-600 text-sm font-semibold">Choose your payout method</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Zelle FIRST */}
+                <button
+                  onClick={() => { setPayoutMethod('zelle'); setCurrentView('form'); }}
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition-all cursor-pointer group"
+                >
+                  <div className="bg-purple-100 group-hover:bg-purple-200 p-3 rounded-full transition-colors">
+                    <Zap className="text-purple-600" size={24} />
+                  </div>
+                  <span className="text-sm font-bold text-gray-800">Zelle</span>
+                </button>
+                {/* Bank SECOND */}
+                <button
+                  onClick={() => { setPayoutMethod('bank'); setCurrentView('form'); }}
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer group"
+                >
+                  <div className="bg-blue-100 group-hover:bg-blue-200 p-3 rounded-full transition-colors">
+                    <Landmark className="text-blue-600" size={24} />
+                  </div>
+                  <span className="text-sm font-bold text-gray-800">Bank Account</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* FORM VIEW */}
+          {currentView === 'form' && (
             <form onSubmit={handleWithdrawSubmit} className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center mb-2">
+              <div className="flex items-center gap-2 mb-1">
+                <button type="button" onClick={() => setCurrentView('select')} className="text-gray-400 hover:text-gray-600 cursor-pointer"><ArrowLeft size={18} /></button>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${payoutMethod === 'zelle' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                  {payoutMethod === 'zelle' ? 'Zelle' : 'Bank Account'}
+                </span>
+              </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
                 <p className="text-green-900 font-bold text-sm">Withdrawal Amount: <span className="text-green-700 font-black">${displayAmount.toFixed(2)}</span></p>
               </div>
-              {withdrawError && <p className="text-red-600 text-xs font-bold text-center bg-red-50 p-2 rounded-lg">⚠️ {withdrawError}</p>}
-              <input type="text" placeholder="Account Holder Name" required value={withdrawalForm.name} onChange={(e) => setWithdrawalForm({ ...withdrawalForm, name: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-green-500 outline-none text-sm font-semibold" />
-              <input type="text" placeholder="Account Number" required value={withdrawalForm.accountNumber} onChange={(e) => setWithdrawalForm({ ...withdrawalForm, accountNumber: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-green-500 outline-none text-sm font-semibold" />
-              <input type="text" placeholder="Bank Name" required value={withdrawalForm.bankName} onChange={(e) => setWithdrawalForm({ ...withdrawalForm, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-green-500 outline-none text-sm font-semibold" />
+
+              {apiError && (
+                <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl p-3">
+                  <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
+                  <p className="text-red-700 text-xs font-semibold">{apiError}</p>
+                </div>
+              )}
+
+              {/* Full Name (common) */}
+              <div>
+                <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Full Name</label>
+                <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter your full name" />
+              </div>
+
+              {/* Bank Fields */}
+              {payoutMethod === 'bank' && (
+                <>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Account Number</label>
+                    <input type="text" required value={form.accountNumber} onChange={(e) => setForm({ ...form, accountNumber: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter account number" />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Bank Name</label>
+                    <input type="text" required value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-sm font-semibold" placeholder="Enter bank name" />
+                  </div>
+                </>
+              )}
+
+              {/* Zelle Fields */}
+              {payoutMethod === 'zelle' && (
+                <>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">Contact Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button type="button" onClick={() => setForm({ ...form, zelleContactType: 'email', zelleContact: '' })}
+                        className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${form.zelleContactType === 'email' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        Email
+                      </button>
+                      <button type="button" onClick={() => setForm({ ...form, zelleContactType: 'phone', zelleContact: '' })}
+                        className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${form.zelleContactType === 'phone' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        Phone
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wide">
+                      {form.zelleContactType === 'email' ? 'Zelle Email' : 'Zelle Phone Number'}
+                    </label>
+                    <input
+                      type={form.zelleContactType === 'email' ? 'email' : 'tel'}
+                      required
+                      value={form.zelleContact}
+                      onChange={(e) => setForm({ ...form, zelleContact: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none text-sm font-semibold"
+                      placeholder={form.zelleContactType === 'email' ? 'your@email.com' : '(555) 123-4567'}
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={() => setCurrentView('main')} className="flex-1 py-3 border-2 rounded-xl font-bold text-xs uppercase hover:bg-gray-50 transition-colors cursor-pointer">Back</button>
-                <button type="submit" disabled={isSubmitting || displayAmount <= 0} className="flex-1 py-3 bg-green-600 text-white rounded-xl font-black text-xs uppercase flex justify-center items-center gap-2 disabled:opacity-50 cursor-pointer">
+                <button type="button" onClick={() => setCurrentView('select')} disabled={isSubmitting} className="flex-1 py-3 border-2 rounded-xl font-bold text-xs uppercase hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50">Back</button>
+                <button type="submit" disabled={isSubmitting || displayAmount <= 0} className="flex-1 py-3 bg-green-600 text-white rounded-xl font-black text-xs uppercase flex justify-center items-center gap-2 disabled:opacity-50 cursor-pointer hover:bg-green-700">
                   {isSubmitting ? <RefreshCw className="animate-spin" size={14} /> : 'Submit Request'}
                 </button>
               </div>
             </form>
+          )}
 
-          ) : (
+          {/* MAIN VIEW */}
+          {currentView === 'main' && (
             <div className="space-y-4">
               {/* Withdraw Button */}
               <button
-                onClick={() => setCurrentView('withdraw')}
+                onClick={() => setCurrentView('select')}
                 disabled={displayAmount <= 0}
                 className="w-full group bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-500 hover:bg-green-50 transition-all flex items-center gap-4 disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:bg-white cursor-pointer"
               >
                 <div className="bg-green-100 p-3 rounded-xl group-hover:bg-green-600 transition-colors"><DollarSign className="text-green-600 group-hover:text-white transition-colors" size={22} /></div>
                 <div className="text-left flex-grow">
-                  <h3 className="cursor-pointer text-gray-900 font-black text-base uppercase tracking-tight">Withdraw Cash</h3>
-                  <p className="text-gray-500 text-xs font-semibold mt-0.5">Receive in 48 hours to your bank</p>
+                  <h3 className="text-gray-900 font-black text-base uppercase tracking-tight">Withdraw Cash</h3>
+                  <p className="text-gray-500 text-xs font-semibold mt-0.5">Receive in 48 hours via Zelle or Bank</p>
                 </div>
               </button>
 
-              {/* Transaction History Section */}
+              {/* Transaction History */}
               <div>
                 <div className="flex justify-between items-center mb-3 mt-6">
                   <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Transaction History</p>
@@ -197,6 +286,7 @@ const WalletModal = ({ isOpen, onClose }) => {
               </div>
             </div>
           )}
+
         </div>
       </div>
     </div>

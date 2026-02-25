@@ -107,15 +107,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
             <div className="space-y-4">
               <p className="text-gray-600 text-sm font-semibold text-center">Choose your payout method</p>
               <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => { setPayoutMethod('bank'); setStep('form'); }}
-                  className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer group"
-                >
-                  <div className="bg-blue-100 group-hover:bg-blue-200 p-3 rounded-full transition-colors">
-                    <Landmark className="text-blue-600" size={24} />
-                  </div>
-                  <span className="text-sm font-bold text-gray-800">Bank Account</span>
-                </button>
+                {/* Zelle FIRST */}
                 <button
                   onClick={() => { setPayoutMethod('zelle'); setStep('form'); }}
                   className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition-all cursor-pointer group"
@@ -124,6 +116,16 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
                     <Zap className="text-purple-600" size={24} />
                   </div>
                   <span className="text-sm font-bold text-gray-800">Zelle</span>
+                </button>
+                {/* Bank SECOND */}
+                <button
+                  onClick={() => { setPayoutMethod('bank'); setStep('form'); }}
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer group"
+                >
+                  <div className="bg-blue-100 group-hover:bg-blue-200 p-3 rounded-full transition-colors">
+                    <Landmark className="text-blue-600" size={24} />
+                  </div>
+                  <span className="text-sm font-bold text-gray-800">Bank Account</span>
                 </button>
               </div>
             </div>

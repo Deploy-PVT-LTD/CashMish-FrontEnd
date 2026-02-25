@@ -50,9 +50,9 @@ const Blogs = () => {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                         {blogs.map(blog => (
-                            <div key={blog._id} className="group border border-gray-100 rounded-[2rem] p-6 hover:shadow-2xl transition-all cursor-pointer">
+                            <Link key={blog._id} to={`/blogs/${blog._id}`} className="block group border border-gray-100 rounded-[2rem] p-6 hover:shadow-2xl transition-all cursor-pointer">
                                 {blog.image && (
-                                    <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-6 cursor-pointer">
+                                    <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-6">
                                         <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                     </div>
                                 )}
@@ -67,11 +67,11 @@ const Blogs = () => {
                                     <p className="text-gray-500 font-medium line-clamp-2">
                                         {blog.excerpt}
                                     </p>
-                                    <Link to={`/blogs/${blog._id}`} className="flex items-center gap-2 text-green-600 font-black uppercase text-[10px] tracking-widest hover:gap-4 transition-all cursor-pointer">
+                                    <div className="flex items-center gap-2 text-green-600 font-black uppercase text-[10px] tracking-widest group-hover:gap-4 transition-all">
                                         Read Full Article <ArrowRight size={14} />
-                                    </Link>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 )}

@@ -3,11 +3,13 @@ import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Za
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import imgg from "../assets/image-removebg-preview.png";
+import cashmishbanner from "../assets/cashmish_banner.webp";
 import { BASE_URL } from '../lib/api';
 
 export default function AboutUs({ isPage = false }) {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [marqueeReviews, setMarqueeReviews] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -21,7 +23,19 @@ export default function AboutUs({ isPage = false }) {
         console.error('Error fetching reviews:', err);
       }
     };
+    const fetchBlogs = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/blogs/published`);
+        if (res.ok) {
+          const data = await res.json();
+          setBlogs((data.blogs || data).slice(0, 3));
+        }
+      } catch (err) {
+        console.error('Error fetching blogs:', err);
+      }
+    };
     fetchReviews();
+    fetchBlogs();
   }, []);
 
   const stats = [
@@ -101,13 +115,13 @@ export default function AboutUs({ isPage = false }) {
             </div>
           </div>
 
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-green-500/20 rounded-3xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-gray-50 rounded-3xl overflow-hidden border border-gray-200 p-8 aspect-square flex items-center justify-center">
+          <div className="relative group cursor-pointer" onClick={() => window.open(cashmishbanner, '_blank')}>
+            <div className="absolute -inset-1 bg-green-500/20 blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-gray-900 overflow-hidden">
               <img
-                src={imgg}
-                alt="Our Operations"
-                className="w-full h-full object-contain rotate-6 hover:rotate-0 transition-transform duration-700"
+                src={cashmishbanner}
+                alt="CashMish Banner"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
           </div>
@@ -177,56 +191,38 @@ export default function AboutUs({ isPage = false }) {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "How to maximize your phone's resale value",
-                excerpt: "Learn the essential steps to keep your device in top condition for the highest possible payout.",
-                fullContent: "To get the best price for your old phone, start by keeping the original box and accessories. Scratches and dents significantly reduce value, so using a screen protector and case from day one is crucial. Before selling, perform a factory reset to clear your data, and ensure all accounts like iCloud or Google are removed. A clean, well-maintained device with original parts can fetch up to 20% more than a poorly kept one.",
-                date: "Oct 12, 2024",
-                category: "Tips & Tricks",
-                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800"
-              },
-              {
-                title: "The future of sustainable tech recycling",
-                excerpt: "Why selling your old devices is more than just about the money — it's about the planet.",
-                fullContent: "Electronic waste is one of the fastest-growing waste streams in the world. By selling your old devices to platforms like CashMish, you contribute to a circular economy. We ensure that devices are either refurbished for a second life or recycled using eco-friendly methods to recover precious metals like gold and copper. This reduces the need for destructive mining and keeps toxic chemicals out of landfills.",
-                date: "Oct 08, 2024",
-                category: "Sustainability",
-                image: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=800"
-              },
-              {
-                title: "E-waste: A goldmine in your drawer",
-                excerpt: "Understanding the hidden value inside your old electronics and how we extract it.",
-                fullContent: "Millions of dollars worth of precious materials are sitting in drawers across the country in the form of old electronics. Beyond the obvious resale value of working phones, even broken devices contain valuable components. Modern recycling technologies allow us to extract these materials efficiently. Selling your 'junk' tech not only nets you some quick cash but also provides the industry with the raw materials needed for next-generation devices.",
-                date: "Sep 25, 2024",
-                category: "Economy",
-                image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800"
-              }
-            ].map((blog, i) => (
-              <div key={i} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
-                <div className="aspect-[16/10] overflow-hidden relative cursor-pointer">
-                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-green-600 shadow-sm">
-                    {blog.category}
+            {blogs.length > 0 ? blogs.map((blog, i) => (
+              <div
+                key={i}
+                className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                onClick={() => setSelectedBlog(blog)}
+              >
+                {blog.image && (
+                  <div className="aspect-[16/10] overflow-hidden relative">
+                    <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    {blog.category && (
+                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-green-600 shadow-sm">
+                        {blog.category}
+                      </div>
+                    )}
                   </div>
-                </div>
+                )}
                 <div className="p-8 space-y-4">
-                  <div className="text-[10px] font-bold text-gray-400 tracking-widest">{blog.date}</div>
+                  {blog.createdAt && <div className="text-[10px] font-bold text-gray-400 tracking-widest">{new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>}
                   <h4 className="text-xl font-black text-gray-900 tracking-tight leading-tight group-hover:text-green-600 transition-colors">
                     {blog.title}
                   </h4>
                   <p className="text-sm text-gray-500 font-medium leading-relaxed line-clamp-2 italic">
-                    "{blog.excerpt}"
+                    "{blog.excerpt || blog.summary || blog.description}"
                   </p>
-                  <button
-                    onClick={() => setSelectedBlog(blog)}
-                    className="pt-4 flex items-center gap-2 text-green-600 font-black text-[10px] tracking-widest group-hover:gap-4 transition-all cursor-pointer"
-                  >
+                  <div className="pt-4 flex items-center gap-2 text-green-600 font-black text-[10px] tracking-widest group-hover:gap-4 transition-all">
                     Read More <ArrowRight size={14} />
-                  </button>
+                  </div>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="col-span-3 text-center text-gray-400 py-12 text-sm">Loading blogs...</div>
+            )}
           </div>
         </div>
       </section>
@@ -255,11 +251,11 @@ export default function AboutUs({ isPage = false }) {
                   </span>
                 </div>
                 <h3 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">
-                  {selectedBlog.title}
+                  {selectedBlog?.title}
                 </h3>
                 <div className="h-1 w-20 bg-green-500 rounded-full"></div>
                 <p className="text-gray-600 leading-relaxed font-medium text-lg">
-                  {selectedBlog.fullContent}
+                  {selectedBlog?.fullContent || selectedBlog?.content || selectedBlog?.description}
                 </p>
                 <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
                   <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold tracking-widest">
