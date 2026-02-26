@@ -39,7 +39,7 @@ export default function AboutUs({ isPage = false }) {
   }, []);
 
   const stats = [
-    { label: 'Successful auctions', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
+    { label: 'Successful Deals', value: '5k+', icon: <TrendingUp className="w-4 h-4" /> },
     { label: 'Active sellers', value: '12k+', icon: <Users className="w-4 h-4" /> },
     { label: 'Country covered', value: '1', icon: <Rocket className="w-4 h-4" /> },
     { label: 'Rating', value: '4.9/5', icon: <Award className="w-4 h-4" /> },
