@@ -3,7 +3,7 @@ import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Za
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import imgg from "../assets/image-removebg-preview.png";
-import cashmishbanner from "../assets/cashmish_banner.webp";
+import cashmishbanner from "../assets/cashmish_banner1.webp";
 import { BASE_URL } from '../lib/api';
 
 export default function AboutUs({ isPage = false }) {
