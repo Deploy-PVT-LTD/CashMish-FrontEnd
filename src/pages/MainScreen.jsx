@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import phoneMockup from "../assets/image-removebg-preview.png";
-import mobileimg from "../assets/iphones-cashmish-png.png"
+import mobileimg from "../assets/iphone 2@3x1.png"
 import { Smartphone, Shield, Zap } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import AboutUs from "./About.jsx";
@@ -145,7 +145,9 @@ const PhoneFlipLanding = () => {
         </div>
       </main>
       <AboutUs />
-      <Chatbot />
+      <div className="cursor-pointer">
+        <Chatbot />
+      </div>
     </div>
   );
 };

@@ -175,7 +175,7 @@ export default function AboutUs({ isPage = false }) {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div className="space-y-4">
               <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Insights</h3>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+              <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 From Our <br />
                 <span className="text-gray-400">Latest Blogs.</span>
               </h2>

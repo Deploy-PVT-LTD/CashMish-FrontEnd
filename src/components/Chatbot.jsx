@@ -71,7 +71,7 @@ export default function Chatbot() {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className={`fixed bottom-6 right-6 z-50 p-4 bg-green-600 text-white rounded-full shadow-2xl hover:bg-green-700 hover:scale-105 active:scale-95 transition-all duration-300 ${isOpen ? 'scale-0' : 'scale-100'}`}
+                className={`fixed bottom-6 cursor-pointer right-6 z-50 p-4 bg-green-600 text-white rounded-full shadow-2xl hover:bg-green-700 hover:scale-105 active:scale-95 transition-all duration-300 ${isOpen ? 'scale-0' : 'scale-100'}`}
             >
                 <MessageSquare size={28} />
             </button>
