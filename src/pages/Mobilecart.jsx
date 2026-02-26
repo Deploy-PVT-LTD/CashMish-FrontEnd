@@ -511,7 +511,7 @@ const MobileCart = () => {
                           </div>
                           {isPaid ? (
                             <div className="bg-green-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-700 shadow-sm flex items-center gap-2">
-                              <Check size={14} strokeWidth={3} /> Finalized
+                              <Check size={14} strokeWidth={3} /> Deal Finalized
                             </div>
                           ) : isAccepted ? (
                             <div className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-200">✅ Bid Accepted</div>
