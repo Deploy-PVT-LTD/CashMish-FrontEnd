@@ -469,6 +469,7 @@ const MobileCart = () => {
               const isPaid = item.status === 'paid';
               const hasBid = item.bidPrice > 0;
               const isCancelled = item.isDeleted;
+              const isItemProcessing = processingOrders.has(item.id);
               return (
                 <div key={item.id} className={`bg-white rounded-2xl shadow-sm border overflow-hidden transition-all duration-300 ${isCancelled ? 'opacity-60 grayscale border-gray-200' : 'hover:border-blue-200 border-gray-100'}`}>
                   <div className="p-4 md:p-5 flex flex-col md:flex-row gap-5 items-center md:items-start">
@@ -559,7 +560,7 @@ const Badge = ({ status }) => {
   const statusMap = {
     pending: { bg: 'bg-orange-100', text: 'text-orange-600', label: 'Pending' },
     accepted: { bg: 'bg-green-100', text: 'text-green-600', label: 'Accepted' },
-    paid: { bg: 'bg-green-600', text: 'text-white', label: 'Paid' },
+    paid: { bg: 'bg-green-600', text: 'text-white', label: 'Finalized' },
     rejected: { bg: 'bg-red-100', text: 'text-red-600', label: 'Rejected' },
     bid_received: { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Received' },
     'bid-placed': { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Placed' },
