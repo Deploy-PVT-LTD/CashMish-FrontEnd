@@ -180,61 +180,10 @@ function Header({ simple = false }) {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
-              {/* Our Services Dropdown */}
-              <div
-                className="relative group py-2"
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
-              >
-                <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
-
-                  <a href="/contact" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
-                    Support
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
-                  </a>
-                  {/* <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-green-600' : ''}`} /> */}
-                </button>
-                {/* <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${servicesOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-3 min-w-[200px] space-y-1">
-                    {menuCategories.services.map((link) => (
-                      <a
-                        key={link.name}
-                        href={link.path}
-                        className="text-[13px] font-bold text-gray-600 hover:text-green-600 hover:bg-green-50 px-3 py-2 rounded-xl transition-all flex items-center justify-between group/item"
-                      >
-                        {link.name}
-                        <ExternalLink size={12} className="opacity-0 group-hover/item:opacity-100 transition-opacity" />
-                      </a>
-                    ))}
-                  </div>
-                </div> */}
-              </div>
-
-              {/* Quick Links Dropdown */}
-              <div
-                className="relative group py-2"
-                onMouseEnter={() => setQuickLinksOpen(true)}
-                onMouseLeave={() => setQuickLinksOpen(false)}
-              >
-                {/* <button className="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-green-800 transition-colors cursor-pointer">
-                  Quick Links
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${quickLinksOpen ? 'rotate-180 text-green-600' : ''}`} />
-                </button> */}
-                {/* <div className={`absolute top-full -left-4 pt-4 transition-all duration-300 ${quickLinksOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-                  <div className="bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl p-3 min-w-[200px] space-y-1">
-                    {menuCategories.quickLinks.map((link) => (
-                      <a
-                        key={link.name}
-                        href={link.path}
-                        className="text-[13px] font-bold text-gray-600 hover:text-green-600 hover:bg-green-50 px-3 py-2 rounded-xl transition-all flex items-center justify-between group/item"
-                      >
-                        {link.name}
-                        <ExternalLink size={12} className="opacity-0 group-hover/item:opacity-100 transition-opacity" />
-                      </a>
-                    ))}
-                  </div>
-                </div> */}
-              </div>
+              <a href="/contact" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+                Support
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
+              </a>
 
               {!simple && (
                 <div className="flex items-center gap-4 ml-4">
