@@ -56,7 +56,7 @@ const Footer = () => {
                             {['Home', 'How It Works', 'About Us', 'Support', 'FAQs', 'Reviews', 'Blogs'].map((item) => (
                                 <li key={item}>
                                     <Link
-                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : item === 'Contact Us' ? '/contact' : item === 'Blogs' ? '/blogs' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
+                                        to={item === 'Home' ? '/' : item === 'About Us' ? '/about' : item === 'Support' ? '/contact' : item === 'Blogs' ? '/blogs' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
                                         className="group flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors font-semibold text-[11px]"
                                     >
                                         <ArrowRight size={8} className="hidden group-hover:inline opacity-50" />
@@ -93,11 +93,11 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li className="flex items-start gap-2">
                                 <MapPin size={12} className="text-green-500 mt-0.5 shrink-0" />
-                                <span className="text-[11px] font-medium text-gray-400">Silicon Valley, California, USA</span>
+                                <span className="text-[11px] font-medium text-gray-400">Georgia, United States</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <Phone size={12} className="text-green-500 shrink-0" />
-                                <a href="tel:+1234567890" className="text-[11px] font-medium text-gray-400 hover:text-green-500 transition-colors">+1 (234) 567-890</a>
+                                <a href="tel:+1234567890" className="text-[11px] font-medium text-gray-400 hover:text-green-500 transition-colors">+1 (470) 339-5011</a>
                             </li>
                             <li className="flex items-center gap-2">
                                 <Mail size={12} className="text-green-500 shrink-0" />

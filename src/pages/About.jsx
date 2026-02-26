@@ -92,7 +92,7 @@ export default function AboutUs({ isPage = false }) {
           <div className="space-y-8">
             <div className="space-y-4">
               <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Our Values</h3>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter leading-[0.9]">
+              <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 Transparency is <br />
                 <span className="text-gray-400">Our Strongest Currency.</span>
               </h2>
