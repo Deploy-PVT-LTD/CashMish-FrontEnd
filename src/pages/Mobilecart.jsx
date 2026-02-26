@@ -331,10 +331,11 @@ const MobileCart = () => {
     storage: form.storage,
     condition: form.screenCondition || form.condition,
     uploadDate: form.pickUpDetails?.pickUpDate ? new Date(form.pickUpDetails.pickUpDate).toLocaleDateString() : 'N/A',
-    status: String(form.status || 'pending').toLowerCase(),
+    status: form.isDeleted ? 'cancelled' : String(form.status || 'pending').toLowerCase(),
     address: form.pickUpDetails?.address?.addressText || form.address || 'N/A',
     bidPrice: parseFloat(form.bidPrice) || 0,
-    modelImage: form.mobileId?.image || form.image || null
+    modelImage: form.mobileId?.image || form.image || null,
+    isDeleted: form.isDeleted || false
   }));
 
   useEffect(() => { loadUserCart(); }, []);
@@ -467,9 +468,9 @@ const MobileCart = () => {
               const isAccepted = item.status === 'accepted' || item.status === 'paid';
               const isPaid = item.status === 'paid';
               const hasBid = item.bidPrice > 0;
-              const isItemProcessing = processingOrders.has(item.id);
+              const isCancelled = item.isDeleted;
               return (
-                <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:border-blue-200 transition-all duration-300">
+                <div key={item.id} className={`bg-white rounded-2xl shadow-sm border overflow-hidden transition-all duration-300 ${isCancelled ? 'opacity-60 grayscale border-gray-200' : 'hover:border-blue-200 border-gray-100'}`}>
                   <div className="p-4 md:p-5 flex flex-col md:flex-row gap-5 items-center md:items-start">
                     <div className="group w-28 h-28 md:w-32 md:h-32 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-50 shrink-0 shadow-inner relative overflow-hidden">
                       {item.modelImage ? (
@@ -479,7 +480,7 @@ const MobileCart = () => {
                     <div className="flex-grow w-full text-center md:text-left">
                       <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-2 mb-3">
                         <div>
-                          <h3 className="text-lg font-black text-gray-800 leading-none uppercase tracking-tight">{item.brand} {item.name}</h3>
+                          <h3 className={`text-lg font-black leading-none uppercase tracking-tight ${isCancelled ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.brand} {item.name}</h3>
                           <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Requested on {item.uploadDate}</p>
                         </div>
                         <Badge status={item.status} />
@@ -492,7 +493,13 @@ const MobileCart = () => {
                           <p className="text-xs font-semibold text-gray-600 truncate">{item.address}</p>
                         </div>
                       </div>
-                      {hasBid && !isRejected ? (
+
+                      {isCancelled ? (
+                        <div className="bg-gray-100 p-4 rounded-2xl border border-gray-200 flex items-center justify-center gap-2">
+                          <X size={16} className="text-gray-500" />
+                          <p className="text-gray-500 text-[10px] md:text-xs font-black uppercase text-center">Request Cancelled</p>
+                        </div>
+                      ) : hasBid && !isRejected ? (
                         <div className={`rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-4 ${isAccepted ? 'bg-green-50/50' : 'bg-blue-50'}`}>
                           <div className="flex items-center gap-3">
                             <div className={`p-2.5 rounded-xl ${isAccepted ? 'bg-green-100 text-green-600' : 'bg-blue-600 text-white shadow-lg shadow-blue-100'}`}><DollarSign size={18} strokeWidth={2.5} /></div>
@@ -517,7 +524,7 @@ const MobileCart = () => {
                           )}
                         </div>
                       ) : isRejected ? (
-                        <div className="bg-red-50 p-4 rounded-2xl border border-red-100"><p className="text-red-600 text-xs font-black uppercase">❌ Bid Declined / Order Cancelled</p></div>
+                        <div className="bg-red-50 p-4 rounded-2xl border border-red-100"><p className="text-red-600 text-xs font-black uppercase text-center md:text-left">❌ Bid Declined / Order Cancelled</p></div>
                       ) : (
                         <div className="flex flex-col md:flex-row items-center justify-between gap-3 rounded-2xl p-4 bg-amber-50 border border-amber-100/50">
                           <div className="flex items-center gap-3">
@@ -555,7 +562,8 @@ const Badge = ({ status }) => {
     paid: { bg: 'bg-green-600', text: 'text-white', label: 'Paid' },
     rejected: { bg: 'bg-red-100', text: 'text-red-600', label: 'Rejected' },
     bid_received: { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Received' },
-    'bid-placed': { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Placed' }
+    'bid-placed': { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Placed' },
+    cancelled: { bg: 'bg-gray-200', text: 'text-gray-600', label: 'Cancelled' }
   };
   const s = statusMap[status] || statusMap.pending;
   return <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider ${s.bg} ${s.text} border border-white/50 shadow-sm`}>{s.label}</span>;
