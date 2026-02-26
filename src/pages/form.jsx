@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import imageCompression from 'browser-image-compression';
 import Header from "../components/layout/header.jsx";
 import { BASE_URL } from '../lib/api';
 import {
@@ -104,11 +105,23 @@ export default function UserForm() {
     };
     data.append("pickUpDetails", JSON.stringify(pickUpDetails));
 
-    // 3. 馃摳 IMAGES LOOP (Fix for DB upload)
+    // 3. 馃摳 IMAGES LOOP (Fix for DB upload + Client Side Compression)
     if (imagesToUpload.length > 0) {
-      imagesToUpload.forEach((file) => {
-        data.append("images", file);
-      });
+      for (const file of imagesToUpload) {
+        try {
+          const options = {
+            maxSizeMB: 0.8,
+            maxWidthOrHeight: 1200,
+            useWebWorker: true,
+          };
+          const compressedFile = await imageCompression(file, options);
+          data.append("images", compressedFile);
+        } catch (error) {
+          console.error("Image compression error:", error);
+          // Fallback to original file if compression fails
+          data.append("images", file);
+        }
+      }
     }
 
     try {
