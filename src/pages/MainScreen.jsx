@@ -4,6 +4,7 @@ import mobileimg from "../assets/iphones-cashmish-png.png"
 import { Smartphone, Shield, Zap } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import AboutUs from "./About.jsx";
+import Chatbot from "../components/Chatbot.jsx";
 
 const PhoneFlipLanding = () => {
   const fullText = "Sell Your Phone at the Best Price";
@@ -144,6 +145,7 @@ const PhoneFlipLanding = () => {
         </div>
       </main>
       <AboutUs />
+      <Chatbot />
     </div>
   );
 };
