@@ -8,6 +8,7 @@ import {
   ArrowRight, Mail, Navigation, Loader2, User
 } from 'lucide-react';
 import deploy from '../assets/deploy-logo.png';
+import Chatbot from '../components/Chatbot.jsx';
 
 export default function UserForm() {
   const navigate = useNavigate();
@@ -193,6 +194,7 @@ export default function UserForm() {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Header />
+      <Chatbot />
       <div className="max-w-4xl mx-auto p-6 grid md:grid-cols-2 gap-8">
 
         {/* Left Info Panel (UI Same as before) */}

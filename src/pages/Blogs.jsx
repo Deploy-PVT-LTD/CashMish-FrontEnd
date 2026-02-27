@@ -4,6 +4,7 @@ import Header from '../components/layout/header.jsx';
 import Footer from '../components/layout/Footer.jsx';
 import { ArrowRight, Calendar, User } from 'lucide-react';
 import { BASE_URL } from '../lib/api';
+import Chatbot from '../components/Chatbot.jsx';
 
 const Blogs = () => {
     const [blogs, setBlogs] = useState([]);
@@ -30,7 +31,7 @@ const Blogs = () => {
     return (
         <div className="min-h-screen bg-white">
             <Header />
-
+            <Chatbot />
             <section className="pt-32 pb-20 px-6 bg-gray-900 text-white text-center">
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-4xl md:text-6xl font-black mb-4 uppercase tracking-tighter">

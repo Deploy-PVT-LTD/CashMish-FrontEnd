@@ -2,6 +2,7 @@
 import { Search, ChevronDown, ChevronUp, HelpCircle, MessageCircle, ArrowRight } from 'lucide-react';
 import Header from '../components/layout/header.jsx';
 import Footer from '../components/layout/Footer.jsx';
+import Chatbot from '../components/Chatbot.jsx';
 
 const faqs = [
     {
@@ -101,7 +102,7 @@ export default function FAQs() {
                         </div>
                     )}
                 </div>
-
+                <Chatbot />
                 {/* Contact Support CTA */}
                 <div className="mt-12 p-8 bg-green-600 rounded-3xl text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden group">
                     <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px] opacity-10"></div>

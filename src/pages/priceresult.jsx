@@ -3,6 +3,7 @@ import { TrendingUp, Info, ArrowRight, ShieldCheck, Zap, Truck, CheckCircle, Sma
 import Header from '../components/layout/header.jsx';
 import { useNavigate, useLocation } from "react-router-dom";
 import { BASE_URL } from '../lib/api';
+import Chatbot from "../components/Chatbot.jsx";
 
 const PriceResult = () => {
   const navigate = useNavigate();
@@ -110,6 +111,7 @@ const PriceResult = () => {
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans pb-12">
       <Header />
+      <Chatbot />
       <main className="flex-1 flex flex-col items-center px-2 pt-5">
         {/* Step Indicator */}
         <div className="w-full max-w-md mb-8 flex justify-between items-end px-2">

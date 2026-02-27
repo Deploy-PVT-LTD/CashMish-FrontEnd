@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
+import Chatbot from "../components/Chatbot.jsx";
 
 const CarrierSelection = () => {
   const [carrier, setCarrier] = useState('');
@@ -30,6 +31,8 @@ const CarrierSelection = () => {
   return (
     <div>
       <Header />
+      {/* chatbot */}
+      <Chatbot />
       <div className="bg-gray-50 flex items-center justify-center px-4 py-8">
         <div className="max-w-3xl w-full">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 md:p-12">
@@ -57,8 +60,8 @@ const CarrierSelection = () => {
                     key={c}
                     onClick={() => setCarrier(c)}
                     className={`cursor-pointer p-5 rounded-xl border-2 text-center font-semibold transition-all capitalize ${carrier === c
-                        ? 'border-greem-800 bg-blue-50 text-green-700 shadow-sm'
-                        : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                      ? 'border-greem-800 bg-blue-50 text-green-700 shadow-sm'
+                      : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                   >
                     {c === 'att' ? 'AT&T' : c === 'tmobile' ? 'T-Mobile' : c}
@@ -72,8 +75,8 @@ const CarrierSelection = () => {
               disabled={!carrier}
               onClick={handleContinue} // 鉁?Ab ye save bhi karega
               className={`w-full font-semibold py-4 rounded-xl transition-all shadow-lg cursor-pointer ${carrier
-                  ? "bg-green-800 text-white hover:bg-green-700"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                ? "bg-green-800 text-white hover:bg-green-700"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
             >
               Continue

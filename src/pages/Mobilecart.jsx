@@ -4,6 +4,7 @@ import Header from '../components/layout/header.jsx';
 import Swal from 'sweetalert2';
 import { useWallet } from '../contexts/Walletcontext';
 import { BASE_URL } from '../lib/api';
+import Chatbot from '../components/Chatbot.jsx';
 
 // 鈹€鈹€鈹€ Accept Bid Popup 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
@@ -427,6 +428,7 @@ const MobileCart = () => {
   return (
     <div className="bg-[#fcfcfc] min-h-screen pb-10 font-sans">
       <Header />
+      <Chatbot />
       <AcceptPopup isOpen={acceptPopup.open} onClose={() => setAcceptPopup({ open: false, orderId: null, amount: 0 })} amount={acceptPopup.amount} onWithdraw={handlePopupWithdraw} onCoupon={handlePopupCoupon} />
       <WithdrawModal isOpen={withdrawModal.open} onClose={() => setWithdrawModal({ open: false, orderId: null, amount: 0 })} amount={withdrawModal.amount} orderId={withdrawModal.orderId} onSuccess={handleWithdrawSuccess} />
       <CouponModal isOpen={couponModal.open} onClose={() => setCouponModal({ open: false, orderId: null, amount: 0 })} amount={couponModal.amount} orderId={couponModal.orderId} onSuccess={handleCouponSuccess} />

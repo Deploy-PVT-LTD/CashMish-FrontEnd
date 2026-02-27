@@ -59,7 +59,7 @@ const UserForm = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-6 sm:p-8">
       <div className="max-w-6xl mx-auto">
 
-        {/* Header */} 
+        {/* Header */}
         {/* der /><Hea */}
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -136,11 +136,10 @@ const UserForm = () => {
                     key={slot}
                     type="button"
                     onClick={() => setSelectedTimeSlot(slot)}
-                    className={`py-2 rounded-xl text-sm ${
-                      selectedTimeSlot === slot
+                    className={`py-2 rounded-xl text-sm ${selectedTimeSlot === slot
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-100'
-                    }`}
+                      }`}
                   >
                     {slot}
                   </button>
@@ -151,11 +150,10 @@ const UserForm = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!isFormComplete}
-                className={`w-full py-3 rounded-xl font-semibold flex justify-center gap-2 ${
-                  isFormComplete
+                className={`w-full py-3 rounded-xl font-semibold flex justify-center gap-2 ${isFormComplete
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 text-gray-400'
-                }`}
+                  }`}
               >
                 Confirm Pickup <ArrowRight />
               </button>

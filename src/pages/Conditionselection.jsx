@@ -5,6 +5,7 @@ import first from '../assets/first.png'
 import second from '../assets/second.png'
 import third from '../assets/third.png'
 import fourth from '../assets/fourth.png'
+import Chatbot from '../components/Chatbot.jsx';
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
 
@@ -24,7 +25,8 @@ const ConditionSelection = ({ onSelectCondition }) => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <Header />
-
+      {/* chatbot */}
+      <Chatbot />
       {/* Main */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
         {/* Progress Tracker */}

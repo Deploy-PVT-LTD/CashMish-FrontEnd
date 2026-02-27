@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import Header from "../components/layout/header.jsx";
 import { BASE_URL } from '../lib/api';
+import Chatbot from '../components/Chatbot.jsx';
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -43,7 +44,7 @@ export default function ContactUs() {
   return (
     <div className="min-h-screen lg:h-screen w-full bg-white flex flex-col font-sans text-slate-900 overflow-x-hidden">
       <Header />
-
+      <Chatbot />
       <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto">
 
         {/* LEFT */}

@@ -2,6 +2,7 @@
 import { Clock, MessageSquare, DollarSign } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/layout/header.jsx';
+import Chatbot from '../components/Chatbot.jsx';
 
 export default function PendingPage() {
   const location = useLocation();
@@ -10,11 +11,11 @@ export default function PendingPage() {
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100">
       <Header />
-
+      <Chatbot />
       <div className="flex-grow flex items-center justify-center px-4">
-        
+
         <div className="w-full max-w-xs sm:max-w-md bg-white rounded-2xl shadow-xl p-6 md:p-8 text-center">
-          
+
           {/* Clock Icon */}
           <div className="flex justify-center mb-4">
             <div className="relative">
