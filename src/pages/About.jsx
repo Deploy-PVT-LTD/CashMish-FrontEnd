@@ -5,6 +5,7 @@ import Footer from "../components/layout/Footer.jsx";
 import imgg from "../assets/image-removebg-preview.png";
 import cashmishbanner from "../assets/cashmish_banner1.webp";
 import { BASE_URL } from '../lib/api';
+import Chatbot from '../components/Chatbot.jsx';
 
 export default function AboutUs({ isPage = false }) {
   const [selectedBlog, setSelectedBlog] = useState(null);
@@ -274,6 +275,7 @@ export default function AboutUs({ isPage = false }) {
           </div>
         </div>
       )}
+      <Chatbot />
 
       {/* Footer is already included in App.jsx */}
     </div>

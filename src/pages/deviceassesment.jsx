@@ -11,6 +11,7 @@ import batteryImg from '../assets/battery-health.webp';
 
 import top from '../assets/top.webp';
 import bottom from '../assets/bottom.webp';
+import Chatbot from '../components/Chatbot.jsx';
 
 const photoCategories = [
   { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <img src={frontImg} alt="Front" className="w-20 h-50 object-contain" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
@@ -178,6 +179,7 @@ const DeviceAssessmentForm = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <Chatbot />
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         <h1 className="text-3xl font-bold text-center mb-8">Device Condition Assessment</h1>
 

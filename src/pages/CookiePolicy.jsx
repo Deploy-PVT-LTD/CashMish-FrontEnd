@@ -1,10 +1,12 @@
 ﻿import React from 'react';
 import Header from '../components/layout/header';
+import Chatbot from '../components/Chatbot';
 
 const CookiePolicy = () => {
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
             <Header />
+            <Chatbot />
             <div className="max-w-4xl mx-auto px-4 py-16 md:py-24">
                 <h1 className="text-4xl font-black text-gray-900 mb-8 uppercase tracking-tighter">
                     Cookie <span className="text-green-600">Policy</span>

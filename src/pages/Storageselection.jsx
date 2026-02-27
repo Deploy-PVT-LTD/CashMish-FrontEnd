@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import storageimg from '../assets/storage.png'
+import Chatbot from '../components/Chatbot.jsx';
 
 const StorageSelection = ({
   selectedBrand,
@@ -19,7 +20,8 @@ const StorageSelection = ({
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <Header />
-
+      {/* chatbot */}
+      <Chatbot />
       {/* Main */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
         {/* Progress Tracker */}

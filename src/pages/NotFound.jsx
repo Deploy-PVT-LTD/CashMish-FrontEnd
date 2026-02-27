@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Home, ArrowLeft, Smartphone } from 'lucide-react';
 import Header from '../components/layout/header.jsx';
+import Chatbot from '../components/Chatbot.jsx';
 
 export default function NotFound() {
   return (
@@ -8,6 +9,8 @@ export default function NotFound() {
       {/* Header */}
 
       <Header />
+
+      <Chatbot />
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">

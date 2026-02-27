@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import axios from "axios";
 import { BASE_URL } from '../lib/api.js';
+import Chatbot from "../components/Chatbot.jsx";
 
 // 1. Logos ka mapping object
 const brandLogos = {
@@ -63,6 +64,7 @@ const BrandSelection = ({ onSelectBrand }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
+      <Chatbot />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
         {/* Progress Tracker */}
         <div className="mb-10 sm:mb-16 flex justify-center">

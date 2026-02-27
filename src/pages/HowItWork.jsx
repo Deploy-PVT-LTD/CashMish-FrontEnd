@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { X, ArrowRight, Zap, Target, ShieldCheck, Truck, DollarSign } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
+import Chatbot from "../components/Chatbot.jsx";
 
 const HowItWorks = () => {
 
@@ -156,7 +157,7 @@ const HowItWorks = () => {
           </div>
         </div>
       )}
-
+      <Chatbot />
       {/* <Footer /> */}
     </div>
   );

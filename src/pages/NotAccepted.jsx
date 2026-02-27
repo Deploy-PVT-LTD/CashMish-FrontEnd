@@ -1,12 +1,13 @@
 import React from 'react';
 import { Home, ArrowLeft, Smartphone, AlertCircle, Mail } from 'lucide-react';
 import Header from '../components/layout/header.jsx';
+import Chatbot from '../components/Chatbot.jsx';
 export default function RejectionPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <Header />
-
+      <Chatbot />
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-6">
         <div className="max-w-2xl w-full">

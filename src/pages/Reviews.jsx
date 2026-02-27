@@ -4,6 +4,7 @@ import Header from '../components/layout/header.jsx';
 import Footer from '../components/layout/Footer.jsx';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../lib/api';
+import Chatbot from '../components/Chatbot.jsx';
 
 const Reviews = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,7 +92,7 @@ const Reviews = () => {
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-green-100 selection:text-green-900 overflow-x-hidden">
             <Header />
-
+            <Chatbot />
             {/* ... (Hero Section & Stats Section remain same) ... */}
 
             {/* Reviews Grid */}

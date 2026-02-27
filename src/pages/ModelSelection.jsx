@@ -4,6 +4,7 @@ import MobileCard from "../components/ui/MobileCard";
 import Header from "../components/layout/header.jsx";
 import axios from "axios";
 import { BASE_URL } from '../lib/api';
+import Chatbot from "../components/Chatbot.jsx";
 
 // ✅ Version score calculator
 const getVersionScore = (name) => {
@@ -87,7 +88,7 @@ const ModelSelection = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-
+      <Chatbot />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
