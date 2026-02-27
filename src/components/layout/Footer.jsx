@@ -22,12 +22,13 @@ const Footer = () => {
                             {/* <div className="bg-green-600 p-1 rounded-lg group-hover:rotate-12 transition-transform duration-300">
                                 <Smartphone className="text-white" size={18} />
                             </div> */}
-
-                            <img
+                        <a href="/">  <img
                                 src={cashmishLogo}
-                                alt="CashMish Logo"
-                                className="h-[20px] w-auto object-contain"
-                            />
+                                alt="CashMish - Sell Old iPhone"
+                                className="h-[20px] w-auto object-contain cursor-pointer"
+                                
+                            /></a>
+                          
                         </div>
                         <p className="text-[10px] leading-relaxed text-gray-400 font-medium max-w-xs">
                             The smartest way to sell your old devices. Instant valuations,
@@ -37,13 +38,13 @@ const Footer = () => {
 
 
                         <div className="flex items-center gap-2">
-                            <a href="https://www.facebook.com/cashmishofficial/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
+                            <a href="https://www.facebook.com/cashmishofficial/" title="CashMish on facebook" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
                                 <Facebook size={14} />
                             </a>
-                            <a href="https://www.instagram.com/cashmishofficial/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
+                            <a href="https://www.instagram.com/cashmishofficial/" title="CashMish on Instagram" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
                                 <Instagram size={14} />
                             </a>
-                            <a href="https://www.youtube.com/@CashMishOfficial" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
+                            <a href="https://www.youtube.com/@CashMishOfficial" title="CashMish on youtube" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-gray-800 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 cursor-pointer">
                                 <Youtube size={14} />
                             </a>
                         </div>
@@ -128,7 +129,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
                     <p className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">
-                        © {currentYear} CashMish. <span className="hidden sm:inline">License: CM-2024-8892</span>
+                        © {currentYear} CashMish. <span className="hidden sm:inline"></span>
                     </p>
                     <div className="flex gap-4">
                         <Link to="/privacy" className="text-[9px] font-black uppercase text-gray-500 hover:text-green-500 transition-colors tracking-widest">Privacy</Link>

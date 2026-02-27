@@ -91,7 +91,7 @@ const StorageSelection = ({
                   }`}
               >
                 <div className="w-8 h-8 sm:w-12 sm:h-12 mb-1">
-                  <img src={storageimg} alt="" className="w-full h-full object-contain" />
+                  <img src={storageimg} alt="mobile storage option" className="w-full h-full object-contain" />
                 </div>
                 <div className="font-semibold text-xs sm:text-sm">
                   {storage}

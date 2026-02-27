@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import phoneMockup from "../assets/image-removebg-preview.png";
-import mobileimg from "../assets/iphone 2@3x1.png"
+import mobileimg from "../assets/iphone 2@3x11.webp"
 import { Smartphone, Shield, Zap } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import AboutUs from "./About.jsx";
@@ -121,7 +120,7 @@ const PhoneFlipLanding = () => {
                 <div className="absolute inset-0 flex items-center justify-center" style={{ overflow: 'visible' }}>
                   <img
                     src={mobileimg}
-                    alt="phones spread"
+                    alt="Sell Used iPhone"
                     className="w-[170%] sm:w-[140%] lg:w-[170%] max-w-none h-auto
                  transform lg:translate-x-8 -translate-y-4 lg:-translate-y-6
                  transition-all duration-500 hover:scale-105"

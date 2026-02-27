@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X, Star } from 'lucide-react';
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
-import imgg from "../assets/image-removebg-preview.png";
 import cashmishbanner from "../assets/cashmish_banner1.webp";
 import { BASE_URL } from '../lib/api';
 
@@ -120,7 +119,7 @@ export default function AboutUs({ isPage = false }) {
             <div className="relative bg-gray-900 overflow-hidden">
               <img
                 src={cashmishbanner}
-                alt="CashMish Banner"
+                alt="Instant Cash iPhone"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>

@@ -167,7 +167,7 @@ const Reviews = () => {
                         <div className="bg-gray-900 p-8 text-white relative">
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                                className="absolute cursor-pointer top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
                             >
                                 <X size={20} />
                             </button>

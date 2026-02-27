@@ -9,10 +9,10 @@ const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
 
   const conditions = [
-    { name: 'Mint', description: 'Like new, no scratches', icon: <img src={first} alt="" />, color: 'green' },
-    { name: 'Good', description: 'Minor signs of use', icon: <img src={second} alt="" />, color: 'blue' },
-    { name: 'Fair', description: 'Visible wear & tear', icon: <img src={third} alt="" />, color: 'orange' },
-    { name: 'Broken', description: 'Cracks (regardless of size)', icon: <img src={fourth} alt="" />, color: 'red' },
+    { name: 'Mint', description: 'Like new, no scratches', icon: <img src={first} alt="Mint condition iPhone" />, color: 'green' },
+    { name: 'Good', description: 'Minor signs of use', icon: <img src={second} alt="Good condition iPhone" />, color: 'blue' },
+    { name: 'Fair', description: 'Visible wear & tear', icon: <img src={third} alt="Fair condition iPhone" />, color: 'orange' },
+    { name: 'Broken', description: 'Cracks (regardless of size)', icon: <img src={fourth} alt="Broken iPhone condition" />, color: 'red' },
   ];
 
   const onBack = () => {

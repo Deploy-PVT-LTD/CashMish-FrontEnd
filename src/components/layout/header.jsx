@@ -163,7 +163,7 @@ function Header({ simple = false }) {
 
             <div className="flex items-center flex-shrink-0">
               <a href="/" className="flex items-center gap-2 group">
-                <img src={cashmishlogo} alt="Logo" className="w-45 h-35" />
+                <img src={cashmishlogo} alt="CashMish Logo" className="w-45 h-35" />
                 {/* <span className="text-xl font-bold text-gray-900 tracking-tight">CashMish</span> */}
               </a>
             </div>
