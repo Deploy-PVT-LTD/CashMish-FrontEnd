@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send } from 'lucide-react';
+import { io } from 'socket.io-client';
+import { BASE_URL } from '../lib/api';
+
+const SOCKET_URL = BASE_URL || 'http://localhost:5000';
 
 const predefinedQuestions = [
     { q: "What devices do you buy?", a: "We buy smartphones, tablets, laptops, and smartwatches from all major brands like Apple, Samsung, Google, and more." },
@@ -21,11 +25,65 @@ export default function Chatbot() {
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [socket, setSocket] = useState(null);
+    const [sessionId, setSessionId] = useState(null);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
+
+    // Initialize socket connection and session
+    useEffect(() => {
+        let currentSessionId = localStorage.getItem('chat_session_id');
+        if (!currentSessionId) {
+            currentSessionId = Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('chat_session_id', currentSessionId);
+        }
+        setSessionId(currentSessionId);
+
+        const newSocket = io(SOCKET_URL);
+        setSocket(newSocket);
+
+        newSocket.on('connect', () => {
+            newSocket.emit('join_chat', currentSessionId);
+        });
+
+        // Load chat history
+        const loadHistory = async () => {
+            try {
+                const res = await fetch(`${SOCKET_URL}/api/chat/${currentSessionId}`);
+                const data = await res.json();
+                if (data.messages && data.messages.length > 0) {
+                    const mappedMessages = data.messages.map(m => ({
+                        text: m.text,
+                        isBot: m.sender === 'admin'
+                    }));
+                    setMessages(prev => {
+                        // Keep the initial greeting if there's history, but don't duplicate it
+                        return [{ text: "Hi there! How can we help you today? Feel free to ask a question below.", isBot: true }, ...mappedMessages];
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load chat history:", error);
+            }
+        };
+
+        loadHistory();
+
+        // Listen for admin replies
+        newSocket.on('receive_message', (msg) => {
+            if (msg.sender === 'admin') {
+                setIsTyping(false);
+                setMessages(prev => [...prev, { text: msg.text, isBot: true }]);
+            }
+            // If sender is 'user', it's already in the UI from optimistic update, so we can ignore.
+        });
+
+        return () => {
+            newSocket.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         scrollToBottom();
@@ -42,29 +100,21 @@ export default function Chatbot() {
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim() || !socket || !sessionId) return;
 
         const userMsg = inputValue;
+
+        // Optimistic UI update
         setMessages(prev => [...prev, { text: userMsg, isBot: false }]);
         setInputValue("");
-        setIsTyping(true);
+        setIsTyping(true); // Show typing indicator since we expect a human reply now
 
-        try {
-            // TODO: Replace with actual POST link provided later by the user
-            // const response = await fetch('YOUR_POST_LINK_HERE', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify({ message: userMsg })
-            // });
+        socket.emit('send_message', { sessionId, text: userMsg });
 
-            setTimeout(() => {
-                setIsTyping(false);
-                setMessages(prev => [...prev, { text: "Thank you for your message! Our human agents will get back to you soon.", isBot: true }]);
-            }, 1000);
-        } catch (error) {
+        // Timeout to disable typing indicator if admin doesn't reply quickly
+        setTimeout(() => {
             setIsTyping(false);
-            setMessages(prev => [...prev, { text: "Sorry, there was an error sending your message.", isBot: true }]);
-        }
+        }, 30000); // 30 seconds wait for admin
     };
 
     return (
