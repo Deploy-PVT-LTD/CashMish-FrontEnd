@@ -25,6 +25,7 @@ export default function Chatbot() {
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [isChatClosed, setIsChatClosed] = useState(false);
     const [socket, setSocket] = useState(null);
     const [sessionId, setSessionId] = useState(null);
     const messagesEndRef = useRef(null);
@@ -36,13 +37,32 @@ export default function Chatbot() {
     // Initialize socket connection and session
     useEffect(() => {
         let currentSessionId = localStorage.getItem('chat_session_id');
+
+        // Priority: Logged in user's email > existing guest session > new guest session
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                if (parsedUser.email) {
+                    currentSessionId = parsedUser.email; // Lock session to their account
+                }
+            } catch (err) {
+                console.error("Error parsing user data");
+            }
+        }
+
         if (!currentSessionId) {
             currentSessionId = Math.random().toString(36).substring(2, 15);
             localStorage.setItem('chat_session_id', currentSessionId);
         }
+
         setSessionId(currentSessionId);
 
-        const newSocket = io(SOCKET_URL);
+        const newSocket = io(SOCKET_URL, {
+            transports: ['websocket', 'polling'], // Fix for Render deployment
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+        });
         setSocket(newSocket);
 
         newSocket.on('connect', () => {
@@ -63,6 +83,11 @@ export default function Chatbot() {
                         // Keep the initial greeting if there's history, but don't duplicate it
                         return [{ text: "Hi there! How can we help you today? Feel free to ask a question below.", isBot: true }, ...mappedMessages];
                     });
+
+                    if (data.status === 'closed') {
+                        setIsChatClosed(true);
+                        setMessages(prev => [...prev, { text: "Your chat is done. This conversation has been marked as resolved by our support team.", isBot: true }]);
+                    }
                 }
             } catch (error) {
                 console.error("Failed to load chat history:", error);
@@ -78,6 +103,20 @@ export default function Chatbot() {
                 setMessages(prev => [...prev, { text: msg.text, isBot: true }]);
             }
             // If sender is 'user', it's already in the UI from optimistic update, so we can ignore.
+        });
+
+        // Listen for admin closing/deleting chat
+        newSocket.on('chat_ended', ({ action }) => {
+            setIsTyping(false);
+            setIsChatClosed(true);
+            setMessages(prev => [
+                ...prev,
+                { text: `Your chat is done. This conversation has been ${action === 'deleted' ? 'deleted' : 'resolved'} by our support team.`, isBot: true }
+            ]);
+
+            if (action === 'deleted') {
+                localStorage.removeItem('chat_session_id'); // Clear local session so next refresh gives a fresh one
+            }
         });
 
         return () => {
@@ -104,12 +143,35 @@ export default function Chatbot() {
 
         const userMsg = inputValue;
 
-        // Optimistic UI update
-        setMessages(prev => [...prev, { text: userMsg, isBot: false }]);
+        if (isChatClosed) {
+            setMessages([
+                { text: "Hi there! How can we help you today? Feel free to ask a question below.", isBot: true },
+                { text: userMsg, isBot: false }
+            ]);
+            setIsChatClosed(false);
+        } else {
+            // Optimistic UI update
+            setMessages(prev => [...prev, { text: userMsg, isBot: false }]);
+        }
+
         setInputValue("");
         setIsTyping(true); // Show typing indicator since we expect a human reply now
 
-        socket.emit('send_message', { sessionId, text: userMsg });
+        // Get user data if logged in
+        let userName = null;
+        let userEmail = null;
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                userName = parsedUser.name || parsedUser.firstName;
+                userEmail = parsedUser.email;
+            } catch (err) {
+                console.error("Error parsing user data for chat:", err);
+            }
+        }
+
+        socket.emit('send_message', { sessionId, text: userMsg, userName, userEmail });
 
         // Timeout to disable typing indicator if admin doesn't reply quickly
         setTimeout(() => {
@@ -183,8 +245,8 @@ export default function Chatbot() {
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="Type your message..."
-                            className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                            placeholder={isChatClosed ? "Chat is closed. Type to start new..." : "Type your message..."}
+                            className={`w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all ${isChatClosed ? 'bg-gray-100 text-gray-500' : ''}`}
                         />
                         <button
                             type="submit"
