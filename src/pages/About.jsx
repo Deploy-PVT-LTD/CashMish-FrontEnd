@@ -279,7 +279,7 @@ export default function AboutUs({ isPage = false }) {
         </div>
       )}
 
-      <Chatbot />
+      {/* <Chatbot /> */}
     </div>
   );
 }
