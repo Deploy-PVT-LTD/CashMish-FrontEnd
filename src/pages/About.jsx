@@ -6,6 +6,21 @@ import cashmishbanner from "../assets/cashmish_banner1.webp";
 import { BASE_URL } from '../lib/api';
 import Chatbot from '../components/Chatbot.jsx';
 
+// Cleans Microsoft Word HTML garbage (<o:p>, MsoNormal, &nbsp; spam, etc.)
+const sanitizeWordHtml = (html) => {
+  if (!html) return '';
+  return html
+    .replace(/<o:p>.*?<\/o:p>/gi, '')
+    .replace(/<\/o:p>/gi, '')
+    .replace(/<o:p>/gi, '')
+    .replace(/class="Mso[^"]*"/gi, '')
+    .replace(/<p[^>]*>\s*&nbsp;\s*<\/p>/gi, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/<span[^>]*>\s*<\/span>/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+};
+
 export default function AboutUs({ isPage = false }) {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [marqueeReviews, setMarqueeReviews] = useState([]);
@@ -99,13 +114,14 @@ export default function AboutUs({ isPage = false }) {
             </div>
 
             <p className="text-gray-500 text-lg font-medium leading-relaxed">
-              At CashMish, we believe every device has a unique story and value. Our mission is to provide you with the most accurate quote without the hassle of negotiation.            </p>
+              At CashMish, we believe every device has a unique story and value. Our mission is to provide you with the most accurate quote without the hassle of negotiation.
+            </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">
                 <Zap className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
                 <h4 className="font-black text-gray-900 mb-2 text-sm tracking-tight">Instant Action</h4>
-                <p className="text-xs text-gray-400 font-medium">Valuations in seconds. Payments in minutes. We value your time as much as we value your tech. </p>
+                <p className="text-xs text-gray-400 font-medium">Valuations in seconds. Payments in minutes. We value your time as much as we value your tech.</p>
               </div>
               <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-lg hover:border-green-500/30 transition-all group">
                 <ShieldCheck className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
@@ -127,47 +143,6 @@ export default function AboutUs({ isPage = false }) {
           </div>
         </div>
       </section>
-
-      {/* Reviews Marquee Section */}
-      {/* <section className="py-20 bg-white overflow-hidden border-y border-gray-100 relative group">
-        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
-        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
-
-        {marqueeReviews.length > 0 ? (
-          <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] whitespace-nowrap">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex gap-12 items-center pr-12">
-                {marqueeReviews.map((review, idx) => (
-                  <div key={idx} className="flex flex-col gap-1 cursor-pointer max-w-[280px]" onClick={() => window.location.href = '/reviews'}>
-                    <div className="flex gap-1 mb-1">
-                      {[...Array(5)].map((_, starIdx) => (
-                        <Star key={starIdx} size={10} className={starIdx < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"} />
-                      ))}
-                    </div>
-                    <p className="text-sm font-black text-gray-900 tracking-tight italic whitespace-normal line-clamp-1">"{review.description}"</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-gray-400 tracking-widest">— {review.name}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center text-gray-400 text-sm py-4">No reviews yet.</div>
-        )} */}
-
-      {/* CSS Animation for Marquee */}
-      {/* <style>{`
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .animate-marquee {
-            animation: marquee 30s linear infinite;
-          }
-        `}</style>
-      </section> */}
 
       {/* Blogs Section */}
       <section className="py-24 px-6 bg-gray-50">
@@ -208,7 +183,11 @@ export default function AboutUs({ isPage = false }) {
                   </div>
                 )}
                 <div className="p-8 space-y-4">
-                  {blog.createdAt && <div className="text-[10px] font-bold text-gray-400 tracking-widest">{new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>}
+                  {blog.createdAt && (
+                    <div className="text-[10px] font-bold text-gray-400 tracking-widest">
+                      {new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </div>
+                  )}
                   <h4 className="text-xl font-black text-gray-900 tracking-tight leading-tight group-hover:text-green-600 transition-colors">
                     {blog.title}
                   </h4>
@@ -227,7 +206,7 @@ export default function AboutUs({ isPage = false }) {
         </div>
       </section>
 
-      {/* Blog Detail Modal */}
+      {/* Blog Detail Modal — FIXED: now renders HTML properly */}
       {selectedBlog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-[2.5rem] max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300">
@@ -238,25 +217,50 @@ export default function AboutUs({ isPage = false }) {
               <X size={20} />
             </button>
             <div className="overflow-y-auto max-h-[90vh]">
-              <div className="h-64 overflow-hidden">
-                <img src={selectedBlog.image} alt={selectedBlog.title} className="w-full h-full object-cover" />
-              </div>
+              {selectedBlog.image && (
+                <div className="h-64 overflow-hidden">
+                  <img src={selectedBlog.image} alt={selectedBlog.title} className="w-full h-full object-cover" />
+                </div>
+              )}
               <div className="p-10 space-y-6">
                 <div className="flex items-center gap-3">
-                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest">
-                    {selectedBlog.category}
-                  </span>
-                  <span className="text-[10px] font-bold text-gray-400 tracking-widest">
-                    {selectedBlog.date}
-                  </span>
+                  {selectedBlog.category && (
+                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest">
+                      {selectedBlog.category}
+                    </span>
+                  )}
+                  {selectedBlog.createdAt && (
+                    <span className="text-[10px] font-bold text-gray-400 tracking-widest">
+                      {new Date(selectedBlog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </span>
+                  )}
                 </div>
+
                 <h3 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">
-                  {selectedBlog?.title}
+                  {selectedBlog.title}
                 </h3>
+
                 <div className="h-1 w-20 bg-green-500 rounded-full"></div>
-                <p className="text-gray-600 leading-relaxed font-medium text-lg">
-                  {selectedBlog?.fullContent || selectedBlog?.content || selectedBlog?.description}
-                </p>
+
+                {/* ✅ THE FIX: dangerouslySetInnerHTML instead of plain text */}
+                <div
+                  className="text-gray-600 leading-relaxed font-medium text-base
+                    [&_h1]:text-2xl [&_h1]:font-black [&_h1]:mb-3 [&_h1]:text-gray-900 [&_h1]:mt-4
+                    [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2 [&_h2]:text-gray-800 [&_h2]:mt-4
+                    [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:text-gray-700 [&_h3]:mt-3
+                    [&_p]:mb-3 [&_p]:leading-relaxed
+                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3
+                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3
+                    [&_li]:mb-1
+                    [&_a]:text-green-600 [&_a]:underline [&_a]:hover:text-green-700
+                    [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_b]:font-bold"
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeWordHtml(
+                      selectedBlog.fullContent || selectedBlog.content || selectedBlog.description
+                    ) || `<p>${selectedBlog.excerpt || ''}</p>`
+                  }}
+                />
+
                 <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
                   <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold tracking-widest">
                     <Zap size={14} className="text-green-500" />
@@ -274,9 +278,8 @@ export default function AboutUs({ isPage = false }) {
           </div>
         </div>
       )}
-      <Chatbot />
 
-      {/* Footer is already included in App.jsx */}
+      <Chatbot />
     </div>
   );
 }
