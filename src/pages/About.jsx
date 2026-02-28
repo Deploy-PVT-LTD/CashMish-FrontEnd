@@ -80,7 +80,7 @@ export default function AboutUs({ isPage = false }) {
             We are <span className="text-green-500">CashMish.</span>
           </h1>
           <p className="text-gray-400 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
-            Unlock the true market value of your devices with an instant, data-driven valuation and enjoy a seamless, hassle-free pickup and payment experience.
+            Unlock the true market value of your devices with an instant, data-driven valuation and enjoy a seamless, hassle-free  shipping process and payment experience.
           </p>
         </div>
       </section>

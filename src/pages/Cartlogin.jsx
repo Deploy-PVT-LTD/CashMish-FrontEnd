@@ -69,21 +69,44 @@ const CartLogin = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginForm),
       });
+
+
+      // ---------------
+
+
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/userdata', { state: { files: pendingFiles } });
       } else {
-        alert(data.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: data.message || 'Invalid credentials',
+          background: '#fff',
+          customClass: { popup: 'rounded-[2rem]' }
+        });
       }
     } catch (err) {
-      alert('Network error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: 'Please check your connection and try again.',
+        background: '#fff',
+        customClass: { popup: 'rounded-[2rem]' }
+      });
     } finally {
       setLoading(false);
     }
   };
 
+
+
+  // ------------------
+
+
+  
   const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -96,24 +119,24 @@ const CartLogin = () => {
       const data = await response.json();
       if (response.ok) {
         Swal.fire({
-          title: "Registration Successful!",
-          text: "Please sign in now.",
-          icon: "success",
+          title: 'Registration Successful!',
+          text: 'Please sign in now.',
+          icon: 'success',
           background: '#fff',
           customClass: { popup: 'rounded-[2rem]' }
         });
         setView('signin');
       } else {
         Swal.fire({
-          icon: "error",
-          title: "Signup Failed",
-          text: data.message || "Something went wrong",
+          icon: 'error',
+          title: 'Signup Failed',
+          text: data.message || 'Something went wrong',
           background: '#fff',
           customClass: { popup: 'rounded-[2rem]' }
         });
       }
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Oops...", text: "Network Error", background: '#fff', customClass: { popup: 'rounded-[2rem]' } });
+      Swal.fire({ icon: 'error', title: 'Oops...', text: 'Network Error', background: '#fff', customClass: { popup: 'rounded-[2rem]' } });
     } finally {
       setLoading(false);
     }
