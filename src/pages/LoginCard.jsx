@@ -26,7 +26,22 @@ const LoginCard = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
+    // PRE-FLIGHT FIX: Send an authenticated request to force ngrok into caching the bypass session.
+    try {
+      await fetch(`${BASE_URL}/`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+        credentials: 'omit' // Ngrok abuse screen cookie might need include, but let's try configuring it correctly.
+      });
+      // Actually, to make sure the browser saves the ngrok bypass cookie, we must use include:
+      await fetch(`${BASE_URL}/`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+        credentials: 'include'
+      });
+    } catch (e) {
+      console.warn("Ngrok preflight skipped", e);
+    }
+
     const receiveMessage = (event) => {
       if (event.origin !== BASE_URL) return;
       const { token, user } = event.data;

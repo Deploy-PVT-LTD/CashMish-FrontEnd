@@ -51,7 +51,7 @@ const Blogs = () => {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                         {blogs.map(blog => (
-                            <Link key={blog._id} to={`/blogs/${blog._id}`} className="block group border border-gray-100 rounded-[2rem] p-6 hover:shadow-2xl transition-all cursor-pointer">
+                            <Link key={blog._id} to={`/blogs/${blog.slug || blog._id}`} className="block group border border-gray-100 rounded-[2rem] p-6 hover:shadow-2xl transition-all cursor-pointer">
                                 {blog.image && (
                                     <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-6">
                                         <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />

@@ -45,7 +45,21 @@ const CartLogin = () => {
     }
   }, []);
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
+    // PRE-FLIGHT FIX: Send an authenticated request to force ngrok into caching the bypass session.
+    try {
+      await fetch(`${BASE_URL}/`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+        credentials: 'omit' // Fallback
+      });
+      await fetch(`${BASE_URL}/`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+        credentials: 'include' // Force cookie persistence
+      });
+    } catch (e) {
+      console.warn("Ngrok preflight skipped", e);
+    }
+
     const receiveMessage = (event) => {
       if (event.origin !== BASE_URL) return;
       const { token, user } = event.data;
@@ -106,7 +120,7 @@ const CartLogin = () => {
   // ------------------
 
 
-  
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
