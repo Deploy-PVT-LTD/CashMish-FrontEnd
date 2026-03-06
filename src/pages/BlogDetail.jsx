@@ -44,7 +44,7 @@ const BlogDetail = () => {
                 <div className="pt-32 text-center">
                     <h2 className="text-2xl font-black text-gray-900 mb-4">Blog Not Found</h2>
                     <Link to="/blogs" className="text-green-600 font-bold uppercase text-sm tracking-widest hover:underline">
-                        鈫?Back to Blogs
+                        ← Back to Blogs
                     </Link>
                 </div>
             </div>

@@ -6,7 +6,7 @@ import { useWallet } from '../contexts/Walletcontext';
 import { BASE_URL } from '../lib/api';
 import Chatbot from '../components/Chatbot.jsx';
 
-// 鈹€鈹€鈹€ Accept Bid Popup 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// --- Accept Bid Popup --------------------------------------------------------
 const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
   if (!isOpen) return null;
   const price = parseFloat(amount) || 0;
@@ -45,7 +45,7 @@ const AcceptPopup = ({ isOpen, onClose, amount, onWithdraw, onCoupon }) => {
   );
 };
 
-// 鈹€鈹€鈹€ Withdraw Form Modal 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// --- Withdraw Form Modal -----------------------------------------------------
 const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   const { withdrawCash, clearWalletAfterPayout, setWalletBalance } = useWallet();
   const [step, setStep] = useState('select'); // 'select' | 'form' | 'success'
@@ -229,7 +229,7 @@ const WithdrawModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   );
 };
 
-// 鈹€鈹€鈹€ Coupon Modal 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// --- Coupon Modal ------------------------------------------------------------
 const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   const { clearWalletAfterPayout, setWalletBalance } = useWallet();
   const [submitted, setSubmitted] = useState(false);
@@ -274,7 +274,7 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
                 <div className="flex justify-between text-orange-600"><span className="text-sm font-semibold">7% Bonus:</span><span className="font-bold">+${bonus}</span></div>
                 <div className="border-t-2 border-orange-200 pt-2"><div className="flex justify-between"><span className="text-gray-900 font-black uppercase">Total Value:</span><span className="text-green-600 text-xl font-black">${total}</span></div></div>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3"><p className="text-blue-900 text-xs font-semibold text-center">馃摟 Coupons will be sent to your registered email</p></div>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3"><p className="text-blue-900 text-xs font-semibold text-center">🎫 Coupons will be sent to your registered email</p></div>
               <div className="flex gap-3">
                 <button onClick={onClose} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-sm uppercase hover:bg-gray-50 cursor-pointer">Back</button>
                 <button onClick={handleConfirm} className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-black text-sm uppercase cursor-pointer">Confirm</button>
@@ -288,7 +288,7 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
   );
 };
 
-// 鈹€鈹€鈹€ Main Cart 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// --- Main Cart ---------------------------------------------------------------
 const MobileCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);

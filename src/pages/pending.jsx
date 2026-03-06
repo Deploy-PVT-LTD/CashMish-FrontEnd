@@ -41,7 +41,7 @@ export default function PendingPage() {
             </div>
           </div>
 
-          {/* 鉁?Estimated Price Section - INFO BOX KE NEECHE */}
+          {/* Estimated Price Section - INFO BOX KE NEECHE */}
           {estimatedPrice > 0 && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-4">
               <div className="flex items-center justify-center gap-2 mb-1">

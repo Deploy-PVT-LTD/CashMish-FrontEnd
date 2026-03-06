@@ -19,7 +19,7 @@ const CarrierSelection = () => {
     });
   }, []);
 
-  // 鉁?Data save karne ka function
+  // Data save karne ka function
   const handleContinue = () => {
     if (carrier) {
       localStorage.setItem("selectedCarrier", carrier); // LS mein save kiya
@@ -73,7 +73,7 @@ const CarrierSelection = () => {
             {/* Submit Button */}
             <button
               disabled={!carrier}
-              onClick={handleContinue} // 鉁?Ab ye save bhi karega
+              onClick={handleContinue} // Ab ye save bhi karega
               className={`w-full font-semibold py-4 rounded-xl transition-all shadow-lg cursor-pointer ${carrier
                 ? "bg-green-800 text-white hover:bg-green-700"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"

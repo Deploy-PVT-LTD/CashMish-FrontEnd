@@ -106,7 +106,7 @@ export default function UserForm() {
     };
     data.append("pickUpDetails", JSON.stringify(pickUpDetails));
 
-    // 3. 馃摳 IMAGES LOOP (Fix for DB upload + Client Side Compression)
+    // 3. IMAGES LOOP (Fix for DB upload + Client Side Compression)
     if (imagesToUpload.length > 0) {
       for (const file of imagesToUpload) {
         try {

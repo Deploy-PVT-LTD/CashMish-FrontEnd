@@ -81,7 +81,7 @@ const PriceResult = () => {
   }, [estimatedPrice]);
 
   const handleProceed = () => {
-    // 馃敟 CHECK LOGIN STATUS
+    // CHECK LOGIN STATUS
     const userToken = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
 
