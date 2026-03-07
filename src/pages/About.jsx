@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X, Star } from 'lucide-react';
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
@@ -22,7 +23,6 @@ const sanitizeWordHtml = (html) => {
 };
 
 export default function AboutUs({ isPage = false }) {
-  const [selectedBlog, setSelectedBlog] = useState(null);
   const [marqueeReviews, setMarqueeReviews] = useState([]);
   const [blogs, setBlogs] = useState([]);
 
@@ -167,10 +167,10 @@ export default function AboutUs({ isPage = false }) {
 
           <div className="grid md:grid-cols-3 gap-8">
             {blogs.length > 0 ? blogs.map((blog, i) => (
-              <div
+              <Link
                 key={i}
-                className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
-                onClick={() => setSelectedBlog(blog)}
+                to={`/blogs/${blog.slug || blog._id}`}
+                className="block group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
               >
                 {blog.image && (
                   <div className="aspect-[16/10] overflow-hidden relative">
@@ -198,86 +198,13 @@ export default function AboutUs({ isPage = false }) {
                     Read More <ArrowRight size={14} />
                   </div>
                 </div>
-              </div>
+              </Link>
             )) : (
               <div className="col-span-3 text-center text-gray-400 py-12 text-sm">Loading blogs...</div>
             )}
           </div>
         </div>
       </section>
-
-      {/* Blog Detail Modal — FIXED: now renders HTML properly */}
-      {selectedBlog && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2.5rem] max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300">
-            <button
-              onClick={() => setSelectedBlog(null)}
-              className="absolute top-6 right-6 p-2 bg-gray-100 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors z-10 cursor-pointer"
-            >
-              <X size={20} />
-            </button>
-            <div className="overflow-y-auto max-h-[90vh]">
-              {selectedBlog.image && (
-                <div className="h-64 overflow-hidden">
-                  <img src={selectedBlog.image} alt={selectedBlog.title} className="w-full h-full object-cover" />
-                </div>
-              )}
-              <div className="p-10 space-y-6">
-                <div className="flex items-center gap-3">
-                  {selectedBlog.category && (
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest">
-                      {selectedBlog.category}
-                    </span>
-                  )}
-                  {selectedBlog.createdAt && (
-                    <span className="text-[10px] font-bold text-gray-400 tracking-widest">
-                      {new Date(selectedBlog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">
-                  {selectedBlog.title}
-                </h3>
-
-                <div className="h-1 w-20 bg-green-500 rounded-full"></div>
-
-                {/* ✅ THE FIX: dangerouslySetInnerHTML instead of plain text */}
-                <div
-                  className="text-gray-600 leading-relaxed font-medium text-base
-                    [&_h1]:text-2xl [&_h1]:font-black [&_h1]:mb-3 [&_h1]:text-gray-900 [&_h1]:mt-4
-                    [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2 [&_h2]:text-gray-800 [&_h2]:mt-4
-                    [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:text-gray-700 [&_h3]:mt-3
-                    [&_p]:mb-3 [&_p]:leading-relaxed
-                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3
-                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3
-                    [&_li]:mb-1
-                    [&_a]:text-green-600 [&_a]:underline [&_a]:hover:text-green-700
-                    [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_b]:font-bold"
-                  dangerouslySetInnerHTML={{
-                    __html: sanitizeWordHtml(
-                      selectedBlog.fullContent || selectedBlog.content || selectedBlog.description
-                    ) || `<p>${selectedBlog.excerpt || ''}</p>`
-                  }}
-                />
-
-                <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-gray-400 text-[10px] font-bold tracking-widest">
-                    <Zap size={14} className="text-green-500" />
-                    CashMish Insights
-                  </div>
-                  <button
-                    onClick={() => setSelectedBlog(null)}
-                    className="bg-gray-900 text-white px-6 py-3 rounded-xl font-black text-xs tracking-widest hover:bg-green-600 transition-colors shadow-lg cursor-pointer"
-                  >
-                    Close Article
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* <Chatbot /> */}
     </div>
