@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
+import { BASE_URL } from '../lib/api.js';
 import Chatbot from "../components/Chatbot.jsx";
 
 const CarrierSelection = () => {
@@ -22,9 +23,31 @@ const CarrierSelection = () => {
   // Data save karne ka function
   const handleContinue = () => {
     if (carrier) {
-      localStorage.setItem("selectedCarrier", carrier); // LS mein save kiya
+      localStorage.setItem("selectedCarrier", carrier);
       console.log("Saved Carrier:", carrier);
-      navigate("/deviceassessment"); // Next page par bheja
+
+      // Auto-save draft to DB for logged-in users
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user._id || user.id;
+      if (userId) {
+        fetch(`${BASE_URL}/api/drafts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            brand: localStorage.getItem('selectedBrand'),
+            model: localStorage.getItem('selectedModel'),
+            mobileId: localStorage.getItem('selectedMobileId'),
+            mobileImage: localStorage.getItem('selectedMobileImage'),
+            condition: localStorage.getItem('selectedCondition'),
+            storage: localStorage.getItem('selectedStorage'),
+            carrier,
+            currentStep: 'carrier'
+          })
+        }).catch(err => console.error('Draft save error:', err));
+      }
+
+      navigate("/deviceassessment");
     }
   };
 

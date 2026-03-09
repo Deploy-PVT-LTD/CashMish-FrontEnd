@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
+import { BASE_URL } from '../lib/api.js';
 import storageimg from '../assets/storage.png'
 import Chatbot from '../components/Chatbot.jsx';
 
@@ -108,6 +109,27 @@ const StorageSelection = ({
               localStorage.setItem("selectedStorage", selectedStorage);
               console.log("Saved storage:", selectedStorage);
               if (onGetPrice) onGetPrice(selectedStorage);
+
+              // Auto-save draft to DB for logged-in users
+              const user = JSON.parse(localStorage.getItem('user') || '{}');
+              const userId = user._id || user.id;
+              if (userId) {
+                fetch(`${BASE_URL}/api/drafts`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    userId,
+                    brand: localStorage.getItem('selectedBrand'),
+                    model: localStorage.getItem('selectedModel'),
+                    mobileId: localStorage.getItem('selectedMobileId'),
+                    mobileImage: localStorage.getItem('selectedMobileImage'),
+                    condition: localStorage.getItem('selectedCondition'),
+                    storage: selectedStorage,
+                    currentStep: 'storage'
+                  })
+                }).catch(err => console.error('Draft save error:', err));
+              }
+
               navigate("/carrierselection");
             }}
             className="w-44 sm:w-48 bg-green-800 text-white py-2.5 rounded-lg

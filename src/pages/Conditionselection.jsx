@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
+import { BASE_URL } from '../lib/api.js';
 import first from '../assets/first.png'
 import second from '../assets/second.png'
 import third from '../assets/third.png'
@@ -94,6 +95,26 @@ const ConditionSelection = ({ onSelectCondition }) => {
                   localStorage.setItem("selectedCondition", condition.name);
                   console.log("Saved Condition:", condition.name);
                   onSelectCondition?.(condition.name);
+
+                  // Auto-save draft to DB for logged-in users
+                  const user = JSON.parse(localStorage.getItem('user') || '{}');
+                  const userId = user._id || user.id;
+                  if (userId) {
+                    fetch(`${BASE_URL}/api/drafts`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        userId,
+                        brand: localStorage.getItem('selectedBrand'),
+                        model: localStorage.getItem('selectedModel'),
+                        mobileId: localStorage.getItem('selectedMobileId'),
+                        mobileImage: localStorage.getItem('selectedMobileImage'),
+                        condition: condition.name,
+                        currentStep: 'condition'
+                      })
+                    }).catch(err => console.error('Draft save error:', err));
+                  }
+
                   navigate("/Storageselection");
                 }}
                 className="bg-white border-2 border-gray-200 rounded-xl

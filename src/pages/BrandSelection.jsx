@@ -58,6 +58,18 @@ const BrandSelection = ({ onSelectBrand }) => {
   const handleBrandSelect = (brandName) => {
     localStorage.setItem("selectedBrand", brandName);
     onSelectBrand?.(brandName);
+
+    // Auto-save draft to DB for logged-in users
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user._id || user.id;
+    if (userId) {
+      fetch(`${BASE_URL}/api/drafts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, brand: brandName, currentStep: 'brand' })
+      }).catch(err => console.error('Draft save error:', err));
+    }
+
     navigate("/ModelSelection");
   };
 

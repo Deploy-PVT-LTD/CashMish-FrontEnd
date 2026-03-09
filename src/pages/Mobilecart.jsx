@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Trash2, Landmark, Zap, ArrowLeft, Clock, DollarSign, Check, Smartphone, RefreshCw, X, Gift, Wallet, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Trash2, Landmark, Zap, ArrowLeft, Clock, DollarSign, Check, Smartphone, RefreshCw, X, Gift, Wallet, AlertCircle, Play } from 'lucide-react';
 import Header from '../components/layout/header.jsx';
 import Swal from 'sweetalert2';
 import { useWallet } from '../contexts/Walletcontext';
@@ -290,7 +291,9 @@ const CouponModal = ({ isOpen, onClose, amount, orderId, onSuccess }) => {
 
 // --- Main Cart ---------------------------------------------------------------
 const MobileCart = () => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
+  const [draftItem, setDraftItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processingOrders, setProcessingOrders] = useState(new Set());
   const { walletBalance, addToWallet } = useWallet();
@@ -339,7 +342,69 @@ const MobileCart = () => {
     isDeleted: form.isDeleted || false
   }));
 
-  useEffect(() => { loadUserCart(); }, []);
+  // Fetch user draft from DB
+  const loadUserDraft = async () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user._id || user.id;
+    if (!userId) { setDraftItem(null); return; }
+    try {
+      const res = await fetch(`${BASE_URL}/api/drafts/${userId}`);
+      const data = await res.json();
+      if (data.draft) {
+        setDraftItem(data.draft);
+      } else {
+        setDraftItem(null);
+      }
+    } catch (err) {
+      console.error('Draft load error:', err);
+      setDraftItem(null);
+    }
+  };
+
+  useEffect(() => { loadUserCart(); loadUserDraft(); }, []);
+
+  // Resume draft — navigate to the next incomplete step
+  const handleResumeDraft = (draft) => {
+    // Restore localStorage so the step pages work correctly
+    if (draft.brand) localStorage.setItem('selectedBrand', draft.brand);
+    if (draft.model) localStorage.setItem('selectedModel', draft.model);
+    if (draft.mobileId?._id || draft.mobileId) {
+      const mobileId = typeof draft.mobileId === 'object' ? draft.mobileId._id : draft.mobileId;
+      localStorage.setItem('selectedMobileId', mobileId);
+    }
+    if (draft.mobileImage) localStorage.setItem('selectedMobileImage', draft.mobileImage);
+    if (draft.condition) localStorage.setItem('selectedCondition', draft.condition);
+    if (draft.storage) localStorage.setItem('selectedStorage', draft.storage);
+    if (draft.carrier) localStorage.setItem('selectedCarrier', draft.carrier);
+
+    // Navigate to the next step after the current one
+    const stepMap = {
+      brand: '/ModelSelection',
+      model: '/ConditionSelection',
+      condition: '/Storageselection',
+      storage: '/carrierselection',
+      carrier: '/deviceassessment',
+      assessment: '/userdata'
+    };
+    const nextPage = stepMap[draft.currentStep] || '/brandselection';
+    navigate(nextPage);
+  };
+
+  // Discard draft permanently
+  const handleDiscardDraft = async () => {
+    const result = await Swal.fire({ title: 'Discard Draft?', text: 'This will permanently remove your incomplete order.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, discard!' });
+    if (result.isConfirmed) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user._id || user.id;
+      if (userId) {
+        try {
+          await fetch(`${BASE_URL}/api/drafts/${userId}`, { method: 'DELETE' });
+          setDraftItem(null);
+          Swal.fire('Discarded!', 'Draft removed.', 'success');
+        } catch { Swal.fire('Error', 'Failed to discard.', 'error'); }
+      }
+    }
+  };
 
   const getImageUrl = (img) => {
     if (!img) return null;
@@ -457,7 +522,55 @@ const MobileCart = () => {
         )}
 
         <div className="space-y-4">
-          {cartItems.length === 0 && !loading ? (
+          {/* Unfulfilled Draft Card */}
+          {draftItem && (
+            <div className="bg-white rounded-2xl shadow-sm border-2 border-amber-200 overflow-hidden transition-all duration-300 hover:border-amber-300" style={{ animation: 'popupIn 0.3s ease-out' }}>
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-2 border-b border-amber-100 flex items-center gap-2">
+                <AlertCircle size={14} className="text-amber-600" />
+                <span className="text-[10px] font-black uppercase tracking-wider text-amber-700">Incomplete Order — Resume where you left off</span>
+              </div>
+              <div className="p-4 md:p-5 flex flex-col md:flex-row gap-5 items-center md:items-start">
+                <div className="group w-28 h-28 md:w-32 md:h-32 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-50 shrink-0 shadow-inner relative overflow-hidden">
+                  {draftItem.mobileImage ? (
+                    <img src={getImageUrl(draftItem.mobileImage)} className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-110" alt="draft model" onError={(e) => { e.target.src = 'https://via.placeholder.com/100?text=Phone'; }} />
+                  ) : <Smartphone className="text-gray-200" size={30} />}
+                </div>
+                <div className="flex-grow w-full text-center md:text-left">
+                  <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-2 mb-3">
+                    <div>
+                      <h3 className="text-lg font-black leading-none uppercase tracking-tight text-gray-800">
+                        {draftItem.brand || 'Unknown'} {draftItem.model || ''}
+                      </h3>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Draft — Not Submitted</p>
+                    </div>
+                    <Badge status="unfulfilled" />
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                    <MiniBox label="Storage" value={draftItem.storage || 'Pending'} />
+                    <MiniBox label="Condition" value={draftItem.condition || 'Pending'} />
+                    <MiniBox label="Carrier" value={draftItem.carrier || 'Pending'} />
+                    <MiniBox label="Step" value={draftItem.currentStep ? draftItem.currentStep.charAt(0).toUpperCase() + draftItem.currentStep.slice(1) : 'Brand'} />
+                  </div>
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-3 rounded-2xl p-4 bg-amber-50 border border-amber-100/50">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-amber-100 p-2 rounded-lg"><Clock className="text-amber-600" size={18} /></div>
+                      <p className="text-xs font-bold text-amber-800 tracking-tight">Continue your sell request</p>
+                    </div>
+                    <div className="flex gap-3 w-full md:w-auto">
+                      <button onClick={() => handleResumeDraft(draftItem)} className="flex-1 md:px-6 py-2.5 bg-green-600 text-white text-[11px] font-black uppercase rounded-xl hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 tracking-wider cursor-pointer">
+                        <Play size={14} strokeWidth={3} /> Resume Order
+                      </button>
+                      <button onClick={handleDiscardDraft} className="flex-1 md:px-5 py-2.5 bg-white border border-red-100 text-red-500 text-[10px] font-black uppercase rounded-xl hover:bg-red-50 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <Trash2 size={14} /> Discard
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {cartItems.length === 0 && !draftItem && !loading ? (
             <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
               <Smartphone className="mx-auto text-gray-200 mb-2" size={48} />
               <p className="text-gray-400 font-bold uppercase text-xs">No orders found</p>
@@ -566,7 +679,8 @@ const Badge = ({ status }) => {
     rejected: { bg: 'bg-red-100', text: 'text-red-600', label: 'Rejected' },
     bid_received: { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Received' },
     'bid-placed': { bg: 'bg-blue-100', text: 'text-blue-600', label: 'Bid Placed' },
-    cancelled: { bg: 'bg-gray-200', text: 'text-gray-600', label: 'Cancelled' }
+    cancelled: { bg: 'bg-gray-200', text: 'text-gray-600', label: 'Cancelled' },
+    unfulfilled: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Unfulfilled' }
   };
   const s = statusMap[status] || statusMap.pending;
   return <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider ${s.bg} ${s.text} border border-white/50 shadow-sm`}>{s.label}</span>;

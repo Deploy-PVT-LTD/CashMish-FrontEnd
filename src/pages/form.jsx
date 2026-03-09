@@ -137,6 +137,14 @@ export default function UserForm() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to submit");
 
+      // Delete draft from DB after successful submission
+      const userForDraft = JSON.parse(localStorage.getItem("user") || "{}");
+      const draftUserId = userForDraft._id || userForDraft.id;
+      if (draftUserId) {
+        fetch(`${BASE_URL}/api/drafts/${draftUserId}`, { method: 'DELETE' })
+          .catch(err => console.error('Draft delete error:', err));
+      }
+
       navigate("/pending", { state: { estimatedPrice: result.estimatedPrice } });
     } catch (err) {
       console.error(err);
