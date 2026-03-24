@@ -29,7 +29,6 @@ const CartLogin = () => {
       body: localStorage.getItem('bodyCondition') || 'perfect',
       battery: localStorage.getItem('batteryCondition') || 'good'
     };
-
     if (deviceDetails.brand !== 'N/A' && deviceDetails.model !== 'N/A') {
       setCartData([{
         name: `${deviceDetails.brand} ${deviceDetails.model}`,
