@@ -3,7 +3,7 @@ import axios from 'axios';
 // export const BASE_URL = 'http://localhost:5000';
 // export const BASE_URL = 'https://cashmish-backend.onrender.com';
 // export const BASE_URL = 'http://192.168.1.11:5000';
-export const BASE_URL = 'http://backend.cashmish.com:5000';
+export const BASE_URL = 'https://backend.cashmish.com:5000';
 
 // Add the header globally to Axios
 axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
