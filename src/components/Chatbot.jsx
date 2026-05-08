@@ -4,7 +4,6 @@ import { io } from 'socket.io-client';
 import { BASE_URL } from '../lib/api';
 
 const BACKEND_URLS = [
-    'http://192.168.1.11:5000',
     'https://cashmish-backend.onrender.com'
 ];
 
@@ -62,7 +61,7 @@ export default function Chatbot() {
         setSessionId(currentSessionId);
 
         let urlIdx = parseInt(sessionStorage.getItem('active_backend_idx') || '0');
-        
+
         const createSocket = (idx) => {
             const url = BACKEND_URLS[idx] || BACKEND_URLS[0];
             console.log(`Connecting socket to: ${url}`);
