@@ -29,6 +29,9 @@ const switchBackend = () => {
 // Global Headers
 axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 axios.defaults.baseURL = getActiveURL();
+// Set a fast timeout for Local VM to trigger fallback quickly (e.g., 5s)
+// Render might need more time for cold starts (e.g., 30s)
+axios.defaults.timeout = currentIndex === 0 ? 5000 : 30000; 
 
 // Axios Interceptor for Fallback
 axios.interceptors.response.use(
@@ -36,17 +39,28 @@ axios.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         
-        // If it's a network error or timeout AND we haven't retried this request yet
-        if ((!error.response || error.code === 'ECONNABORTED' || error.message === 'Network Error') && !originalRequest._retry) {
+        // If it's a network error OR a timeout OR specific status codes like 502/503/504
+        const isNetworkError = !error.response || error.code === 'ECONNABORTED' || error.message === 'Network Error';
+        
+        if (isNetworkError && !originalRequest._retry) {
             if (switchBackend()) {
                 originalRequest._retry = true;
+                
+                // Update axios timeout for the backup server
+                axios.defaults.timeout = 30000; 
+                originalRequest.timeout = 30000;
+
                 // Update the URL in the original request if it was absolute
                 BACKEND_URLS.forEach(url => {
-                    if (originalRequest.url.startsWith(url)) {
+                    if (originalRequest.url && originalRequest.url.startsWith(url)) {
                         originalRequest.url = originalRequest.url.replace(url, getActiveURL());
                     }
                 });
-                // If it was relative, axios will use the new defaults.baseURL
+                
+                // Update baseURL for this specific retry
+                originalRequest.baseURL = getActiveURL();
+                
+                console.log("Retrying axios request with backup...");
                 return axios(originalRequest);
             }
         }
@@ -79,17 +93,28 @@ window.fetch = async function (resource, config = {}) {
         return finalUrl;
     };
 
+    // Fast timeout for fetch on primary
+    const controller = new AbortController();
+    const id = currentIndex === 0 ? setTimeout(() => controller.abort(), 5000) : null;
+    
+    const fetchConfig = { ...config, signal: config.signal || controller.signal };
+
     try {
         const finalResource = getResolvedUrl(resource);
-        const response = await originalFetch(finalResource, config);
+        const response = await originalFetch(finalResource, fetchConfig);
+        if (id) clearTimeout(id);
         return response;
     } catch (error) {
-        // Network errors (failed to fetch)
+        if (id) clearTimeout(id);
+        
+        // Network errors or AbortError (timeout)
         if (switchBackend()) {
             const retryResource = getResolvedUrl(resource);
             console.log(`Retrying fetch with alternate URL: ${retryResource}`);
+            // Retry without the tight timeout for Render
             return await originalFetch(retryResource, config);
         }
         throw error;
     }
-};
+};
+
