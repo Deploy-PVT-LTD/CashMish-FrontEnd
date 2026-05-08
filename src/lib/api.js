@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Priority list of backend URLs
 const BACKEND_URLS = [
-    'http://192.168.1.11:5000',               // Local VM (Primary)
-    'https://cashmish-backend.onrender.com'   // Render (Backup)
+    'https://cashmish-backend.onrender.com',               // Local VM (Primary)
+    'http://192.168.1.11:5000'   // Render (Backup)
 ];
 
 // Initialize from sessionStorage or default to 0
@@ -31,23 +31,23 @@ axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 axios.defaults.baseURL = getActiveURL();
 // Set a fast timeout for Local VM to trigger fallback quickly (e.g., 5s)
 // Render might need more time for cold starts (e.g., 30s)
-axios.defaults.timeout = currentIndex === 0 ? 5000 : 30000; 
+axios.defaults.timeout = currentIndex === 0 ? 5000 : 30000;
 
 // Axios Interceptor for Fallback
 axios.interceptors.response.use(
     response => response,
     async (error) => {
         const originalRequest = error.config;
-        
+
         // If it's a network error OR a timeout OR specific status codes like 502/503/504
         const isNetworkError = !error.response || error.code === 'ECONNABORTED' || error.message === 'Network Error';
-        
+
         if (isNetworkError && !originalRequest._retry) {
             if (switchBackend()) {
                 originalRequest._retry = true;
-                
+
                 // Update axios timeout for the backup server
-                axios.defaults.timeout = 30000; 
+                axios.defaults.timeout = 30000;
                 originalRequest.timeout = 30000;
 
                 // Update the URL in the original request if it was absolute
@@ -56,10 +56,10 @@ axios.interceptors.response.use(
                         originalRequest.url = originalRequest.url.replace(url, getActiveURL());
                     }
                 });
-                
+
                 // Update baseURL for this specific retry
                 originalRequest.baseURL = getActiveURL();
-                
+
                 console.log("Retrying axios request with backup...");
                 return axios(originalRequest);
             }
@@ -72,14 +72,14 @@ axios.interceptors.response.use(
 const originalFetch = window.fetch;
 window.fetch = async function (resource, config = {}) {
     // Ensure headers include ngrok bypass
-    const headers = config.headers instanceof Headers 
-        ? config.headers 
+    const headers = config.headers instanceof Headers
+        ? config.headers
         : new Headers(config.headers || {});
-    
+
     if (!headers.has('ngrok-skip-browser-warning')) {
         headers.set('ngrok-skip-browser-warning', 'true');
     }
-    
+
     config.headers = headers;
 
     // Helper to rewrite URL
@@ -96,7 +96,7 @@ window.fetch = async function (resource, config = {}) {
     // Fast timeout for fetch on primary
     const controller = new AbortController();
     const id = currentIndex === 0 ? setTimeout(() => controller.abort(), 5000) : null;
-    
+
     const fetchConfig = { ...config, signal: config.signal || controller.signal };
 
     try {
@@ -106,7 +106,7 @@ window.fetch = async function (resource, config = {}) {
         return response;
     } catch (error) {
         if (id) clearTimeout(id);
-        
+
         // Network errors or AbortError (timeout)
         if (switchBackend()) {
             const retryResource = getResolvedUrl(resource);
@@ -117,4 +117,4 @@ window.fetch = async function (resource, config = {}) {
         throw error;
     }
 };
-
+
