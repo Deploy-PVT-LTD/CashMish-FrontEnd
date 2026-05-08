@@ -3,7 +3,10 @@ import { MessageSquare, X, Send } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { BASE_URL } from '../lib/api';
 
-const SOCKET_URL = BASE_URL || 'http://localhost:5000';
+const BACKEND_URLS = [
+    'http://192.168.1.11:5000',
+    'https://cashmish-backend.onrender.com'
+];
 
 const predefinedQuestions = [
     { q: "What devices do you buy?", a: "We buy smartphones, tablets, laptops, and smartwatches from all major brands like Apple, Samsung, Google, and more." },
@@ -58,21 +61,69 @@ export default function Chatbot() {
 
         setSessionId(currentSessionId);
 
-        const newSocket = io(SOCKET_URL, {
-            transports: ['websocket', 'polling'], // Fix for Render deployment
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-        });
+        let urlIdx = parseInt(sessionStorage.getItem('active_backend_idx') || '0');
+        
+        const createSocket = (idx) => {
+            const url = BACKEND_URLS[idx] || BACKEND_URLS[0];
+            console.log(`Connecting socket to: ${url}`);
+            return io(url, {
+                transports: ['websocket', 'polling'],
+                reconnectionAttempts: 3,
+                reconnectionDelay: 1000,
+            });
+        };
+
+        let newSocket = createSocket(urlIdx);
         setSocket(newSocket);
 
-        newSocket.on('connect', () => {
-            newSocket.emit('join_chat', currentSessionId);
+        newSocket.on('connect_error', () => {
+            if (urlIdx < BACKEND_URLS.length - 1) {
+                console.warn("Socket connection failed, trying backup...");
+                newSocket.disconnect();
+                urlIdx++;
+                sessionStorage.setItem('active_backend_idx', urlIdx.toString());
+                newSocket = createSocket(urlIdx);
+                setSocket(newSocket);
+                setupListeners(newSocket);
+            }
         });
+
+        const setupListeners = (sock) => {
+            sock.on('connect', () => {
+                console.log("Socket connected!");
+                sock.emit('join_chat', currentSessionId);
+            });
+
+            // Listen for admin replies
+            sock.on('receive_message', (msg) => {
+                if (msg.sender === 'admin') {
+                    setIsTyping(false);
+                    setMessages(prev => [...prev, { text: msg.text, isBot: true }]);
+                }
+            });
+
+            sock.on('chat_ended', ({ action }) => {
+                setIsTyping(false);
+                setIsChatClosed(true);
+                setMessages(prev => [
+                    ...prev,
+                    { text: `Your chat is done. This conversation has been ${action === 'deleted' ? 'deleted' : 'resolved'} by our support team.`, isBot: true }
+                ]);
+
+                if (action === 'deleted') {
+                    localStorage.removeItem('chat_session_id');
+                }
+            });
+        };
+
+        setupListeners(newSocket);
 
         // Load chat history
         const loadHistory = async () => {
             try {
-                const res = await fetch(`${SOCKET_URL}/api/chat/${currentSessionId}`);
+                // The global fetch override will handle the URL fallback automatically
+                const targetUrl = BACKEND_URLS[urlIdx] || BACKEND_URLS[0];
+                const res = await fetch(`${targetUrl}/api/chat/${currentSessionId}`);
                 const data = await res.json();
                 if (data.messages && data.messages.length > 0) {
                     const mappedMessages = data.messages.map(m => ({
@@ -96,31 +147,9 @@ export default function Chatbot() {
 
         loadHistory();
 
-        // Listen for admin replies
-        newSocket.on('receive_message', (msg) => {
-            if (msg.sender === 'admin') {
-                setIsTyping(false);
-                setMessages(prev => [...prev, { text: msg.text, isBot: true }]);
-            }
-            // If sender is 'user', it's already in the UI from optimistic update, so we can ignore.
-        });
-
-        // Listen for admin closing/deleting chat
-        newSocket.on('chat_ended', ({ action }) => {
-            setIsTyping(false);
-            setIsChatClosed(true);
-            setMessages(prev => [
-                ...prev,
-                { text: `Your chat is done. This conversation has been ${action === 'deleted' ? 'deleted' : 'resolved'} by our support team.`, isBot: true }
-            ]);
-
-            if (action === 'deleted') {
-                localStorage.removeItem('chat_session_id'); // Clear local session so next refresh gives a fresh one
-            }
-        });
 
         return () => {
-            newSocket.disconnect();
+            if (newSocket) newSocket.disconnect();
         };
     }, []);
 

@@ -1,28 +1,95 @@
 import axios from 'axios';
-// Centralized API configuration
-// export const BASE_URL = 'http://localhost:5000';
- export const BASE_URL = 'https://cashmish-backend.onrender.com';
- //export const BASE_URL = 'http://192.168.1.11:5000';
-//export const BASE_URL = 'https://backend.cashmish.com:5000';
 
-// Add the header globally to Axios
-axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
+// Priority list of backend URLs
+const BACKEND_URLS = [
+    'http://192.168.1.11:5000',               // Local VM (Primary)
+    'https://cashmish-backend.onrender.com'   // Render (Backup)
+];
 
-// Add the header globally to the native fetch API
-const originalFetch = window.fetch;
-window.fetch = async function () {
-    let [resource, config] = arguments;
-    if (config === undefined) {
-        config = {};
+// Initialize from sessionStorage or default to 0
+let currentIndex = parseInt(sessionStorage.getItem('active_backend_idx') || '0');
+if (currentIndex >= BACKEND_URLS.length) currentIndex = 0;
+
+export const BASE_URL = BACKEND_URLS[currentIndex];
+
+const getActiveURL = () => BACKEND_URLS[currentIndex];
+
+const switchBackend = () => {
+    if (currentIndex < BACKEND_URLS.length - 1) {
+        currentIndex++;
+        sessionStorage.setItem('active_backend_idx', currentIndex.toString());
+        console.warn(`Falling back to: ${BACKEND_URLS[currentIndex]}`);
+        // Update axios default just in case
+        axios.defaults.baseURL = BACKEND_URLS[currentIndex];
+        return true;
     }
-    if (config.headers === undefined) {
-        config.headers = {};
-    }
-    // Convert Headers object to normal object if necessary, or just set if it's a plain object
-    if (config.headers instanceof Headers) {
-        config.headers.append('ngrok-skip-browser-warning', 'true');
-    } else {
-        config.headers['ngrok-skip-browser-warning'] = 'true';
-    }
-    return await originalFetch(resource, config);
+    return false;
 };
+
+// Global Headers
+axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
+axios.defaults.baseURL = getActiveURL();
+
+// Axios Interceptor for Fallback
+axios.interceptors.response.use(
+    response => response,
+    async (error) => {
+        const originalRequest = error.config;
+        
+        // If it's a network error or timeout AND we haven't retried this request yet
+        if ((!error.response || error.code === 'ECONNABORTED' || error.message === 'Network Error') && !originalRequest._retry) {
+            if (switchBackend()) {
+                originalRequest._retry = true;
+                // Update the URL in the original request if it was absolute
+                BACKEND_URLS.forEach(url => {
+                    if (originalRequest.url.startsWith(url)) {
+                        originalRequest.url = originalRequest.url.replace(url, getActiveURL());
+                    }
+                });
+                // If it was relative, axios will use the new defaults.baseURL
+                return axios(originalRequest);
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
+// Fetch Override with Fallback
+const originalFetch = window.fetch;
+window.fetch = async function (resource, config = {}) {
+    // Ensure headers include ngrok bypass
+    const headers = config.headers instanceof Headers 
+        ? config.headers 
+        : new Headers(config.headers || {});
+    
+    if (!headers.has('ngrok-skip-browser-warning')) {
+        headers.set('ngrok-skip-browser-warning', 'true');
+    }
+    
+    config.headers = headers;
+
+    // Helper to rewrite URL
+    const getResolvedUrl = (url) => {
+        let finalUrl = url;
+        BACKEND_URLS.forEach(u => {
+            if (typeof finalUrl === 'string' && finalUrl.startsWith(u)) {
+                finalUrl = finalUrl.replace(u, getActiveURL());
+            }
+        });
+        return finalUrl;
+    };
+
+    try {
+        const finalResource = getResolvedUrl(resource);
+        const response = await originalFetch(finalResource, config);
+        return response;
+    } catch (error) {
+        // Network errors (failed to fetch)
+        if (switchBackend()) {
+            const retryResource = getResolvedUrl(resource);
+            console.log(`Retrying fetch with alternate URL: ${retryResource}`);
+            return await originalFetch(retryResource, config);
+        }
+        throw error;
+    }
+};
