@@ -170,7 +170,7 @@ function Header({ simple = false }) {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
-              <a href="/" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+              <a href="/brandselection" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
                 Sell Your Device
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
