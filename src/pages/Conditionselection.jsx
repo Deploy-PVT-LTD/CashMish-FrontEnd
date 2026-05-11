@@ -8,14 +8,62 @@ import third from '../assets/third.png'
 import fourth from '../assets/fourth.png'
 import Chatbot from '../components/Chatbot.jsx';
 import Swal from 'sweetalert2';
+
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
 
   const conditions = [
-    { name: 'Mint', description: 'Like new, no scratches', icon: <img src={first} alt="Mint condition iPhone" />, color: 'green' },
-    { name: 'Good', description: 'Minor signs of use', icon: <img src={second} alt="Good condition iPhone" />, color: 'blue' },
-    { name: 'Fair', description: 'Visible wear & tear', icon: <img src={third} alt="Fair condition iPhone" />, color: 'orange' },
-    { name: 'Broken', description: 'Cracks (regardless of size)', icon: <img src={fourth} alt="Broken iPhone condition" />, color: 'red' },
+    { 
+      name: 'Mint', 
+      description: 'Like new, no scratches', 
+      icon: <img src={first} alt="Mint condition iPhone" />, 
+      color: 'green',
+      requirements: [
+        'Still in factory original packaging.',
+        'Plastic film still on the device and has not been reapplied.',
+        'Device is not activated.',
+        'Must come with the original box with matching serial number.',
+        'Contains original accessories sealed and untouched.',
+        'Must be paid off and free of any financial obligations.'
+      ]
+    },
+    { 
+      name: 'Good', 
+      description: 'Minor signs of use', 
+      icon: <img src={second} alt="Good condition iPhone" />, 
+      color: 'blue',
+      requirements: [
+        'Light to moderate signs of wear. Few light scratches and/or dents.',
+        'Display is free of defects such as cracks, dead pixels, white spots, or burn-in.',
+        'Original battery above 80% capacity.',
+        'Powers on and functions 100% as intended.',
+        'Must be paid off and free of any financial obligations.'
+      ]
+    },
+    { 
+      name: 'Fair', 
+      description: 'Visible wear & tear', 
+      icon: <img src={third} alt="Fair condition iPhone" />, 
+      color: 'orange',
+      requirements: [
+        'Functionally defective or broken parts on either screen or body of the item.',
+        'Cracked display or damaged housing.',
+        'Display defects such as dead pixels, white spots, or burn-in.',
+        'Shows no signs of liquid intrusion or water damage.'
+      ]
+    },
+    { 
+      name: 'Broken', 
+      description: 'Cracks (regardless of size)', 
+      icon: <img src={fourth} alt="Broken iPhone condition" />, 
+      color: 'red',
+      requirements: [
+        'Heavy physical damage or multiple cracks.',
+        'Liquid damage or water intrusion signs.',
+        'Connectivity issues or sensor failures.',
+        'Device does not power on or stays stuck on logo.'
+      ]
+    },
   ];
 
   const onBack = () => {
@@ -48,6 +96,34 @@ const ConditionSelection = ({ onSelectCondition }) => {
     navigate("/Storageselection");
   };
 
+  const showRequirements = (condition) => {
+    if (!condition.requirements || condition.requirements.length === 0) {
+      handleSelection(condition.name);
+      return;
+    }
+
+    Swal.fire({
+      title: `<strong>${condition.name} Requirements</strong>`,
+      icon: 'info',
+      html: `
+        <div style="text-align: left; font-size: 0.95rem; line-height: 1.6;">
+          <ul style="list-style-type: disc; margin-left: 20px;">
+            ${condition.requirements.map(req => `<li>${req}</li>`).join('')}
+          </ul>
+          <p style="margin-top: 15px; font-weight: 500;">Does your device meet all these criteria?</p>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, it matches',
+      cancelButtonText: 'No, go back',
+      confirmButtonColor: '#166534', // green-800
+      cancelButtonColor: '#d33',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleSelection(condition.name);
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -61,8 +137,8 @@ const ConditionSelection = ({ onSelectCondition }) => {
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
             {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step === 1 || step === 2; // first step completed
-              const isActive = step === 3;    // second step active
+              const isCompleted = step === 1 || step === 2; 
+              const isActive = step === 3;    
 
               return (
                 <React.Fragment key={step}>
@@ -94,7 +170,6 @@ const ConditionSelection = ({ onSelectCondition }) => {
           </div>
         </div>
 
-
         {/* Back */}
         <div className="text-center mb-6">
           <button
@@ -118,38 +193,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
             {conditions.map((condition) => (
               <button
                 key={condition.name}
-                onClick={() => {
-                  if (condition.name === 'Mint') {
-                    Swal.fire({
-                      title: '<strong>Mint Condition Requirements</strong>',
-                      icon: 'info',
-                      html: `
-                        <div style="text-align: left; font-size: 0.95rem; line-height: 1.6;">
-                          <ul style="list-style-type: disc; margin-left: 20px;">
-                            <li>Still in factory original packaging.</li>
-                            <li>Plastic film still on the device and has not been reapplied.</li>
-                            <li>Device is not activated.</li>
-                            <li>Must come with the original box with matching serial number.</li>
-                            <li>Contains original accessories sealed and untouched.</li>
-                            <li>Must be paid off and free of any financial obligations.</li>
-                          </ul>
-                          <p style="margin-top: 15px; font-weight: 500;">Does your device meet all these criteria?</p>
-                        </div>
-                      `,
-                      showCancelButton: true,
-                      confirmButtonText: 'Yes, it matches',
-                      cancelButtonText: 'No, go back',
-                      confirmButtonColor: '#166534', // green-800
-                      cancelButtonColor: '#d33',
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        handleSelection(condition.name);
-                      }
-                    });
-                  } else {
-                    handleSelection(condition.name);
-                  }
-                }}
+                onClick={() => showRequirements(condition)}
                 className="bg-white border-2 border-gray-200 rounded-xl
                            p-4 sm:p-6 hover:border-green-800 hover:shadow-lg transition cursor-pointer"
               >
