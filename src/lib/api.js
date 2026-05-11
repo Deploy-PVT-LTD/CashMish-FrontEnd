@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Priority list of backend URLs
 const BACKEND_URLS = [
-    'https://cashmish-backend.onrender.com',             // Production (Primary)
-    'http://localhost:5000'                             // Local Testing
+    'https://cashmish-backend.onrender.com'            // Production (Primary)
+    // Local Testing
 ];
 
 // Initialize from sessionStorage or default to 0
