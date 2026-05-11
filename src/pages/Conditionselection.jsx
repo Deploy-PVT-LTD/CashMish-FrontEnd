@@ -7,6 +7,7 @@ import second from '../assets/second.png'
 import third from '../assets/third.png'
 import fourth from '../assets/fourth.png'
 import Chatbot from '../components/Chatbot.jsx';
+import Swal from 'sweetalert2';
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
 
@@ -19,6 +20,32 @@ const ConditionSelection = ({ onSelectCondition }) => {
 
   const onBack = () => {
     navigate("/ModelSelection");
+  };
+
+  const handleSelection = (conditionName) => {
+    localStorage.setItem("selectedCondition", conditionName);
+    onSelectCondition?.(conditionName);
+
+    // Auto-save draft to DB for logged-in users
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user._id || user.id;
+    if (userId) {
+      fetch(`${BASE_URL}/api/drafts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          brand: localStorage.getItem('selectedBrand'),
+          model: localStorage.getItem('selectedModel'),
+          mobileId: localStorage.getItem('selectedMobileId'),
+          mobileImage: localStorage.getItem('selectedMobileImage'),
+          condition: conditionName,
+          currentStep: 'condition'
+        })
+      }).catch(err => console.error('Draft save error:', err));
+    }
+
+    navigate("/Storageselection");
   };
 
 
@@ -92,30 +119,36 @@ const ConditionSelection = ({ onSelectCondition }) => {
               <button
                 key={condition.name}
                 onClick={() => {
-                  localStorage.setItem("selectedCondition", condition.name);
-                  console.log("Saved Condition:", condition.name);
-                  onSelectCondition?.(condition.name);
-
-                  // Auto-save draft to DB for logged-in users
-                  const user = JSON.parse(localStorage.getItem('user') || '{}');
-                  const userId = user._id || user.id;
-                  if (userId) {
-                    fetch(`${BASE_URL}/api/drafts`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        userId,
-                        brand: localStorage.getItem('selectedBrand'),
-                        model: localStorage.getItem('selectedModel'),
-                        mobileId: localStorage.getItem('selectedMobileId'),
-                        mobileImage: localStorage.getItem('selectedMobileImage'),
-                        condition: condition.name,
-                        currentStep: 'condition'
-                      })
-                    }).catch(err => console.error('Draft save error:', err));
+                  if (condition.name === 'Mint') {
+                    Swal.fire({
+                      title: '<strong>Mint Condition Requirements</strong>',
+                      icon: 'info',
+                      html: `
+                        <div style="text-align: left; font-size: 0.95rem; line-height: 1.6;">
+                          <ul style="list-style-type: disc; margin-left: 20px;">
+                            <li>Still in factory original packaging.</li>
+                            <li>Plastic film still on the device and has not been reapplied.</li>
+                            <li>Device is not activated.</li>
+                            <li>Must come with the original box with matching serial number.</li>
+                            <li>Contains original accessories sealed and untouched.</li>
+                            <li>Must be paid off and free of any financial obligations.</li>
+                          </ul>
+                          <p style="margin-top: 15px; font-weight: 500;">Does your device meet all these criteria?</p>
+                        </div>
+                      `,
+                      showCancelButton: true,
+                      confirmButtonText: 'Yes, it matches',
+                      cancelButtonText: 'No, go back',
+                      confirmButtonColor: '#166534', // green-800
+                      cancelButtonColor: '#d33',
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleSelection(condition.name);
+                      }
+                    });
+                  } else {
+                    handleSelection(condition.name);
                   }
-
-                  navigate("/Storageselection");
                 }}
                 className="bg-white border-2 border-gray-200 rounded-xl
                            p-4 sm:p-6 hover:border-green-800 hover:shadow-lg transition cursor-pointer"
