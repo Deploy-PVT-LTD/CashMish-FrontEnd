@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { BASE_URL } from '../lib/api.js';
@@ -7,10 +7,11 @@ import second from '../assets/second.png'
 import third from '../assets/third.png'
 import fourth from '../assets/fourth.png'
 import Chatbot from '../components/Chatbot.jsx';
-import Swal from 'sweetalert2';
+import { Check } from 'lucide-react';
 
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
+  const [selectedCondition, setSelectedCondition] = useState(null);
 
   const conditions = [
     { 
@@ -70,9 +71,11 @@ const ConditionSelection = ({ onSelectCondition }) => {
     navigate("/ModelSelection");
   };
 
-  const handleSelection = (conditionName) => {
-    localStorage.setItem("selectedCondition", conditionName);
-    onSelectCondition?.(conditionName);
+  const handleNext = () => {
+    if (!selectedCondition) return;
+
+    localStorage.setItem("selectedCondition", selectedCondition.name);
+    onSelectCondition?.(selectedCondition.name);
 
     // Auto-save draft to DB for logged-in users
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -87,7 +90,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
           model: localStorage.getItem('selectedModel'),
           mobileId: localStorage.getItem('selectedMobileId'),
           mobileImage: localStorage.getItem('selectedMobileImage'),
-          condition: conditionName,
+          condition: selectedCondition.name,
           currentStep: 'condition'
         })
       }).catch(err => console.error('Draft save error:', err));
@@ -96,43 +99,11 @@ const ConditionSelection = ({ onSelectCondition }) => {
     navigate("/Storageselection");
   };
 
-  const showRequirements = (condition) => {
-    if (!condition.requirements || condition.requirements.length === 0) {
-      handleSelection(condition.name);
-      return;
-    }
-
-    Swal.fire({
-      title: `<strong>${condition.name} Requirements</strong>`,
-      icon: 'info',
-      html: `
-        <div style="text-align: left; font-size: 0.95rem; line-height: 1.6;">
-          <ul style="list-style-type: disc; margin-left: 20px;">
-            ${condition.requirements.map(req => `<li>${req}</li>`).join('')}
-          </ul>
-          <p style="margin-top: 15px; font-weight: 500;">Does your device meet all these criteria?</p>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Yes, it matches',
-      cancelButtonText: 'No, go back',
-      confirmButtonColor: '#166534', // green-800
-      cancelButtonColor: '#d33',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleSelection(condition.name);
-      }
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
       <Header />
-      {/* chatbot */}
       <Chatbot />
-      {/* Main */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full pb-20">
         {/* Progress Tracker */}
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
@@ -180,7 +151,6 @@ const ConditionSelection = ({ onSelectCondition }) => {
           </button>
         </div>
 
-        {/* Condition Cards */}
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Select Your Phone’s Condition
@@ -189,14 +159,22 @@ const ConditionSelection = ({ onSelectCondition }) => {
             Accurate details help us offer the best price.
           </p>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 max-w-5xl mx-auto">
+          {/* Condition Cards Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 max-w-5xl mx-auto mb-6">
             {conditions.map((condition) => (
               <button
                 key={condition.name}
-                onClick={() => showRequirements(condition)}
-                className="bg-white border-2 border-gray-200 rounded-xl
-                           p-4 sm:p-6 hover:border-green-800 hover:shadow-lg transition cursor-pointer"
+                onClick={() => setSelectedCondition(condition)}
+                className={`bg-white border-2 rounded-xl p-4 sm:p-6 transition cursor-pointer relative overflow-hidden
+                           ${selectedCondition?.name === condition.name 
+                             ? 'border-green-800 shadow-md ring-1 ring-green-800' 
+                             : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
               >
+                {selectedCondition?.name === condition.name && (
+                  <div className="absolute top-2 right-2 bg-green-800 text-white rounded-full p-0.5 sm:p-1">
+                    <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </div>
+                )}
                 <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-4 rounded-full
                   flex items-center justify-center text-2xl sm:text-3xl
                   ${condition.color === 'green' ? 'bg-green-50' :
@@ -213,6 +191,34 @@ const ConditionSelection = ({ onSelectCondition }) => {
               </button>
             ))}
           </div>
+
+          {/* Requirements & Next Button Section */}
+          {selectedCondition && (
+            <div className="max-w-5xl mx-auto bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 animate-fade-in-up">
+              <div className="text-left">
+                <ul className="space-y-2 mb-6">
+                  {selectedCondition.requirements.map((req, idx) => (
+                    <li key={idx} className="flex gap-3 items-start text-gray-700">
+                      <div className="mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-green-50 text-green-700 flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5" />
+                      </div>
+                      <span className="text-sm sm:text-base leading-tight font-medium">{req}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="flex border-t border-gray-100 pt-4 justify-end">
+                <button
+                  onClick={handleNext}
+                  className="w-full sm:w-40 bg-green-800 text-white py-2.5 px-6 rounded-xl font-bold text-base 
+                             hover:bg-green-700 transition shadow-md shadow-green-800/10 active:scale-95 cursor-pointer"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
