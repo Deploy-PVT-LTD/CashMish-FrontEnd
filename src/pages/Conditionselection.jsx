@@ -14,10 +14,10 @@ const ConditionSelection = ({ onSelectCondition }) => {
   const [selectedCondition, setSelectedCondition] = useState(null);
 
   const conditions = [
-    { 
-      name: 'Mint', 
-      description: 'Like new, no scratches', 
-      icon: <img src={first} alt="Mint condition iPhone" />, 
+    {
+      name: 'Excellent',
+      description: 'Like new, no scratches',
+      icon: <img src={first} alt="Mint condition iPhone" />,
       color: 'green',
       requirements: [
         'Still in factory original packaging.',
@@ -28,10 +28,10 @@ const ConditionSelection = ({ onSelectCondition }) => {
         'Must be paid off and free of any financial obligations.'
       ]
     },
-    { 
-      name: 'Good', 
-      description: 'Minor signs of use', 
-      icon: <img src={second} alt="Good condition iPhone" />, 
+    {
+      name: 'Good',
+      description: 'Minor signs of use',
+      icon: <img src={second} alt="Good condition iPhone" />,
       color: 'blue',
       requirements: [
         'Light to moderate signs of wear. Few light scratches and/or dents.',
@@ -41,10 +41,10 @@ const ConditionSelection = ({ onSelectCondition }) => {
         'Must be paid off and free of any financial obligations.'
       ]
     },
-    { 
-      name: 'Fair', 
-      description: 'Visible wear & tear', 
-      icon: <img src={third} alt="Fair condition iPhone" />, 
+    {
+      name: 'Fair',
+      description: 'Visible wear & tear',
+      icon: <img src={third} alt="Fair condition iPhone" />,
       color: 'orange',
       requirements: [
         'Functionally defective or broken parts on either screen or body of the item.',
@@ -53,10 +53,10 @@ const ConditionSelection = ({ onSelectCondition }) => {
         'Shows no signs of liquid intrusion or water damage.'
       ]
     },
-    { 
-      name: 'Broken', 
-      description: 'Cracks (regardless of size)', 
-      icon: <img src={fourth} alt="Broken iPhone condition" />, 
+    {
+      name: 'Damaged',
+      description: 'Cracks (regardless of size)',
+      icon: <img src={fourth} alt="Broken iPhone condition" />,
       color: 'red',
       requirements: [
         'Heavy physical damage or multiple cracks.',
@@ -108,8 +108,8 @@ const ConditionSelection = ({ onSelectCondition }) => {
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
             {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step === 1 || step === 2; 
-              const isActive = step === 3;    
+              const isCompleted = step === 1 || step === 2;
+              const isActive = step === 3;
 
               return (
                 <React.Fragment key={step}>
@@ -166,9 +166,9 @@ const ConditionSelection = ({ onSelectCondition }) => {
                 key={condition.name}
                 onClick={() => setSelectedCondition(condition)}
                 className={`bg-white border-2 rounded-xl p-4 sm:p-6 transition cursor-pointer relative overflow-hidden
-                           ${selectedCondition?.name === condition.name 
-                             ? 'border-green-800 shadow-md ring-1 ring-green-800' 
-                             : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
+                           ${selectedCondition?.name === condition.name
+                    ? 'border-green-800 shadow-md ring-1 ring-green-800'
+                    : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
               >
                 {selectedCondition?.name === condition.name && (
                   <div className="absolute top-2 right-2 bg-green-800 text-white rounded-full p-0.5 sm:p-1">

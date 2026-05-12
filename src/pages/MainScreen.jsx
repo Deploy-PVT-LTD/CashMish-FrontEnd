@@ -6,7 +6,7 @@ import AboutUs from "./About.jsx";
 import Chatbot from "../components/Chatbot.jsx";
 
 const PhoneFlipLanding = () => {
-  const fullText = "Sell Your Phone at the Best Price";
+  const fullText = "Get Instant Cash for Your Used iPhone";
   const [displayText, setDisplayText] = useState("");
 
   // Typewriter effect
@@ -24,7 +24,7 @@ const PhoneFlipLanding = () => {
   const renderText = () => {
     const parts = displayText.split(" ");
     return parts.map((word, i) =>
-      word === "Price" ? (
+      word === "iPhone" ? (
         <span key={i} className="text-green-700">
           {word}{" "}
         </span>
