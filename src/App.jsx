@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+
 
 // Pages
 import PhoneFlipLanding from './pages/MainScreen';
@@ -43,6 +45,13 @@ import ScrollToTop from './components/layout/ScrollToTop';
 import { WalletProvider } from './contexts/Walletcontext';
 
 function App() {
+  useEffect(() => {
+    // Ping the backend so the trackTraffic middleware records this visitor.
+    // Fire-and-forget — we don't block the UI on this.
+    const backendUrl = 'https://cashmish-backend.onrender.com';
+    fetch(`${backendUrl}/api/traffic/ping`, { method: 'GET' }).catch(() => {});
+  }, []);
+
   return (
     <WalletProvider>
       <Router>
