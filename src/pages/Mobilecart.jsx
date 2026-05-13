@@ -322,6 +322,7 @@ const MobileCart = () => {
         const sorted = myForms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setCartItems(transformForms(sorted));
         const activeCount = myForms.filter(f => f.status !== 'accepted' && f.status !== 'rejected').length;
+        localStorage.setItem('activeCartCount', activeCount.toString());
         window.dispatchEvent(new CustomEvent('cartUpdated', { detail: activeCount }));
       }
     } catch (err) { console.error('Cart Load Error:', err); }

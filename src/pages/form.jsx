@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 import Header from "../components/layout/header.jsx";
@@ -136,6 +136,13 @@ export default function UserForm() {
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to submit");
+
+      // ✔ Save to myGuestOrders for cart visibility
+      const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
+      if (result._id && !guestOrders.includes(result._id)) {
+        guestOrders.push(result._id);
+        localStorage.setItem('myGuestOrders', JSON.stringify(guestOrders));
+      }
 
       // Delete draft from DB after successful submission
       const userForDraft = JSON.parse(localStorage.getItem("user") || "{}");

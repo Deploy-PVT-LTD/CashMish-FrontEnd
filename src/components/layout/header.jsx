@@ -52,11 +52,18 @@ function Header({ simple = false }) {
     resetWallet = () => { }
   } = walletContext;
 
-  const updateCartCount = useCallback(() => {
+  const updateCartCount = useCallback((e) => {
+    if (e && typeof e.detail === 'number') {
+      setCartItemCount(e.detail);
+      return;
+    }
+
     const token = localStorage.getItem("token");
     if (token) {
-      // Logic for logged in users cart if needed
-      setCartItemCount(0);
+      // In a real app, you might fetch this. For now, we rely on the cartUpdated event
+      // or we can fallback to 0 if not yet loaded.
+      const cachedCount = parseInt(localStorage.getItem('activeCartCount') || '0');
+      setCartItemCount(cachedCount);
     } else {
       const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
       setCartItemCount(guestOrders.length);
@@ -202,9 +209,14 @@ function Header({ simple = false }) {
                         </span>
                       </button>
 
-                      {/* Desktop Cart - Only for Logged In */}
+                      {/* Desktop Cart */}
                       <a href="/cart" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
                         <ShoppingBag size={22} />
+                        {cartItemCount > 0 && (
+                          <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-600 text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center">
+                            {cartItemCount}
+                          </span>
+                        )}
                       </a>
 
                       <button onClick={handleLogout} className="cursor-pointer flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
@@ -270,19 +282,23 @@ function Header({ simple = false }) {
                 </div>
 
                 <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
-                  {/* Cart logic: Only show if isLoggedIn is true */}
+                  <a href="/cart" onClick={() => setOpen(false)} className="relative flex items-center gap-2 text-gray-600 font-medium">
+                    <ShoppingBag size={20} />
+                    <span>Cart</span>
+                    {cartItemCount > 0 && (
+                      <span className="h-4 w-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {cartItemCount}
+                      </span>
+                    )}
+                  </a>
+
                   {isLoggedIn ? (
-                    <>
-                      <a href="/cart" onClick={() => setOpen(false)} className="flex items-center gap-2 text-gray-600 font-medium">
-                        <ShoppingBag size={20} /> Cart
-                      </a>
-                      <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
-                        <LogOut size={20} /> Logout
-                      </button>
-                    </>
+                    <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
+                      <LogOut size={20} /> Logout
+                    </button>
                   ) : (
-                    <a href="/login" onClick={() => setOpen(false)} className="bg-green-800 text-white w-full py-2 rounded-full text-center font-semibold">
-                      Sign Up
+                    <a href="/login" onClick={() => setOpen(false)} className="bg-green-800 text-white px-6 py-2 rounded-full text-center font-semibold">
+                      Login
                     </a>
                   )}
                 </div>
