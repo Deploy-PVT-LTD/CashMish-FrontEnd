@@ -72,10 +72,6 @@ export const WalletProvider = ({ children }) => {
 
   // --- 2. FRONTEND FUNCTIONS (Important Fix) ---
 
-  // Manual update ke liye (Jab bid accept ho)
-  const addToWallet = (amount) => {
-    setWalletBalance(prev => prev + amount);
-  };
 
   // Payout ke baad balance clear karne ke liye
   const clearWalletAfterPayout = (orderId) => {
@@ -159,7 +155,6 @@ export const WalletProvider = ({ children }) => {
     <WalletContext.Provider value={{
       walletBalance,
       setWalletBalance,
-      addToWallet,           // Ab yeh function body ke saath export ho raha hai
       clearWalletAfterPayout, // Ab yeh function body ke saath export ho raha hai
       pendingOrders,
       isProcessing,

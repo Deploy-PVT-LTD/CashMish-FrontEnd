@@ -296,7 +296,7 @@ const MobileCart = () => {
   const [draftItem, setDraftItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processingOrders, setProcessingOrders] = useState(new Set());
-  const { walletBalance, addToWallet } = useWallet();
+  const { walletBalance, fetchAndUpdateBalance } = useWallet();
 
   const [acceptPopup, setAcceptPopup] = useState({ open: false, orderId: null, amount: 0 });
   const [withdrawModal, setWithdrawModal] = useState({ open: false, orderId: null, amount: 0 });
@@ -452,7 +452,7 @@ const MobileCart = () => {
       if (newStatus === 'accepted') {
         const freshBidPrice = parseFloat(updatedForm.bidPrice) || 0;
         if (freshBidPrice > 0) {
-          addToWallet(freshBidPrice);
+          fetchAndUpdateBalance();
           setAcceptPopup({ open: true, orderId: id, amount: freshBidPrice });
         }
       } else if (newStatus === 'rejected') {
