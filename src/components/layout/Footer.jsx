@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Smartphone, Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight, Send } from 'lucide-react';
+import { Smartphone, Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight, Send, ShieldCheck } from 'lucide-react';
 import cashmishLogo from '../../assets/cashmish-logo-dark.svg';
 
 
@@ -14,6 +14,20 @@ const Footer = () => {
             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-48 h-48 bg-green-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+                {/* Satisfaction Promise Banner */}
+                <div className="bg-gray-800/40 rounded-2xl p-4 flex items-center gap-4 border border-gray-700/30 mb-10 group hover:border-green-500/30 transition-all duration-500">
+                    <div className="bg-[#003d33] p-3 rounded-2xl shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <ShieldCheck className="text-green-500" size={32} />
+                    </div>
+                    <div>
+                        <h4 className="text-white font-black text-sm uppercase tracking-tight">Satisfaction Promise</h4>
+                        <p className="text-[11px] text-gray-400 mt-1 font-medium leading-normal max-w-lg">
+                            Accurately describe your device and we promise the quoted value and a smooth transaction. 
+                            <span className="text-green-500 font-bold ml-1">That's a promise.</span>
+                        </p>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
 
                     {/* Column 1: Brand & About */}
