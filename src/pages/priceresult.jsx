@@ -178,9 +178,46 @@ const PriceResult = () => {
             </div>
           </div>
         </div>
+        {/* Trust Factor Section */}
+        <div className="w-full max-w-md mt-10 space-y-7 px-4">
+          <TrustRow 
+            icon={<div className="bg-[#004d40] p-2 rounded-full"><TrendingUp className="w-4 h-4 text-white" /></div>} 
+            title="No selling fees" 
+            description="Save up to 15% on marketplace fees" 
+          />
+          <TrustRow 
+            icon={<div className="bg-[#004d40] p-2 rounded-full"><ShieldCheck className="w-4 h-4 text-white" /></div>} 
+            title="Zero fraud risk" 
+            description="We handle the bad guys" 
+          />
+          <TrustRow 
+            icon={<div className="bg-[#004d40] p-2 rounded-full"><Truck className="w-4 h-4 text-white" /></div>} 
+            title="Free shipping via FedEx or UPS" 
+            description="Drop-off around the corner" 
+          />
+          <TrustRow 
+            icon={<div className="bg-[#004d40] p-2 rounded-full"><Zap className="w-4 h-4 text-white" /></div>} 
+            title="Optional 2-Day shipping and 24-Hour processing" 
+            description="We get it. Sometimes you just can't wait!" 
+          />
+          <TrustRow 
+            icon={<div className="bg-[#004d40] p-2 rounded-full"><Smartphone className="w-4 h-4 text-white" /></div>} 
+            title="Zelle® payment" 
+            description="Cha-ching, money straight into your bank." 
+          />
+        </div>
       </main>
     </div>
   );
 };
+
+const TrustRow = ({ icon, title, description }) => (
+  <div className="flex items-start gap-4 border-b border-gray-100 pb-4 last:border-0">
+    <div className="flex-shrink-0 mt-1">{icon}</div>
+    <div>
+      <h3 className="text-sm font-black text-gray-800">{title} — <span className="font-medium text-gray-500">{description}</span></h3>
+    </div>
+  </div>
+);
 
 export default PriceResult;
