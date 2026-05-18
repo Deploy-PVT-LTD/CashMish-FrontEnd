@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X, Star } from 'lucide-react';
+import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Zap, Heart, ArrowRight, X, Star, Volume2, VolumeX } from 'lucide-react';
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import cashmishbanner from "../assets/cashmish_banner1.webp";
@@ -25,6 +25,7 @@ const sanitizeWordHtml = (html) => {
 export default function AboutUs({ isPage = false }) {
   const [marqueeReviews, setMarqueeReviews] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -142,6 +143,24 @@ export default function AboutUs({ isPage = false }) {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Video Section */}
+      <section className="w-full relative overflow-hidden bg-black flex justify-center items-center">
+        <video
+          src="https://res.cloudinary.com/dan80selw/video/upload/v1779102373/WhatsApp_Video_2026-05-17_at_10.27.02_PM_bdpfon.mp4"
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          className="w-full max-h-[80vh] object-cover"
+        />
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          className="absolute bottom-6 right-6 lg:bottom-10 lg:right-10 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full backdrop-blur-md transition-all z-10 shadow-lg border border-white/20"
+        >
+          {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+        </button>
       </section>
 
       {/* Blogs Section */}
