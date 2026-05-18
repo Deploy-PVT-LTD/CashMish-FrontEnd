@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { BASE_URL } from '../lib/api.js';
@@ -14,7 +14,7 @@ const StorageSelection = ({
 }) => {
   const navigate = useNavigate();
 
-  const storageOptions = ['64GB', '128GB', '256GB', '512GB', '1TB'];
+  const storageOptions = ['64GB', '128GB', '256GB', '512GB', '1TB', '2TB'];
   const [selectedStorage, setSelectedStorage] = React.useState('64GB');
 
   return (
