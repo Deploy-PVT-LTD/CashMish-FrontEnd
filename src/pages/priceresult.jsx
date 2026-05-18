@@ -33,6 +33,7 @@ const PriceResult = () => {
           body: JSON.stringify({
             mobileId: mobileId,
             storage: storage,
+            carrier: localStorage.getItem("selectedCarrier") || "Unlocked",
             screenCondition: localStorage.getItem("screenCondition"),
             bodyCondition: localStorage.getItem("bodyCondition"),
             batteryCondition: localStorage.getItem("batteryCondition"),

@@ -87,7 +87,7 @@ export default function UserForm() {
     data.append("bodyCondition", deviceDetails.body);
     data.append("batteryCondition", deviceDetails.battery);
     data.append("estimatedPrice", localStorage.getItem('estimatedPrice') || "0");
-    data.append("carrier", "Unlocked");
+    data.append("carrier", localStorage.getItem('selectedCarrier') || "Unlocked");
 
     // 2. Pickup Details
     const pickUpDetails = {
