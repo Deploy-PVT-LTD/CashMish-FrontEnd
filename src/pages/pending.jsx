@@ -73,8 +73,8 @@ export default function PendingPage() {
       status: "completed"
     },
     {
-      title: "Saved to Cart",
-      description: "We've added this request to your cart for tracking and final checkout.",
+      title: "Download Free USPS Label",
+      description: "Download your free prepaid shipping label to send your device to us securely and without any cost.",
       status: "completed"
     },
     {
