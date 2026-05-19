@@ -146,14 +146,14 @@ export default function AboutUs({ isPage = false }) {
       </section>
 
       {/* Video Section */}
-      <section className="w-full relative bg-black flex justify-center items-center">
+      <section className="w-full relative flex justify-center items-center overflow-hidden">
         <video
-          src="https://res.cloudinary.com/dan80selw/video/upload/v1779102373/WhatsApp_Video_2026-05-17_at_10.27.02_PM_bdpfon.mp4"
+          src="https://res.cloudinary.com/dan80selw/video/upload/v1779194303/WhatsApp_Video_2026-05-19_at_5.14.04_PM_xf8zqt.mp4"
           autoPlay
           loop
           muted={isMuted}
           playsInline
-          className="w-full h-auto block"
+          className="w-full h-auto block scale-[1.005]"
         />
         <button
           onClick={() => setIsMuted(!isMuted)}
