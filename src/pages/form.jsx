@@ -7,7 +7,7 @@ import {
   Search, CreditCard, Calendar, MapPin, Phone,
   ArrowRight, Mail, Navigation, Loader2, User
 } from 'lucide-react';
-import deploy from '../assets/deploy-logo.png';
+import favIcon from '../assets/cashmish-Fav.svg';
 import Chatbot from '../components/Chatbot.jsx';
 
 export default function UserForm() {
@@ -28,7 +28,7 @@ export default function UserForm() {
   const [deviceDetails, setDeviceDetails] = useState({
     brand: 'N/A', model: 'N/A', storage: 'N/A',
     screen: 'N/A', body: 'N/A', battery: 'N/A',
-    condition: 'N/A', mobileId: ''
+    condition: 'N/A', mobileId: '', carrier: 'N/A'
   });
 
   const [formData, setFormData] = useState({
@@ -48,7 +48,8 @@ export default function UserForm() {
       condition: localStorage.getItem('selectedCondition') || 'Fair',
       screen: localStorage.getItem('screenCondition') || 'perfect',
       body: localStorage.getItem('bodyCondition') || 'perfect',
-      battery: localStorage.getItem('batteryCondition') || 'good'
+      battery: localStorage.getItem('batteryCondition') || 'good',
+      carrier: localStorage.getItem('selectedCarrier') || 'Unlocked'
     };
     setDeviceDetails(details);
 
@@ -241,13 +242,14 @@ export default function UserForm() {
           <div className="bg-gradient-to-br from-green-900 to-green-700 rounded-2xl p-6 text-white shadow-xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold">Your Device</h2>
-              <img src={deploy} alt="logo" className="w-8 h-8 opacity-80" />
+              <img src={favIcon} alt="logo" className="w-10 h-10 object-contain" />
             </div>
             <div className="space-y-3">
               <DetailRow label="Brand" value={deviceDetails.brand} />
               <DetailRow label="Model" value={deviceDetails.model} />
               <DetailRow label="Storage" value={deviceDetails.storage} />
               <DetailRow label="Condition" value={deviceDetails.condition} />
+              <DetailRow label="Carrier" value={deviceDetails.carrier} />
             </div>
           </div>
         </div>
@@ -308,10 +310,20 @@ export default function UserForm() {
 
 // Sub-components
 function DetailRow({ label, value }) {
+  const formatValue = (val) => {
+    if (!val) return 'N/A';
+    if (label === 'Carrier') {
+      if (val === 'att') return 'AT&T';
+      if (val === 'tmobile') return 'T-Mobile';
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    }
+    return val;
+  };
+
   return (
     <div className="flex justify-between border-b border-white/10 py-2">
       <span className="text-green-100 text-sm">{label}</span>
-      <span className="font-bold text-sm uppercase">{value}</span>
+      <span className="font-bold text-sm uppercase">{formatValue(value)}</span>
     </div>
   );
 }

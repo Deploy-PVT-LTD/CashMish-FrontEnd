@@ -335,6 +335,7 @@ const MobileCart = () => {
     name: form.mobileId?.phoneModel || form.phoneModel || form.name || 'N/A',
     storage: form.storage,
     condition: form.screenCondition || form.condition,
+    carrier: form.carrier || 'N/A',
     uploadDate: form.pickUpDetails?.pickUpDate ? new Date(form.pickUpDetails.pickUpDate).toLocaleDateString() : 'N/A',
     status: form.isDeleted ? 'cancelled' : String(form.status || 'pending').toLowerCase(),
     address: form.pickUpDetails?.address?.addressText || form.address || 'N/A',
@@ -605,6 +606,7 @@ const MobileCart = () => {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                         <MiniBox label="Storage" value={item.storage} />
                         <MiniBox label="Condition" value={item.condition} />
+                        <MiniBox label="Carrier" value={item.carrier} />
                         <div className="col-span-2 bg-gray-50 px-3 py-2 rounded-lg text-left border border-gray-100/50">
                           <p className="text-[9px] text-gray-400 font-bold uppercase mb-1">Pickup Address</p>
                           <p className="text-xs font-semibold text-gray-600 truncate">{item.address}</p>
@@ -665,12 +667,24 @@ const MobileCart = () => {
   );
 };
 
-const MiniBox = ({ label, value }) => (
-  <div className="bg-gray-50 px-3 py-2 rounded-lg text-left border border-gray-100/50 hover:bg-white transition-colors">
-    <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">{label}</p>
-    <p className="text-xs font-bold text-gray-700">{value || 'N/A'}</p>
-  </div>
-);
+const MiniBox = ({ label, value }) => {
+  const formatValue = (val) => {
+    if (!val) return 'N/A';
+    if (label === 'Carrier') {
+      if (val === 'att') return 'AT&T';
+      if (val === 'tmobile') return 'T-Mobile';
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    }
+    return val;
+  };
+
+  return (
+    <div className="bg-gray-50 px-3 py-2 rounded-lg text-left border border-gray-100/50 hover:bg-white transition-colors">
+      <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">{label}</p>
+      <p className="text-xs font-bold text-gray-700">{formatValue(value)}</p>
+    </div>
+  );
+};
 
 const Badge = ({ status }) => {
   const statusMap = {
