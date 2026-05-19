@@ -13,6 +13,7 @@ const PriceResult = () => {
   const [estimatedPrice, setEstimatedPrice] = useState(0);
   const [loading, setLoading] = useState(true);
   const [gaugeOffset, setGaugeOffset] = useState(251);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   // Data from LocalStorage/State
   const brand = localStorage.getItem('selectedBrand') || 'Smartphone';
@@ -176,6 +177,42 @@ const PriceResult = () => {
                 <span className="text-sm uppercase tracking-wider">Confirm My Offer</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
+
+              {/* Price Disclaimer / Terms */}
+              <div className="mt-8 px-2">
+                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                  <span className="text-slate-900 font-bold uppercase tracking-tight">Important Notice:</span> This quote is a preliminary estimate and may vary based on the actual physical and inspected condition of your device.
+                  {!showDisclaimer && (
+                    <button 
+                      type="button"
+                      onClick={() => setShowDisclaimer(true)}
+                      className="ml-1 text-blue-600 font-black hover:text-blue-700 cursor-pointer underline underline-offset-4 decoration-blue-200 hover:decoration-blue-600 transition-all"
+                    >
+                      Read More
+                    </button>
+                  )}
+                </p>
+                
+                {showDisclaimer && (
+                  <div className="mt-4 p-5 bg-slate-50 rounded-[1.5rem] border border-slate-100 text-left transition-all duration-500 animate-in fade-in zoom-in-95">
+                    <p className="text-[10px] text-slate-500 font-semibold mb-3 leading-relaxed">
+                      Our experts will perform a comprehensive diagnostic physical and software inspection to verify every aspect of your device.
+                    </p>
+                    <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">
+                      If the actual condition differs from your assessment—due to hidden defects, screen issues, or battery performance—we may provide a revised offer. You will always have the option to accept the adjustment or have your device returned for free.
+                    </p>
+                    <div className="mt-4 pt-3 border-t border-slate-200/50">
+                      <button 
+                        type="button"
+                        onClick={() => setShowDisclaimer(false)}
+                        className="text-blue-600 font-black text-[10px] uppercase tracking-wider hover:text-blue-700 cursor-pointer"
+                      >
+                        Close Details
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
