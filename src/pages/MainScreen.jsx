@@ -321,22 +321,16 @@ const PhoneFlipLanding = () => {
 
             {/* Trust row */}
             <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-gray-700">
-              <span className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-green-700 flex items-center justify-center shrink-0">
-                  <Truck className="w-4.5 h-4.5 text-white" strokeWidth={2} />
-                </span>
+              <span className="flex items-center gap-2">
+                <Truck className="w-5 h-5 text-green-700" strokeWidth={1.5} />
                 Free shipping
               </span>
-              <span className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-green-700 flex items-center justify-center shrink-0">
-                  <Zap className="w-4.5 h-4.5 text-white" strokeWidth={2} fill="currentColor" />
-                </span>
+              <span className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-green-700" strokeWidth={1.5} />
                 Fast payment
               </span>
-              <span className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-green-700 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4.5 h-4.5 text-white" strokeWidth={2} />
-                </span>
+              <span className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-green-700" strokeWidth={1.5} />
                 Secure data handling
               </span>
             </div>
