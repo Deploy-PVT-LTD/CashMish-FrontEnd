@@ -177,8 +177,8 @@ function Header({ simple = false }) {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
-              <a href="/brandselection" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
-                Sell Your Device
+              <a href="/categoryselection" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+                CashMish Your Device
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
@@ -187,8 +187,13 @@ function Header({ simple = false }) {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
+              <a href="/why-cashmish" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
+                Why CashMish
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
+              </a>
+
               <a href="/contact" className="text-sm font-semibold text-gray-600 hover:text-green-800 transition-colors relative group py-2">
-                Support
+                Help
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
@@ -259,6 +264,7 @@ function Header({ simple = false }) {
               <div className="flex flex-col space-y-4 pt-4">
                 <a href="/" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Home</a>
                 <a href="/Howitworks" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">How It Works</a>
+                <a href="/why-cashmish" onClick={() => setOpen(false)} className="text-base font-medium text-gray-600 px-2">Why CashMish</a>
 
                 {/* Mobile Categories */}
                 <div className="space-y-4 pt-2">

@@ -12,25 +12,65 @@ import batteryImg from '../assets/battery-health.webp';
 import top from '../assets/top.webp';
 import bottom from '../assets/bottom.webp';
 import Chatbot from '../components/Chatbot.jsx';
+import { getSelectedCategory } from '../lib/categoryFlow';
 
-const photoCategories = [
-  { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <img src={frontImg} alt="Front view iPhone" className="w-20 h-50 object-contain" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
-  { key: 'back', label: 'Back Side', desc: 'Flip your phone and capture the back panel clearly', icon: <img src={backImg} alt="Back view iPhone" className="w-20 h-50 object-contain" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
-  { key: 'left', label: 'Left Side', desc: 'Capture the left edge showing volume buttons', icon: <img src={leftImg} alt="Left side view iPhone" className="w-20 h-50 object-contain" />, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', activeBorder: 'border-orange-500' },
-  { key: 'right', label: 'Right Side', desc: 'Capture the right edge showing power button', icon: <img src={rightImg} alt="Right side view iPhone" className="w-20 h-50 object-contain" />, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', activeBorder: 'border-green-500' },
-  { key: 'battery', label: 'Battery Health', desc: 'Go to Settings > Battery > Battery Health and take a Picture', icon: <img src={batteryImg} alt="iPhone battery health" className="w-20 h-50 object-contain" />, color: 'text-gray-600', bg: 'bg-gray-100', border: 'border-gray-200', activeBorder: 'border-gray-500' },
-  { key: 'top', label: 'Top Side', desc: 'Capture the top edge of the phone clearly', icon: <img src={top} alt="Top view iPhone" className="w-20 h-50 object-contain" />, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200', activeBorder: 'border-sky-500' },
-  { key: 'bottom', label: 'Bottom Side', desc: 'Capture the bottom edge showing the charging port', icon: <img src={bottom} alt="Bottom view iPhone" className="w-20 h-50 object-contain" />, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', activeBorder: 'border-rose-500' },
+// Fallback questions — only used if a category somehow has no condition questions
+// configured yet, so the flow doesn't just break.
+const LEGACY_QUESTIONS = [
+  {
+    key: 'screen', label: 'Screen Condition (Front Display)', options: [
+      { key: 'perfect', label: 'Perfect', description: 'No scratches, cracks, or visible marks' },
+      { key: 'scratched', label: 'Scratched', description: 'Minor surface scratches visible' },
+      { key: 'cracked', label: 'Cracked', description: 'Visible cracks, chips, or display damage' },
+    ]
+  },
+  {
+    key: 'body', label: 'Back & Frame Condition', options: [
+      { key: 'perfect', label: 'Perfect', description: 'Like new with no visible wear' },
+      { key: 'scratched', label: 'Scratched', description: 'Minor scratches or light wear' },
+      { key: 'damaged', label: 'Damaged', description: 'Visible dents, cracks, or structural damage' },
+    ]
+  },
+  {
+    key: 'battery', label: 'Battery Health', options: [
+      { key: 'good', label: 'Good (80%+)', description: 'Battery health 80% or higher' },
+      { key: 'average', label: 'Average (60-80%)', description: 'Battery health between 60%–79%' },
+      { key: 'poor', label: 'Poor (<60%)', description: 'Battery health below 60%' },
+    ]
+  },
+];
+
+const QUESTION_ICONS = [<Smartphone />, <Shield />, <Battery />, <Info />];
+
+// Green (best) -> yellow (middle) -> red (worst) across however many options a
+// question has, so a custom category's questions still look consistent.
+const colorForOptionIndex = (index, total) => {
+  if (total <= 1 || index === 0) return 'green';
+  if (index === total - 1) return 'red';
+  return 'yellow';
+};
+
+const ALL_PHOTO_SLOTS = [
+  { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <img src={frontImg} alt="Front view" className="w-20 h-50 object-contain" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
+  { key: 'back', label: 'Back Side', desc: 'Flip your device and capture the back panel clearly', icon: <img src={backImg} alt="Back view" className="w-20 h-50 object-contain" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
+  { key: 'left', label: 'Left Side', desc: 'Capture the left edge clearly', icon: <img src={leftImg} alt="Left side view" className="w-20 h-50 object-contain" />, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', activeBorder: 'border-orange-500' },
+  { key: 'right', label: 'Right Side', desc: 'Capture the right edge clearly', icon: <img src={rightImg} alt="Right side view" className="w-20 h-50 object-contain" />, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', activeBorder: 'border-green-500' },
+  { key: 'battery', label: 'Battery Health', desc: 'Go to Settings > Battery > Battery Health and take a Picture', icon: <img src={batteryImg} alt="Battery health" className="w-20 h-50 object-contain" />, color: 'text-gray-600', bg: 'bg-gray-100', border: 'border-gray-200', activeBorder: 'border-gray-500' },
+  { key: 'top', label: 'Top Side', desc: 'Capture the top edge clearly', icon: <img src={top} alt="Top view" className="w-20 h-50 object-contain" />, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200', activeBorder: 'border-sky-500' },
+  { key: 'bottom', label: 'Bottom Side', desc: 'Capture the bottom edge clearly', icon: <img src={bottom} alt="Bottom view" className="w-20 h-50 object-contain" />, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', activeBorder: 'border-rose-500' },
 ];
 
 const DeviceAssessmentForm = () => {
   const navigate = useNavigate();
+  const category = getSelectedCategory();
+  const questions = category?.assessmentQuestions?.length > 0 ? category.assessmentQuestions : LEGACY_QUESTIONS;
+  const questionKeys = questions.map(q => q.key);
+  // The "Battery Health" photo slot's instructions only make sense for a question
+  // literally called "battery" — hide it for categories that don't have one.
+  const photoCategories = ALL_PHOTO_SLOTS.filter(p => p.key !== 'battery' || questionKeys.includes('battery'));
 
-  const [formData, setFormData] = useState({
-    screenCondition: '',
-    bodyCondition: '',
-    batteryCondition: '',
-  });
+  // Generic map of questionKey -> chosen optionKey (works for any category's questions).
+  const [answers, setAnswers] = useState({});
 
   const [imagePreviews, setImagePreviews] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -42,26 +82,8 @@ const DeviceAssessmentForm = () => {
   const [activeSlot, setActiveSlot] = useState(null);
   const slotInputRef = useRef(null);
 
-  const screenConditions = [
-    { value: 'perfect', label: 'Perfect', description: 'No scratches, cracks, or visible marks', color: 'green' },
-    { value: 'scratched', label: 'Scratched', description: 'Minor surface scratches visible', color: 'yellow' },
-    { value: 'cracked', label: 'Cracked', description: 'Visible cracks, chips, or display damage', color: 'red' }
-  ];
-
-  const bodyConditions = [
-    { value: 'perfect', label: 'Perfect', description: 'Like new with no visible wear', color: 'green' },
-    { value: 'scratched', label: 'Scratched', description: 'Minor scratches or light wear', color: 'yellow' },
-    { value: 'damaged', label: 'Damaged', description: 'Visible dents, cracks, or structural damage', color: 'red' }
-  ];
-
-  const batteryConditions = [
-    { value: 'good', label: 'Good (80%+)', description: 'Battery health 80% or higher', color: 'green' },
-    { value: 'average', label: 'Average (60-80%)', description: 'Battery health between 60%–79%', color: 'yellow' },
-    { value: 'poor', label: 'Poor (<60%)', description: 'Battery health below 60%', color: 'red' }
-  ];
-
-  const handleConditionSelect = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleConditionSelect = (key, value) => {
+    setAnswers(prev => ({ ...prev, [key]: value }));
   };
 
   const handleSlotUpload = (e) => {
@@ -136,22 +158,28 @@ const DeviceAssessmentForm = () => {
   const currentCategory = photoCategories[currentStep];
   const currentUploaded = photoSlots[currentCategory?.key];
 
+  const allQuestionsAnswered = questions.every(q => answers[q.key]);
+
   const isFormValid = () => {
-    return formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0 && acceptedTerms;
+    return allQuestionsAnswered && selectedFiles.length > 0 && acceptedTerms;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
-      localStorage.setItem("screenCondition", formData.screenCondition);
-      localStorage.setItem("bodyCondition", formData.bodyCondition);
-      localStorage.setItem("batteryCondition", formData.batteryCondition);
+      localStorage.setItem("conditionAnswers", JSON.stringify(answers));
+      // Legacy mirrors — harmless no-ops for categories that don't use these keys,
+      // kept so any other page still reading them directly (e.g. a cart summary)
+      // keeps working for Mobile Phones without changes.
+      if (answers.screen) localStorage.setItem("screenCondition", answers.screen);
+      if (answers.body) localStorage.setItem("bodyCondition", answers.body);
+      if (answers.battery) localStorage.setItem("batteryCondition", answers.battery);
 
-      const currentStorage = localStorage.getItem("selectedStorage") || "128GB";
+      const currentStorage = localStorage.getItem("selectedStorage") || "";
       const currentPrice = localStorage.getItem("estimatedPrice") || "500";
 
       const assessmentSummary = {
-        ...formData,
+        ...answers,
         storage: currentStorage,
         estimatedPrice: currentPrice,
         status: 'pending'
@@ -184,27 +212,23 @@ const DeviceAssessmentForm = () => {
         <h1 className="text-3xl font-bold text-center mb-8">Device Condition Assessment</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {[
-            { title: 'Screen Condition (Front Display)', icon: <Smartphone />, field: 'screenCondition', options: screenConditions },
-            { title: 'Back & Frame Condition', icon: <Shield />, field: 'bodyCondition', options: bodyConditions },
-            { title: 'Battery Health', icon: <Battery />, field: 'batteryCondition', options: batteryConditions }
-          ].map((section) => (
-            <div key={section.field} className="bg-white rounded-2xl shadow-lg p-6">
+          {questions.map((q, qIndex) => (
+            <div key={q.key} className="bg-white rounded-2xl shadow-lg p-6">
               <div className="flex items-center gap-3 mb-6 font-bold text-xl">
-                {section.icon} {section.title}
+                {QUESTION_ICONS[qIndex % QUESTION_ICONS.length]} {q.label}
               </div>
               <div className="grid md:grid-cols-3 gap-4">
-                {section.options.map((opt) => (
+                {q.options.map((opt, optIndex) => (
                   <button
-                    key={opt.value}
+                    key={opt.key}
                     type="button"
-                    onClick={() => handleConditionSelect(section.field, opt.value)}
-                    className={`relative p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${formData[section.field] === opt.value ? getColorClass(opt.color, true) : getColorClass(opt.color, false)
+                    onClick={() => handleConditionSelect(q.key, opt.key)}
+                    className={`relative p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${getColorClass(colorForOptionIndex(optIndex, q.options.length), answers[q.key] === opt.key)
                       }`}
                   >
                     <div className="font-semibold">{opt.label}</div>
-                    <div className="text-xs opacity-70">{opt.description}</div>
-                    {formData[section.field] === opt.value && <Check className="absolute top-2 right-2 w-4 h-4" />}
+                    {opt.description && <div className="text-xs opacity-70">{opt.description}</div>}
+                    {answers[q.key] === opt.key && <Check className="absolute top-2 right-2 w-4 h-4" />}
                   </button>
                 ))}
               </div>
@@ -223,7 +247,7 @@ const DeviceAssessmentForm = () => {
             >
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
               <p className="text-sm text-gray-500">
-                {uploadedCount > 0 ? `${uploadedCount}/7 photos uploaded — tap to add more` : 'Upload photos to show condition'}
+                {uploadedCount > 0 ? `${uploadedCount}/${photoCategories.length} photos uploaded — tap to add more` : 'Upload photos to show condition'}
               </p>
             </div>
 
@@ -268,7 +292,7 @@ const DeviceAssessmentForm = () => {
             className={`w-full py-4 rounded-xl font-bold text-white text-lg transition-all ${isFormValid() ? "bg-green-800 hover:bg-green-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
               }`}
           >
-            {isFormValid() ? "Get My Offer" : !acceptedTerms && formData.screenCondition && formData.bodyCondition && formData.batteryCondition && selectedFiles.length > 0 ? "Accept Terms to Continue" : !selectedFiles.length && isFormValid() === false && formData.screenCondition && formData.bodyCondition && formData.batteryCondition ? "Please Upload Photos" : "Get My Offer"}
+            {isFormValid() ? "Get My Offer" : !acceptedTerms && allQuestionsAnswered && selectedFiles.length > 0 ? "Accept Terms to Continue" : !selectedFiles.length && allQuestionsAnswered ? "Please Upload Photos" : "Get My Offer"}
           </button>
         </form>
       </div>

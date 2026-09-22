@@ -2,12 +2,16 @@ import axios from 'axios';
 
 // Priority list of backend URLs
 const BACKEND_URLS = [
-    'https://cashmish-backend.onrender.com'            // Production (Primary)
-    // Local Testing
+    ...(import.meta.env.DEV ? ['http://localhost:5000'] : []),  // Local Testing (dev server only)
+    'https://cashmish-backend.onrender.com'            // Production (Primary / fallback)
 ];
 
-// Initialize from sessionStorage or default to 0
-let currentIndex = parseInt(sessionStorage.getItem('active_backend_idx') || '0');
+// Initialize from sessionStorage or default to 0.
+// In dev, always start at 0 (localhost) fresh — don't honor a stale fallback
+// pin left over from an earlier session where localhost happened to be down.
+let currentIndex = import.meta.env.DEV
+    ? 0
+    : parseInt(sessionStorage.getItem('active_backend_idx') || '0');
 if (currentIndex >= BACKEND_URLS.length) currentIndex = 0;
 
 export const BASE_URL = BACKEND_URLS[currentIndex];

@@ -8,10 +8,13 @@ import third from '../assets/third.png'
 import fourth from '../assets/fourth.png'
 import Chatbot from '../components/Chatbot.jsx';
 import { Check } from 'lucide-react';
+import { getSelectedCategory, routeAfterCondition } from '../lib/categoryFlow';
 
 const ConditionSelection = ({ onSelectCondition }) => {
   const navigate = useNavigate();
   const [selectedCondition, setSelectedCondition] = useState(null);
+  const category = getSelectedCategory();
+  const categoryName = localStorage.getItem("selectedCategoryName") || "Device";
 
   const conditions = [
     {
@@ -96,7 +99,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
       }).catch(err => console.error('Draft save error:', err));
     }
 
-    navigate("/Storageselection");
+    navigate(routeAfterCondition(category));
   };
 
   return (
@@ -107,9 +110,9 @@ const ConditionSelection = ({ onSelectCondition }) => {
         {/* Progress Tracker */}
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-            {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step === 1 || step === 2;
-              const isActive = step === 3;
+            {[1, 2, 3, 4, 5].map((step, i) => {
+              const isCompleted = step === 1 || step === 2 || step === 3;
+              const isActive = step === 4;
 
               return (
                 <React.Fragment key={step}>
@@ -128,11 +131,11 @@ const ConditionSelection = ({ onSelectCondition }) => {
                       {isCompleted ? "✓" : step}
                     </div>
                     <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-                      {["Brand", "Model", "Condition", "Storage"][i]}
+                      {["Category", "Brand", "Model", "Condition", "Storage"][i]}
                     </span>
                   </div>
 
-                  {step !== 4 && (
+                  {step !== 5 && (
                     <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
                   )}
                 </React.Fragment>
@@ -153,7 +156,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
 
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Select Your Phone’s Condition
+            Select Your {categoryName}’s Condition
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
             Accurate details help us offer the best price.

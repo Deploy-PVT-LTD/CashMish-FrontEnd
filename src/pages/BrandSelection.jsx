@@ -21,11 +21,21 @@ const BrandSelection = ({ onSelectBrand }) => {
   const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
+  const category = localStorage.getItem("selectedCategory");
+  const categoryName = localStorage.getItem("selectedCategoryName") || "Device";
 
   useEffect(() => {
+    // Category must be picked first — send them back if they landed here directly (e.g. a stale link)
+    if (!category) {
+      navigate("/categoryselection");
+      return;
+    }
+
     const fetchBrandsFromBE = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/mobiles`);
+        const response = await axios.get(`${BASE_URL}/api/mobiles`, {
+          params: { category }
+        });
         const allMobiles = response.data.mobiles; // Access the 'mobiles' array directly
 
         if (Array.isArray(allMobiles)) {
@@ -53,7 +63,7 @@ const BrandSelection = ({ onSelectBrand }) => {
     };
 
     fetchBrandsFromBE();
-  }, []);
+  }, [category, navigate]);
 
   const handleBrandSelect = (brandName) => {
     localStorage.setItem("selectedBrand", brandName);
@@ -81,26 +91,27 @@ const BrandSelection = ({ onSelectBrand }) => {
         {/* Progress Tracker */}
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-            {[1, 2, 3, 4].map((step, i) => {
-              const isActive = step === 1; // Adjust this as per your active step logic
+            {[1, 2, 3, 4, 5].map((step, i) => {
+              const isCompleted = step === 1;
+              const isActive = step === 2;
 
               return (
                 <React.Fragment key={step}>
                   <div className="flex flex-col items-center">
                     <div
                       className={`rounded-full flex items-center justify-center font-semibold mb-2
-                        ${isActive ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-500'}
+                        ${isActive || isCompleted ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-500'}
                         w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base
                       `}
                     >
                       {step}
                     </div>
                     <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-                      {["Brand", "Model", "Condition", "Storage"][i]}
+                      {["Category", "Brand", "Model", "Condition", "Storage"][i]}
                     </span>
                   </div>
 
-                  {step !== 4 && (
+                  {step !== 5 && (
                     <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
                   )}
                 </React.Fragment>
@@ -110,7 +121,7 @@ const BrandSelection = ({ onSelectBrand }) => {
         </div>
 
         <div className="text-center">
-          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your Phone Brand</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your {categoryName} Brand</h1>
 
           {loading ? (
             <div className="mt-20 flex justify-center items-center gap-2">

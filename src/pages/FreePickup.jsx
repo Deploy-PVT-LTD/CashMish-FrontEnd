@@ -23,7 +23,7 @@ const FreePickup = () => {
                             We come to your office, home, or your favorite coffee shop. Fast verification and instant cash at your convenience.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <a href="/brandselection" className="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-all shadow-xl cursor-pointer">
+                            <a href="/categoryselection" className="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-all shadow-xl cursor-pointer">
                                 Book a Pickup
                             </a>
                         </div>

@@ -65,42 +65,47 @@ export default function AboutUs({ isPage = false }) {
     <div className="min-h-screen bg-white font-sans selection:bg-green-100 selection:text-green-900">
       {isPage && <Header />}
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-gray-900 text-white">
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-[120px] -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-green-600/10 rounded-full blur-[150px]"></div>
-        </div>
+      {/* Hero Section + Stats Bar — only on the dedicated /about page. Removed
+          from the homepage embed (isPage=false): redundant there, right after
+          the homepage's own hero + stats strip. */}
+      {isPage && (
+        <>
+          <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-gray-900 text-white">
+            <div className="absolute top-0 left-0 w-full h-full">
+              <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-[120px] -translate-y-1/2"></div>
+              <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-green-600/10 rounded-full blur-[150px]"></div>
+            </div>
 
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black tracking-widest mb-8">
-            <Heart size={12} fill="currentColor" />
-            Trusted by thousands
-          </div>
-          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-none">
-            We are <span className="text-green-500">CashMish.</span>
-          </h1>
-          <p className="text-gray-400 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
-            Unlock the true market value of your devices with an instant, data-driven valuation and enjoy a seamless, hassle-free  shipping process and payment experience.
-          </p>
-        </div>
-      </section>
-
-      {/* Stats Bar */}
-      <section className="relative z-20 max-w-7xl mx-auto px-4 -mt-10">
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 md:p-12 overflow-hidden relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {stats.map((stat, i) => (
-              <div key={i} className="flex flex-col items-center lg:items-start space-y-2">
-                <div className="text-green-600 mb-2">{stat.icon}</div>
-                <div className="text-3xl font-black text-gray-900 tracking-tight">{stat.value}</div>
-                <div className="text-[10px] font-bold text-gray-400 tracking-widest">{stat.label}</div>
+            <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black tracking-widest mb-8">
+                <Heart size={12} fill="currentColor" />
+                Trusted by thousands
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-none">
+                We are <span className="text-green-500">CashMish.</span>
+              </h1>
+              <p className="text-gray-400 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
+                Unlock the true market value of your devices with an instant, data-driven valuation and enjoy a seamless, hassle-free  shipping process and payment experience.
+              </p>
+            </div>
+          </section>
+
+          <section className="relative z-20 max-w-7xl mx-auto px-4 -mt-10">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 md:p-12 overflow-hidden relative">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+                {stats.map((stat, i) => (
+                  <div key={i} className="flex flex-col items-center lg:items-start space-y-2">
+                    <div className="text-green-600 mb-2">{stat.icon}</div>
+                    <div className="text-3xl font-black text-gray-900 tracking-tight">{stat.value}</div>
+                    <div className="text-[10px] font-bold text-gray-400 tracking-widest">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Core Values */}
       <section className="py-24 px-6 max-w-7xl mx-auto">

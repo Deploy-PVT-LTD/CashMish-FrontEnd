@@ -3,13 +3,25 @@ import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { BASE_URL } from '../lib/api.js';
 import Chatbot from "../components/Chatbot.jsx";
+import { getSelectedCategory, hasCarrierStep } from '../lib/categoryFlow';
 
 const CarrierSelection = () => {
   const [carrier, setCarrier] = useState('');
   const [deviceInfo, setDeviceInfo] = useState({ model: "", condition: "" });
   const navigate = useNavigate();
+  const category = getSelectedCategory();
+  const carrierOptions = category?.carrierOptions?.length > 0
+    ? category.carrierOptions
+    : ['AT&T', 'Verizon', 'Sprint', 'T-Mobile', 'Unlocked', 'Other'];
 
   useEffect(() => {
+    // This category doesn't have a carrier step — skip straight ahead (guards a
+    // stale link/back-button landing here directly).
+    if (!hasCarrierStep(category)) {
+      navigate("/deviceassessment", { replace: true });
+      return;
+    }
+
     // Pichle pages se data uthayein
     const selectedModel = localStorage.getItem("selectedModel");
     const selectedCondition = localStorage.getItem("selectedCondition");
@@ -70,7 +82,7 @@ const CarrierSelection = () => {
             {/* Carrier Selection */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Choose your phone’s carrier
+                Choose your {(localStorage.getItem("selectedCategoryName") || "device").toLowerCase()}’s carrier
               </h2>
               <p className="text-gray-600 mb-6">
                 Is the device financed, blacklisted, or activation locked?
@@ -78,16 +90,16 @@ const CarrierSelection = () => {
 
               {/* Carrier Buttons Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {['att', 'verizon', 'sprint', 'tmobile', 'unlocked', 'other'].map((c) => (
+                {carrierOptions.map((c) => (
                   <button
                     key={c}
                     onClick={() => setCarrier(c)}
-                    className={`cursor-pointer p-5 rounded-xl border-2 text-center font-semibold transition-all capitalize ${carrier === c
+                    className={`cursor-pointer p-5 rounded-xl border-2 text-center font-semibold transition-all ${carrier === c
                       ? 'border-greem-800 bg-blue-50 text-green-700 shadow-sm'
                       : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                   >
-                    {c === 'att' ? 'AT&T' : c === 'tmobile' ? 'T-Mobile' : c}
+                    {c}
                   </button>
                 ))}
               </div>

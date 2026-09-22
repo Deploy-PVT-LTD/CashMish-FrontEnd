@@ -20,7 +20,7 @@ const InstantQuote = () => {
                     <p className="text-green-50 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
                         We provide a free, trackable prepaid shipping label so you can send your item(s) to us at no cost.                    </p>
                     <div className="pt-4">
-                        <a href="/brandselection" className="bg-gray-900 text-white px-10 py-5 rounded-3xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-2xl inline-block cursor-pointer">
+                        <a href="/categoryselection" className="bg-gray-900 text-white px-10 py-5 rounded-3xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-2xl inline-block cursor-pointer">
                             Start Appraisal
                         </a>
                     </div>

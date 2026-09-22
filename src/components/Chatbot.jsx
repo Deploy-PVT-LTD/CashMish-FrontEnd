@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { BASE_URL } from '../lib/api';
 
 const BACKEND_URLS = [
+    ...(import.meta.env.DEV ? ['http://localhost:5000'] : []),
     'https://cashmish-backend.onrender.com'
 ];
 
@@ -60,7 +61,8 @@ export default function Chatbot() {
 
         setSessionId(currentSessionId);
 
-        let urlIdx = parseInt(sessionStorage.getItem('active_backend_idx') || '0');
+        // In dev, always start at 0 (localhost) fresh — same reasoning as lib/api.js.
+        let urlIdx = import.meta.env.DEV ? 0 : parseInt(sessionStorage.getItem('active_backend_idx') || '0');
 
         const createSocket = (idx) => {
             const url = BACKEND_URLS[idx] || BACKEND_URLS[0];

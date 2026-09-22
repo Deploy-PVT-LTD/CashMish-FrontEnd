@@ -5,11 +5,13 @@ import { useEffect } from 'react';
 // Pages
 import PhoneFlipLanding from './pages/MainScreen';
 import Login from './pages/LoginCard';
+import CategorySelection from './pages/CategorySelection';
 import BrandSelection from './pages/BrandSelection';
 import ModelSelection from './pages/ModelSelection';
 import ConditionSelection from './pages/Conditionselection';
 import Storageselection from './pages/Storageselection';
 import HowItWorks from './pages/HowItWork';
+import WhyCashMish from './pages/WhyCashMish';
 import Userdata from './pages/form';
 import DeviceAssessmentForm from './pages/deviceassesment';
 import PendingPage from './pages/pending';
@@ -48,7 +50,7 @@ function App() {
   useEffect(() => {
     // Ping the backend so the trackTraffic middleware records this visitor.
     // Fire-and-forget — we don't block the UI on this.
-    const backendUrl = 'https://cashmish-backend.onrender.com';
+    const backendUrl = import.meta.env.DEV ? 'http://localhost:5000' : 'https://cashmish-backend.onrender.com';
     fetch(`${backendUrl}/api/traffic/ping`, { method: 'GET' }).catch(() => {});
   }, []);
 
@@ -73,6 +75,7 @@ function AppContent() {
         {/* Public Marketing Routes */}
         <Route path="/" element={<PhoneFlipLanding />} />
         <Route path="/howitworks" element={<HowItWorks />} />
+        <Route path="/why-cashmish" element={<WhyCashMish />} />
         <Route path="/about" element={<AboutUs isPage={true} />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/faqs" element={<FAQs />} />
@@ -92,6 +95,7 @@ function AppContent() {
         <Route path="/reset-password/:token" element={<ResetPasswordNew />} />
 
         {/* Trade-in Funnel */}
+        <Route path="/categoryselection" element={<CategorySelection />} />
         <Route path="/brandselection" element={<BrandSelection />} />
         <Route path="/modelselection" element={<ModelSelection />} />
         <Route path="/carrierselection" element={<CarrierSelection />} />

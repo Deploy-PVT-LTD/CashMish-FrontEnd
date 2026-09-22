@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
 @import "tailwindcss";
+
+.font-handwritten {
+  font-family: 'Caveat', cursive;
+}
 
 /* add animation for main screen  */
 @keyframes floatSmooth {

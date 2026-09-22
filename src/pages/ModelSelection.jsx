@@ -37,9 +37,14 @@ const ModelSelection = () => {
   const [loading, setLoading] = useState(true);
 
   const brand = localStorage.getItem("selectedBrand");
+  const category = localStorage.getItem("selectedCategory");
 
   useEffect(() => {
     const fetchModelsByBrand = async () => {
+      if (!category) {
+        navigate("/categoryselection");
+        return;
+      }
       if (!brand) {
         navigate("/brandselection");
         return;
@@ -47,7 +52,7 @@ const ModelSelection = () => {
       try {
         setLoading(true);
         const response = await axios.get(`${BASE_URL}/api/mobiles/brand`, {
-          params: { brand },
+          params: { brand, category },
         });
 
         console.log("Full API Response:", response.data);
@@ -68,7 +73,7 @@ const ModelSelection = () => {
     };
 
     fetchModelsByBrand();
-  }, [brand, navigate]);
+  }, [brand, category, navigate]);
 
   const handleSelectModel = (item) => {
     if (item && item._id) {
@@ -111,9 +116,9 @@ const ModelSelection = () => {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full">
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-            {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step === 1;
-              const isActive = step === 2;
+            {[1, 2, 3, 4, 5].map((step, i) => {
+              const isCompleted = step === 1 || step === 2;
+              const isActive = step === 3;
 
               return (
                 <React.Fragment key={step}>
@@ -132,11 +137,11 @@ const ModelSelection = () => {
                       {isCompleted ? "✓" : step}
                     </div>
                     <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-                      {["Brand", "Model", "Condition", "Storage"][i]}
+                      {["Category", "Brand", "Model", "Condition", "Storage"][i]}
                     </span>
                   </div>
 
-                  {step !== 4 && (
+                  {step !== 5 && (
                     <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
                   )}
                 </React.Fragment>

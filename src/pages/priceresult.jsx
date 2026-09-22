@@ -18,7 +18,8 @@ const PriceResult = () => {
   // Data from LocalStorage/State
   const brand = localStorage.getItem('selectedBrand') || 'Smartphone';
   const model = localStorage.getItem('selectedModel') || '';
-  const storage = localStorage.getItem('selectedStorage') || '128GB';
+  const storage = localStorage.getItem('selectedStorage') || '';
+  const condition = localStorage.getItem('selectedCondition') || '';
   const mobileId = localStorage.getItem('selectedMobileId');
 
   // Assessment data (images) from previous page
@@ -34,10 +35,8 @@ const PriceResult = () => {
           body: JSON.stringify({
             mobileId: mobileId,
             storage: storage,
-            carrier: localStorage.getItem("selectedCarrier") || "Unlocked",
-            screenCondition: localStorage.getItem("screenCondition"),
-            bodyCondition: localStorage.getItem("bodyCondition"),
-            batteryCondition: localStorage.getItem("batteryCondition"),
+            carrier: localStorage.getItem("selectedCarrier") || "",
+            conditionAnswers: localStorage.getItem("conditionAnswers") || "{}",
           }),
         });
 
@@ -156,7 +155,7 @@ const PriceResult = () => {
 
               <div className="mb-8">
                 <h2 className="text-sm font-bold text-gray-700 capitalize">{brand} {model}</h2>
-                <p className="text-xs text-gray-400 font-medium">{storage} • {localStorage.getItem("screenCondition")} screen</p>
+                <p className="text-xs text-gray-400 font-medium">{[storage, condition].filter(Boolean).join(' • ')}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-8">

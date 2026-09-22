@@ -388,7 +388,7 @@ const MobileCart = () => {
       carrier: '/deviceassessment',
       assessment: '/userdata'
     };
-    const nextPage = stepMap[draft.currentStep] || '/brandselection';
+    const nextPage = stepMap[draft.currentStep] || '/categoryselection';
     navigate(nextPage);
   };
 

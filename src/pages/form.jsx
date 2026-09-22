@@ -27,8 +27,7 @@ export default function UserForm() {
 
   const [deviceDetails, setDeviceDetails] = useState({
     brand: 'N/A', model: 'N/A', storage: 'N/A',
-    screen: 'N/A', body: 'N/A', battery: 'N/A',
-    condition: 'N/A', mobileId: '', carrier: 'N/A'
+    condition: 'N/A', mobileId: '', carrier: 'N/A', conditionAnswers: {}
   });
 
   const [formData, setFormData] = useState({
@@ -40,16 +39,21 @@ export default function UserForm() {
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
+    let conditionAnswers = {};
+    try {
+      conditionAnswers = JSON.parse(localStorage.getItem('conditionAnswers') || '{}');
+    } catch {
+      conditionAnswers = {};
+    }
+
     const details = {
       brand: localStorage.getItem('selectedBrand') || 'N/A',
       model: localStorage.getItem('selectedModel') || 'N/A',
       mobileId: localStorage.getItem('selectedMobileId') || '',
-      storage: localStorage.getItem('selectedStorage') || '128GB',
+      storage: localStorage.getItem('selectedStorage') || '',
       condition: localStorage.getItem('selectedCondition') || 'Fair',
-      screen: localStorage.getItem('screenCondition') || 'perfect',
-      body: localStorage.getItem('bodyCondition') || 'perfect',
-      battery: localStorage.getItem('batteryCondition') || 'good',
-      carrier: localStorage.getItem('selectedCarrier') || 'Unlocked'
+      conditionAnswers,
+      carrier: localStorage.getItem('selectedCarrier') || ''
     };
     setDeviceDetails(details);
 
@@ -84,11 +88,9 @@ export default function UserForm() {
     data.append("mobileId", deviceDetails.mobileId);
     data.append("storage", deviceDetails.storage);
     data.append("condition", deviceDetails.condition);
-    data.append("screenCondition", deviceDetails.screen);
-    data.append("bodyCondition", deviceDetails.body);
-    data.append("batteryCondition", deviceDetails.battery);
+    data.append("conditionAnswers", JSON.stringify(deviceDetails.conditionAnswers || {}));
     data.append("estimatedPrice", localStorage.getItem('estimatedPrice') || "0");
-    data.append("carrier", localStorage.getItem('selectedCarrier') || "Unlocked");
+    data.append("carrier", localStorage.getItem('selectedCarrier') || "");
 
     // 2. Pickup Details
     const pickUpDetails = {

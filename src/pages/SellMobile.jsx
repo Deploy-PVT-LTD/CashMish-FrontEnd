@@ -21,7 +21,7 @@ const SellMobile = () => {
                            We use real-time market data to ensure you get the best price for your smartphone, with instant payment and convenient doorstep pickup.
                         </p>
                         <div className="pt-4">
-                            <a href="/brandselection" className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-xl inline-block cursor-pointer">
+                            <a href="/categoryselection" className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-xl inline-block cursor-pointer">
                                 Sell My Phone Now
                             </a>
                         </div>

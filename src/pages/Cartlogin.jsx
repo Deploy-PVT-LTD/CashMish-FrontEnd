@@ -23,22 +23,16 @@ const CartLogin = () => {
       brand: localStorage.getItem('selectedBrand') || 'N/A',
       model: localStorage.getItem('selectedModel') || 'N/A',
       mobileId: localStorage.getItem('selectedMobileId') || '',
-      storage: localStorage.getItem('selectedStorage') || '128GB',
+      storage: localStorage.getItem('selectedStorage') || '',
       condition: localStorage.getItem('selectedCondition') || 'Fair',
-      screen: localStorage.getItem('screenCondition') || 'perfect',
-      body: localStorage.getItem('bodyCondition') || 'perfect',
-      battery: localStorage.getItem('batteryCondition') || 'good'
     };
     if (deviceDetails.brand !== 'N/A' && deviceDetails.model !== 'N/A') {
       setCartData([{
         name: `${deviceDetails.brand} ${deviceDetails.model}`,
         quantity: 1,
-        description: `${deviceDetails.storage} | ${deviceDetails.condition} Condition`,
+        description: [deviceDetails.storage, `${deviceDetails.condition} Condition`].filter(Boolean).join(' | '),
         storage: deviceDetails.storage,
         condition: deviceDetails.condition,
-        screenCondition: deviceDetails.screen,
-        bodyCondition: deviceDetails.body,
-        batteryCondition: deviceDetails.battery,
         mobileId: deviceDetails.mobileId
       }]);
     }
@@ -308,11 +302,8 @@ const CartLogin = () => {
                     <h3 className="font-bold text-gray-800">{item.name}</h3>
                     <p className="text-xs text-gray-500 mt-1">{item.description}</p>
                     <div className="grid grid-cols-2 gap-2 mt-2 text-xs font-semibold text-gray-600">
-                      <span>Storage: {item.storage}</span>
+                      {item.storage && <span>Storage: {item.storage}</span>}
                       <span>Condition: {item.condition}</span>
-                      <span>Screen: {item.screenCondition}</span>
-                      <span>Body: {item.bodyCondition}</span>
-                      <span>Battery: {item.batteryCondition}</span>
                     </div>
                     {pendingFiles.length > 0 && (
                       <div className="mt-3 text-xs text-green-600 flex items-center gap-1">

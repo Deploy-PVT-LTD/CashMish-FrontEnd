@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { BASE_URL } from '../lib/api.js';
 import storageimg from '../assets/storage.png'
 import Chatbot from '../components/Chatbot.jsx';
+import { getSelectedCategory, hasStorageStep, routeAfterStorage } from '../lib/categoryFlow';
 
 const StorageSelection = ({
   selectedBrand,
@@ -13,9 +14,20 @@ const StorageSelection = ({
   onBack
 }) => {
   const navigate = useNavigate();
+  const category = getSelectedCategory();
 
-  const storageOptions = ['64GB', '128GB', '256GB', '512GB', '1TB', '2TB'];
-  const [selectedStorage, setSelectedStorage] = React.useState('64GB');
+  const storageOptions = category?.storageOptions?.length > 0
+    ? category.storageOptions
+    : ['64GB', '128GB', '256GB', '512GB', '1TB', '2TB'];
+  const [selectedStorage, setSelectedStorage] = React.useState(storageOptions[0]);
+
+  useEffect(() => {
+    // This category doesn't have a storage step — skip straight ahead (guards a
+    // stale link/back-button landing here directly).
+    if (!hasStorageStep(category)) {
+      navigate(routeAfterStorage(category), { replace: true });
+    }
+  }, [category, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -28,9 +40,9 @@ const StorageSelection = ({
         {/* Progress Tracker */}
         <div className="mb-10 sm:mb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4 max-w-full px-2">
-            {[1, 2, 3, 4].map((step, i) => {
-              const isCompleted = step === 1 || step === 2 || step === 3; // first step completed
-              const isActive = step === 4;    // second step active
+            {[1, 2, 3, 4, 5].map((step, i) => {
+              const isCompleted = step === 1 || step === 2 || step === 3 || step === 4;
+              const isActive = step === 5;
 
               return (
                 <React.Fragment key={step}>
@@ -49,11 +61,11 @@ const StorageSelection = ({
                       {isCompleted ? "\u2713" : step}
                     </div>
                     <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-                      {["Brand", "Model", "Condition", "Storage"][i]}
+                      {["Category", "Brand", "Model", "Condition", "Storage"][i]}
                     </span>
                   </div>
 
-                  {step !== 4 && (
+                  {step !== 5 && (
                     <div className="hidden sm:block w-12 h-0.5 bg-gray-300 self-center"></div>
                   )}
                 </React.Fragment>
@@ -130,7 +142,7 @@ const StorageSelection = ({
                 }).catch(err => console.error('Draft save error:', err));
               }
 
-              navigate("/carrierselection");
+              navigate(routeAfterStorage(category));
             }}
             className="w-44 sm:w-48 bg-green-800 text-white py-2.5 rounded-lg
                        font-semibold hover:bg-green-700 transition cursor-pointer"
