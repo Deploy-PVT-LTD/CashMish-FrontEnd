@@ -455,12 +455,22 @@ const PhoneFlipLanding = () => {
         <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
           {/* Reviews */}
           <div className="lg:col-span-3">
-            <p className="text-green-700 font-bold text-xs sm:text-sm tracking-[0.15em] uppercase mb-3">
-              Thousands Of Happy Sellers
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 sm:mb-8">
-              Real people. Real experiences.
-            </h2>
+            <div className="flex flex-wrap items-end justify-between gap-4 mb-6 sm:mb-8">
+              <div>
+                <p className="text-green-700 font-bold text-xs sm:text-sm tracking-[0.15em] uppercase mb-3">
+                  Thousands Of Happy Sellers
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                  Real people. Real experiences.
+                </h2>
+              </div>
+              <a
+                href="/reviews"
+                className="border border-green-700 text-green-700 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-green-50 transition-colors whitespace-nowrap"
+              >
+                Write a Review
+              </a>
+            </div>
 
             {reviews.length > 0 ? (
               <div className="grid sm:grid-cols-3 gap-4">
