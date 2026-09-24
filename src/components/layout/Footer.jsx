@@ -23,7 +23,7 @@ const Footer = () => {
                         <h4 className="text-white font-black text-sm uppercase tracking-tight">Satisfaction Promise</h4>
                         <p className="text-[11px] text-gray-400 mt-1 font-medium leading-normal max-w-lg">
                             Accurately describe your device and we promise the quoted value and a smooth transaction. 
-                            <span className="text-green-500 font-bold ml-1">That's a promise.</span>
+                            <span className="text-green-700 font-bold ml-1">That's a promise.</span>
                         </p>
                     </div>
                 </div>

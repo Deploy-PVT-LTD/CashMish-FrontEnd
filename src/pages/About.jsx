@@ -112,7 +112,7 @@ export default function AboutUs({ isPage = false }) {
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
-              <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Our Values</h3>
+              <h3 className="text-green-700 text-xs font-black tracking-[0.2em]">Our Values</h3>
               <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 Transparency is <br />
                 <span className="text-gray-400">Our Strongest Currency.</span>
@@ -173,13 +173,13 @@ export default function AboutUs({ isPage = false }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div className="space-y-4">
-              <h3 className="text-green-600 text-xs font-black tracking-[0.2em]">Insights</h3>
+              <h3 className="text-green-700 text-xs font-black tracking-[0.2em]">Insights</h3>
               <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 From Our <br />
                 <span className="text-gray-400">Latest Blogs.</span>
               </h2>
               <div className="pt-4">
-                <a href="/blogs" className="group text-[10px] font-black tracking-widest text-green-600 flex items-center gap-2 transition-all cursor-pointer">
+                <a href="/blogs" className="group text-[10px] font-black tracking-widest text-green-700 flex items-center gap-2 transition-all cursor-pointer">
                   View All Articles <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>

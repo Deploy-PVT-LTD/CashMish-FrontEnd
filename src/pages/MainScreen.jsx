@@ -219,7 +219,7 @@ const PhoneFlipLanding = () => {
             <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-gray-900 leading-[1.08] mb-4 sm:mb-5 tracking-tight">
               Turn your old tech
               <br />
-              <span className="text-green-600">into cash.</span>
+              <span className="text-green-700">into cash.</span>
             </h1>
 
             <p className="text-base sm:text-lg font-medium text-gray-600 mb-7 sm:mb-8 lg:whitespace-nowrap">
