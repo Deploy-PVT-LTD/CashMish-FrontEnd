@@ -386,7 +386,7 @@ const PhoneFlipLanding = () => {
                 </div>
                 <div className="min-w-0">
                   <div className="text-base sm:text-lg font-extrabold text-gray-900 leading-tight">{stat.value}</div>
-                  <div className="text-xs sm:text-sm text-gray-500 leading-tight">{stat.label}</div>
+                  <div className="text-xs sm:text-sm font-semibold text-gray-500 leading-tight">{stat.label}</div>
                 </div>
               </div>
             ))}
