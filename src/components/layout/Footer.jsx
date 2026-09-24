@@ -109,12 +109,12 @@ const Footer = () => {
                             <li className="flex items-start gap-2">
                                 <MapPin size={12} className="text-green-500 mt-0.5 shrink-0" />
                                 <a
-                                    href="https://www.google.com/maps/search/?api=1&query=704+-+3950+Cobb+Parkway%2C+Acworth%2C+GA+30101"
+                                    href="https://www.google.com/maps/search/?api=1&query=3950+Cobb+Pkwy+Ste+704%2C+Acworth+GA+30101%2C+United+States+of+America"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[11px] font-medium text-gray-400 hover:text-green-500 transition-colors"
                                 >
-                                    704 - 3950 Cobb Parkway, Acworth, GA 30101
+                                    3950 Cobb Pkwy Ste 704, Acworth GA 30101, United States of America
                                 </a>
                             </li>
                             <li className="flex items-center gap-2">
