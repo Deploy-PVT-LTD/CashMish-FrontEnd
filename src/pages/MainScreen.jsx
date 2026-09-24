@@ -8,6 +8,10 @@ import quickIphone from "../assets/quick-iphone.webp"
 import quickSamsung from "../assets/quick-samsung.webp"
 import quickGooglePixel from "../assets/quick-google-pixel.webp"
 import quickTablets from "../assets/quick-tablets.webp"
+import quickMacbooks from "../assets/quick-macbooks.png"
+import quickLaptops from "../assets/quick-laptops.png"
+import quickSmartwatches from "../assets/quick-smartwatches.webp"
+import quickOtherElectronics from "../assets/quick-other-electronics.webp"
 import {
   Search, ArrowRight, Truck, Zap, ShieldCheck, Star, Users, DollarSign, Package,
   MoreHorizontal, Smartphone, CircleDollarSign, Tablet, Laptop, Watch, Headphones, Lock,
@@ -45,10 +49,10 @@ const QUICK_CATEGORIES = [
   { label: "Samsung", categorySlug: "mobile-phones", brand: "Samsung", icon: quickSamsung },
   { label: "Google Pixel", categorySlug: "mobile-phones", brand: "Google", icon: quickGooglePixel },
   { label: "Tablets", categorySlug: "tablets", icon: quickTablets },
-  { label: "MacBooks", categorySlug: "macbooks", icon: Laptop },
-  { label: "Laptops", categorySlug: "laptops", icon: Laptop },
-  { label: "Smartwatches", categorySlug: "smartwatches", icon: Watch },
-  { label: "Other Electronics", categorySlug: "other-electronics", icon: Headphones },
+  { label: "MacBooks", categorySlug: "macbooks", icon: quickMacbooks },
+  { label: "Laptops", categorySlug: "laptops", icon: quickLaptops },
+  { label: "Smartwatches", categorySlug: "smartwatches", icon: quickSmartwatches },
+  { label: "Other Electronics", categorySlug: "other-electronics", icon: quickOtherElectronics },
 ];
 
 const PhoneFlipLanding = () => {
