@@ -292,10 +292,24 @@ export default function UserForm() {
           </div>
         </div>
 
-        {/* Form Panel (Functionality Merged) */}
+        {/* Form Panel (Functionality Merged)
+            Intentionally a <div>, not a native <form>, so this never fires a
+            native "submit" DOM event — GTM's built-in "All Forms" trigger
+            auto-tracks any real form submission regardless of our own JS, so
+            avoiding the native event is the only reliable way to keep it out
+            of the "Form Submit"/gtm.formSubmit stream while still only
+            sending our own explicit "PersonalDataForm" tracking event.
+            Enter-to-submit UX is preserved via onKeyDown below. */}
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
           <h2 className="text-xl font-bold mb-6 text-gray-800">Schedule Pickup</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div
+            className="space-y-4"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                handleSubmit(e);
+              }
+            }}
+          >
             <Input icon={User} name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleInputChange} error={showError && !formData.fullName} />
             <Input icon={Mail} name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} />
             <Input icon={Phone} name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
@@ -336,10 +350,10 @@ export default function UserForm() {
               ))}
             </div>
 
-            <button disabled={loading} type="submit" className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
+            <button disabled={loading} type="button" onClick={handleSubmit} className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
               {loading ? <Loader2 className="animate-spin" /> : <>Confirm Pickup <ArrowRight size={20} /></>}
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
