@@ -4,6 +4,10 @@ import mobileimg from "../assets/hero-devices-bundle.jpg"
 import appleIcon from "../assets/apple.png"
 import samsungIcon from "../assets/samsung.png"
 import googleIcon from "../assets/google.png"
+import quickIphone from "../assets/quick-iphone.webp"
+import quickSamsung from "../assets/quick-samsung.webp"
+import quickGooglePixel from "../assets/quick-google-pixel.webp"
+import quickTablets from "../assets/quick-tablets.webp"
 import {
   Search, ArrowRight, Truck, Zap, ShieldCheck, Star, Users, DollarSign, Package,
   MoreHorizontal, Smartphone, CircleDollarSign, Tablet, Laptop, Watch, Headphones, Lock,
@@ -37,10 +41,10 @@ const STEPS = [
 // the "Mobile Phones" category (so they skip straight to model selection); the
 // rest are their own categories (managed in the admin Categories page).
 const QUICK_CATEGORIES = [
-  { label: "iPhones", categorySlug: "mobile-phones", brand: "Apple", icon: appleIcon },
-  { label: "Samsung", categorySlug: "mobile-phones", brand: "Samsung", icon: samsungIcon },
-  { label: "Google Pixel", categorySlug: "mobile-phones", brand: "Google", icon: googleIcon },
-  { label: "Tablets", categorySlug: "tablets", icon: Tablet },
+  { label: "iPhones", categorySlug: "mobile-phones", brand: "Apple", icon: quickIphone },
+  { label: "Samsung", categorySlug: "mobile-phones", brand: "Samsung", icon: quickSamsung },
+  { label: "Google Pixel", categorySlug: "mobile-phones", brand: "Google", icon: quickGooglePixel },
+  { label: "Tablets", categorySlug: "tablets", icon: quickTablets },
   { label: "MacBooks", categorySlug: "macbooks", icon: Laptop },
   { label: "Laptops", categorySlug: "laptops", icon: Laptop },
   { label: "Smartwatches", categorySlug: "smartwatches", icon: Watch },
@@ -435,9 +439,9 @@ const PhoneFlipLanding = () => {
               onClick={() => handleQuickCategorySelect(tile)}
               className="flex flex-col items-center gap-3 p-4 border border-gray-100 rounded-2xl hover:border-green-200 hover:shadow-md transition-all cursor-pointer bg-white"
             >
-              <div className="w-14 h-14 flex items-center justify-center">
+              <div className="w-16 h-16 flex items-center justify-center">
                 {typeof tile.icon === "string" ? (
-                  <img src={tile.icon} alt="" className="w-10 h-10 object-contain" />
+                  <img src={tile.icon} alt="" className="w-16 h-16 object-contain" />
                 ) : (
                   <tile.icon className="w-8 h-8 text-green-700" strokeWidth={1.5} />
                 )}

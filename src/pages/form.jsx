@@ -140,6 +140,33 @@ export default function UserForm() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to submit");
 
+      // Tracking: "Personal Data Form" — fires once the pickup/contact details
+      // (name, phone, email, address) are successfully submitted. Named event
+      // for Meta Pixel + Google Ads/GA4 + GTM so it's distinguishable from the
+      // earlier "Mobile Form Submit" step in Events Manager.
+      const estimatedPriceValue = Number(localStorage.getItem('estimatedPrice')) || 0;
+      const deviceLabel = `${deviceDetails.brand} ${deviceDetails.model}`.trim();
+      if (typeof window.fbq === 'function') {
+        window.fbq('trackCustom', 'PersonalDataForm', {
+          value: estimatedPriceValue,
+          currency: 'USD',
+          content_name: deviceLabel,
+        });
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'personal_data_form', {
+          event_category: 'conversion',
+          event_label: deviceLabel,
+          value: estimatedPriceValue,
+        });
+      }
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'personal_data_form',
+        device: deviceLabel,
+        estimatedPrice: estimatedPriceValue,
+      });
+
       // ✔ Save to myGuestOrders for cart visibility
       const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
       if (result._id && !guestOrders.includes(result._id)) {

@@ -44,6 +44,32 @@ const PriceResult = () => {
         if (response.ok) {
           setEstimatedPrice(data.estimatedPrice);
           localStorage.setItem('estimatedPrice', data.estimatedPrice);
+
+          // Tracking: "Mobile Form Submit" — fires once the device assessment
+          // (brand/model/condition/storage) has produced a quote. Named event
+          // for Meta Pixel + Google Ads/GA4 + GTM so it's distinguishable from
+          // the later "Personal Data Form" step in Events Manager.
+          const deviceLabel = `${brand} ${model}`.trim();
+          if (typeof window.fbq === 'function') {
+            window.fbq('trackCustom', 'MobileFormSubmit', {
+              value: data.estimatedPrice,
+              currency: 'USD',
+              content_name: deviceLabel,
+            });
+          }
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'mobile_form_submit', {
+              event_category: 'engagement',
+              event_label: deviceLabel,
+              value: data.estimatedPrice,
+            });
+          }
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'mobile_form_submit',
+            device: deviceLabel,
+            estimatedPrice: data.estimatedPrice,
+          });
         }
       } catch (error) {
         console.error("Price fetch error:", error);
