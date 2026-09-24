@@ -63,9 +63,9 @@ export default function ContactUs() {
           </p>
 
           <div className="space-y-8">
-            <ContactInfoItem icon={<Phone size={18} />} label="Call us" value="+1 (470) 339-5011" />
+            <ContactInfoItem icon={<Phone size={18} />} label="Call us" value="+1 (470) 708-2901" />
             <ContactInfoItem icon={<Mail size={18} />} label="Email" value="support@cashmish.com" />
-            <ContactInfoItem icon={<MapPin size={18} />} label="Office" value="Georgia, United States" />
+            <ContactInfoItem icon={<MapPin size={18} />} label="Office" value="704 - 3950 Cobb Parkway, Acworth, GA 30101" />
           </div>
         </div>
 

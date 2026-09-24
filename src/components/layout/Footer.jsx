@@ -108,11 +108,18 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li className="flex items-start gap-2">
                                 <MapPin size={12} className="text-green-500 mt-0.5 shrink-0" />
-                                <span className="text-[11px] font-medium text-gray-400">Georgia, United States</span>
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=704+-+3950+Cobb+Parkway%2C+Acworth%2C+GA+30101"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[11px] font-medium text-gray-400 hover:text-green-500 transition-colors"
+                                >
+                                    704 - 3950 Cobb Parkway, Acworth, GA 30101
+                                </a>
                             </li>
                             <li className="flex items-center gap-2">
                                 <Phone size={12} className="text-green-500 shrink-0" />
-                                <a href="tel:+1234567890" className="text-[11px] font-medium text-gray-400 hover:text-green-500 transition-colors">+1 (470) 339-5011</a>
+                                <a href="tel:+14707082901" className="text-[11px] font-medium text-gray-400 hover:text-green-500 transition-colors">+1 (470) 708-2901</a>
                             </li>
                             <li className="flex items-center gap-2">
                                 <Mail size={12} className="text-green-500 shrink-0" />
