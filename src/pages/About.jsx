@@ -4,6 +4,7 @@ import { Target, Users, Award, CheckCircle2, TrendingUp, ShieldCheck, Rocket, Za
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import cashmishbanner from "../assets/cashmish_banner1.webp";
+import ecoImpactBanner from "../assets/eco-impact-banner.webp";
 import { BASE_URL } from '../lib/api';
 import Chatbot from '../components/Chatbot.jsx';
 
@@ -166,6 +167,17 @@ export default function AboutUs({ isPage = false }) {
         >
           {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
         </button>
+      </section>
+
+      {/* Eco Impact Banner */}
+      <section className="w-full pt-8 sm:pt-12">
+        <a href="/why-cashmish" className="block">
+          <img
+            src={ecoImpactBanner}
+            alt="A cleaner planet — your old phone isn't trash, it's technology waiting for its next life"
+            className="w-full h-auto block"
+          />
+        </a>
       </section>
 
       {/* Blogs Section */}
