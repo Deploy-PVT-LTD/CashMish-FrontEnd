@@ -14,6 +14,11 @@ export default function UserForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const suggestionRef = useRef(null);
+  // Guards against a double POST (and duplicate "PersonalDataForm" tracking
+  // event) from a fast double-click on "Confirm Pickup" — React state
+  // (`loading`) updates async, so `disabled={loading}` alone can't close
+  // that race; this ref check is synchronous.
+  const isSubmittingRef = useRef(false);
 
   // ✔ Pichle page se aayi hui images yahan milengi
   const imagesToUpload = location.state?.files || [];
@@ -72,11 +77,14 @@ export default function UserForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmittingRef.current) return;
+
     if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.date || !selectedTimeSlot) {
       setShowError(true);
       return;
     }
 
+    isSubmittingRef.current = true;
     setLoading(true);
     const data = new FormData();
     const token = localStorage.getItem("token");
@@ -186,6 +194,7 @@ export default function UserForm() {
     } catch (err) {
       console.error(err);
       alert("Error: " + err.message);
+      isSubmittingRef.current = false;
     } finally {
       setLoading(false);
     }

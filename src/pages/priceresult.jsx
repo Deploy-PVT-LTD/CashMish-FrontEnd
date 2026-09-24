@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TrendingUp, Info, ArrowRight, ShieldCheck, Zap, Truck, CheckCircle, Smartphone, Loader2 } from "lucide-react";
 import Header from '../components/layout/header.jsx';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -25,7 +25,15 @@ const PriceResult = () => {
   // Assessment data (images) from previous page
   const assessmentFiles = location.state?.files || [];
 
+  // Guards against a duplicate fetch (and duplicate "MobileFormSubmit"
+  // tracking event) if this effect ever runs twice for the same mount
+  // (e.g. React StrictMode's dev-only double-invoke).
+  const hasFetchedRef = useRef(false);
+
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
     const fetchPriceFromBE = async () => {
       try {
         setLoading(true);
