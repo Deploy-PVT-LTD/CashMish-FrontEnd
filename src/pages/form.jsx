@@ -205,7 +205,7 @@ export default function UserForm() {
     }
   };
 
-  // US format as the user types: (307) 236-6792 — caps at 10 digits.
+  // US format as the user types: (555) 123-4567 — caps at 10 digits.
   const formatUSPhone = (value) => {
     const digits = value.replace(/\D/g, '').slice(0, 10);
     if (digits.length === 0) return '';
@@ -327,7 +327,7 @@ export default function UserForm() {
           >
             <Input icon={User} name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleInputChange} error={showError && !formData.fullName} />
             <Input icon={Mail} name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} />
-            <Input icon={Phone} type="tel" name="phoneNumber" placeholder="(307) 236-6792" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
+            <Input icon={Phone} type="tel" name="phoneNumber" placeholder="(555) 123-4567" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
 
             <div className="relative" ref={suggestionRef}>
               <Input
