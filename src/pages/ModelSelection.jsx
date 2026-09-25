@@ -80,6 +80,11 @@ const ModelSelection = () => {
       localStorage.setItem("selectedModel", item.phoneModel);
       localStorage.setItem("selectedMobileId", item._id);
       localStorage.setItem("selectedMobileImage", item.image);
+      // Fresh device, fresh assessment — never carry over a "Grade F" override,
+      // stale answers, or a stale condition label from a previous attempt.
+      localStorage.removeItem("forcedGrade");
+      localStorage.removeItem("conditionAnswers");
+      localStorage.removeItem("selectedCondition");
 
       // Auto-save draft to DB for logged-in users
       const user = JSON.parse(localStorage.getItem('user') || '{}');

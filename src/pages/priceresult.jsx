@@ -19,8 +19,22 @@ const PriceResult = () => {
   const brand = localStorage.getItem('selectedBrand') || 'Smartphone';
   const model = localStorage.getItem('selectedModel') || '';
   const storage = localStorage.getItem('selectedStorage') || '';
-  const condition = localStorage.getItem('selectedCondition') || '';
   const mobileId = localStorage.getItem('selectedMobileId');
+
+  // Customer-facing label for the letter grade the backend actually computed (see
+  // priceCalculator.js#GRADE_LABELS) — state, not a plain localStorage read, since
+  // it isn't known until the estimate call below resolves. For non-phone
+  // categories (no `grade` gate flow) this just falls back to whatever
+  // Conditionselection.jsx already stored.
+  const [condition, setCondition] = useState(localStorage.getItem('selectedCondition') || '');
+  const GRADE_LABELS = {
+    A: 'Excellent — Like New',
+    B: 'Good',
+    C: 'Fair',
+    D: 'Worn',
+    E: 'Poor',
+    F: 'Heavily Damaged',
+  };
 
   // Assessment data (images) from previous page
   const assessmentFiles = location.state?.files || [];
@@ -45,6 +59,7 @@ const PriceResult = () => {
             storage: storage,
             carrier: localStorage.getItem("selectedCarrier") || "",
             conditionAnswers: localStorage.getItem("conditionAnswers") || "{}",
+            forcedGrade: localStorage.getItem("forcedGrade") || undefined,
           }),
         });
 
@@ -52,6 +67,19 @@ const PriceResult = () => {
         if (response.ok) {
           setEstimatedPrice(data.estimatedPrice);
           localStorage.setItem('estimatedPrice', data.estimatedPrice);
+
+          // Show the label for the grade that was ACTUALLY just computed — always
+          // refreshed from this estimate response, never "sticky" from an earlier
+          // attempt, UNLESS Conditionselection.jsx set one of its own specific
+          // gate reasons ("Not Powering On" / "Account Locked"), which are more
+          // descriptive than a generic grade-letter mapping for those cases.
+          const SPECIAL_CONDITION_LABELS = ['Not Powering On', 'Account Locked'];
+          const currentLabel = localStorage.getItem('selectedCondition');
+          if (data.grade && GRADE_LABELS[data.grade] && !SPECIAL_CONDITION_LABELS.includes(currentLabel)) {
+            const label = GRADE_LABELS[data.grade];
+            localStorage.setItem('selectedCondition', label);
+            setCondition(label);
+          }
 
           // Tracking: "Mobile Form Submit" — fires once the device assessment
           // (brand/model/condition/storage) has produced a quote. Named event

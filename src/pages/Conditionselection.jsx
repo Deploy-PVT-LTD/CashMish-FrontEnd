@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { BASE_URL } from '../lib/api.js';
@@ -15,6 +15,78 @@ const ConditionSelection = ({ onSelectCondition }) => {
   const [selectedCondition, setSelectedCondition] = useState(null);
   const category = getSelectedCategory();
   const categoryName = localStorage.getItem("selectedCategoryName") || "Device";
+
+  // Phones-only gates, asked before anything else and in this priority order
+  // (matching the reference grading spec): account lock, then power-on. Either one
+  // failing skips every other condition question and goes straight to Storage —
+  // priced at a fixed "Grade F" (worst grade — see
+  // priceCalculator.js#calculateGradePrice / formController.js), not computed from
+  // screen/back/frame/etc. answers nobody locked out of or holding a dead phone
+  // could meaningfully give anyway.
+  const isMobilePhones = category?.slug === 'mobile-phones';
+
+  // Gate 1: account/activation lock. null = unanswered, 'off'/'unknown' = passes
+  // through to the next gate, 'on' = blocks (forces Grade F).
+  const [accountStatus, setAccountStatus] = useState(null);
+  const accountPassed = accountStatus === 'off' || accountStatus === 'unknown';
+
+  const handleAccountSelect = (value) => {
+    setAccountStatus(value);
+    if (value !== 'on') {
+      localStorage.removeItem("forcedGrade"); // clear stale, in case of a prior "on" attempt
+    }
+  };
+
+  const handleAccountNext = () => {
+    if (accountStatus !== 'on') return;
+    localStorage.setItem("forcedGrade", "F");
+    localStorage.setItem("selectedCondition", "Account Locked");
+    onSelectCondition?.("Account Locked");
+    navigate(routeAfterCondition(category));
+  };
+
+  // Gate 2: does it power on. Only reached once the account gate has passed.
+  const [powersOn, setPowersOn] = useState(null); // null = unanswered, true/false once answered
+
+  // Selecting "Yes" reveals the normal picker on this same render (no separate
+  // confirmation click for that branch), so the stale-forcedGrade cleanup has to
+  // happen right here, not in handlePowersOnNext (which "Yes" never reaches).
+  const handlePowersOnSelect = (value) => {
+    setPowersOn(value);
+    if (value === true) {
+      localStorage.removeItem("forcedGrade");
+    }
+  };
+
+  const handlePowersOnNext = () => {
+    if (powersOn !== false) return;
+
+    localStorage.setItem("forcedGrade", "F");
+    localStorage.setItem("selectedCondition", "Not Powering On");
+    onSelectCondition?.("Not Powering On");
+    navigate(routeAfterCondition(category));
+  };
+
+  // Once both gates are passed, skip the coarse Excellent/Good/Fair/Damaged picker
+  // below entirely for phones — it's a leftover, purely-cosmetic label with no
+  // effect on price, sitting right in front of the real (much more detailed)
+  // condition questions on the next page. Customers picking "Excellent" here and
+  // then getting a lower-grade price from their actual screen/back/frame/etc.
+  // answers is confusing precisely because this step and the real grading were
+  // disconnected — so for phones we no longer ask it. (Other categories, whose
+  // condition assessment is still just this coarse picker, are unaffected.)
+  // This also guarantees forcedGrade is cleared the moment both gates are actually
+  // passed — not just when the passing option is clicked — covering any path that
+  // lands here with both gates already "passed" without those onClick handlers
+  // having fired in this render (e.g. dev Fast Refresh preserving state, or a
+  // stale value left over from an earlier attempt with this same device).
+  useEffect(() => {
+    if (isMobilePhones && accountPassed && powersOn === true) {
+      localStorage.removeItem("forcedGrade");
+      localStorage.removeItem("selectedCondition"); // set later, from the real computed grade
+      navigate(routeAfterCondition(category), { replace: true });
+    }
+  }, [isMobilePhones, accountPassed, powersOn, category, navigate]);
 
   const conditions = [
     {
@@ -147,13 +219,111 @@ const ConditionSelection = ({ onSelectCondition }) => {
         {/* Back */}
         <div className="text-center mb-6">
           <button
-            onClick={onBack}
+            onClick={
+              isMobilePhones && !accountPassed
+                ? onBack
+                : isMobilePhones && powersOn !== true
+                  ? () => setAccountStatus(null)
+                  : isMobilePhones
+                    ? () => setPowersOn(null)
+                    : onBack
+            }
             className="text-green-800 hover:text-green-700 text-sm sm:text-base font-medium cursor-pointer"
           >
-            ← Back to models
+            {isMobilePhones && accountPassed ? '← Back' : '← Back to models'}
           </button>
         </div>
 
+        {isMobilePhones && !accountPassed ? (
+          <div className="text-center max-w-2xl mx-auto">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">
+              Is Find My / Activation Lock turned off?
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
+              Check Settings on the device, or your Apple ID / Google account.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
+              {[
+                { value: 'off', label: 'Yes' },
+                { value: 'on', label: 'No' },
+                { value: 'unknown', label: 'Not sure' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleAccountSelect(opt.value)}
+                  className={`flex items-center gap-3 bg-white border-2 rounded-xl p-5 sm:p-6 text-left transition cursor-pointer
+                    ${accountStatus === opt.value
+                      ? 'border-green-800 shadow-md ring-1 ring-green-800'
+                      : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full border-2 shrink-0 ${accountStatus === opt.value ? 'border-green-800 bg-green-800' : 'border-gray-300'
+                      }`}
+                  />
+                  <span className="text-sm sm:text-base font-semibold text-gray-900">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {accountStatus === 'on' && (
+              <button
+                onClick={handleAccountNext}
+                className="w-full sm:w-40 bg-green-800 text-white py-2.5 px-6 rounded-xl font-bold text-base
+                           hover:bg-green-700 transition shadow-md shadow-green-800/10 active:scale-95 cursor-pointer"
+              >
+                Next
+              </button>
+            )}
+          </div>
+        ) : isMobilePhones && powersOn !== true ? (
+          <div className="text-center max-w-2xl mx-auto">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">
+              Does your phone turn on normally?
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
+              Choose the answer that best matches the phone right now.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
+              {[
+                { value: true, label: 'Yes, works normally' },
+                { value: false, label: 'No / has trouble turning on' },
+              ].map((opt) => (
+                <button
+                  key={String(opt.value)}
+                  onClick={() => handlePowersOnSelect(opt.value)}
+                  className={`flex items-center gap-3 bg-white border-2 rounded-xl p-5 sm:p-6 text-left transition cursor-pointer
+                    ${powersOn === opt.value
+                      ? 'border-green-800 shadow-md ring-1 ring-green-800'
+                      : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full border-2 shrink-0 ${powersOn === opt.value ? 'border-green-800 bg-green-800' : 'border-gray-300'
+                      }`}
+                  />
+                  <span className="text-sm sm:text-base font-semibold text-gray-900">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {powersOn === false && (
+              <button
+                onClick={handlePowersOnNext}
+                className="w-full sm:w-40 bg-green-800 text-white py-2.5 px-6 rounded-xl font-bold text-base
+                           hover:bg-green-700 transition shadow-md shadow-green-800/10 active:scale-95 cursor-pointer"
+              >
+                Next
+              </button>
+            )}
+          </div>
+        ) : isMobilePhones ? (
+          // Both gates just passed — the useEffect above is navigating away to
+          // Storage this same tick. Render nothing here (not even for one frame)
+          // instead of flashing the coarse picker below, which no longer applies
+          // to phones and would otherwise show for an instant before the redirect.
+          null
+        ) : (
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Select Your {categoryName}’s Condition
@@ -223,6 +393,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
             </div>
           )}
         </div>
+        )}
       </main>
     </div>
   );

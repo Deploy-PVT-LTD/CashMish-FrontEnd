@@ -97,6 +97,8 @@ export default function UserForm() {
     data.append("storage", deviceDetails.storage);
     data.append("condition", deviceDetails.condition);
     data.append("conditionAnswers", JSON.stringify(deviceDetails.conditionAnswers || {}));
+    const forcedGrade = localStorage.getItem("forcedGrade");
+    if (forcedGrade) data.append("forcedGrade", forcedGrade);
     data.append("estimatedPrice", localStorage.getItem('estimatedPrice') || "0");
     data.append("carrier", localStorage.getItem('selectedCarrier') || "");
 
@@ -174,6 +176,9 @@ export default function UserForm() {
         device: deviceLabel,
         estimatedPrice: estimatedPriceValue,
       });
+
+      // Clear the "doesn't turn on" override so it doesn't bleed into the next device.
+      localStorage.removeItem('forcedGrade');
 
       // ✔ Save to myGuestOrders for cart visibility
       const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');

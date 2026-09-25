@@ -63,7 +63,13 @@ const ALL_PHOTO_SLOTS = [
 const DeviceAssessmentForm = () => {
   const navigate = useNavigate();
   const category = getSelectedCategory();
-  const questions = category?.assessmentQuestions?.length > 0 ? category.assessmentQuestions : LEGACY_QUESTIONS;
+  // A phone marked "doesn't turn on" on the Condition step is priced at a fixed
+  // grade (see Conditionselection.jsx) — no point asking screen/body/battery
+  // questions nobody submitting a dead phone could meaningfully answer.
+  const forcedGrade = localStorage.getItem('forcedGrade');
+  const questions = forcedGrade
+    ? []
+    : (category?.assessmentQuestions?.length > 0 ? category.assessmentQuestions : LEGACY_QUESTIONS);
   const questionKeys = questions.map(q => q.key);
   // The "Battery Health" photo slot's instructions only make sense for a question
   // literally called "battery" — hide it for categories that don't have one.
@@ -82,8 +88,24 @@ const DeviceAssessmentForm = () => {
   const [activeSlot, setActiveSlot] = useState(null);
   const slotInputRef = useRef(null);
 
-  const handleConditionSelect = (key, value) => {
-    setAnswers(prev => ({ ...prev, [key]: value }));
+  // `multi` questions (e.g. "Display Problems", "Other Functions") collect an array
+  // of chosen option keys instead of a single value — picking the "none" option
+  // clears everything else, and picking a real problem clears "none".
+  const handleConditionSelect = (key, value, multi, noneKey) => {
+    setAnswers(prev => {
+      if (!multi) return { ...prev, [key]: value };
+
+      const current = Array.isArray(prev[key]) ? prev[key] : [];
+      let next;
+      if (value === noneKey) {
+        next = [noneKey];
+      } else if (current.includes(value)) {
+        next = current.filter(v => v !== value);
+      } else {
+        next = [...current.filter(v => v !== noneKey), value];
+      }
+      return { ...prev, [key]: next };
+    });
   };
 
   const handleSlotUpload = (e) => {
@@ -167,7 +189,16 @@ const DeviceAssessmentForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
-      localStorage.setItem("conditionAnswers", JSON.stringify(answers));
+      // Merge with anything already saved (e.g. the "camera" gate answered earlier
+      // on the Condition step) instead of overwriting it.
+      let existingAnswers = {};
+      try {
+        existingAnswers = JSON.parse(localStorage.getItem("conditionAnswers") || "{}");
+      } catch {
+        existingAnswers = {};
+      }
+      const mergedAnswers = { ...existingAnswers, ...answers };
+      localStorage.setItem("conditionAnswers", JSON.stringify(mergedAnswers));
       // Legacy mirrors — harmless no-ops for categories that don't use these keys,
       // kept so any other page still reading them directly (e.g. a cart summary)
       // keeps working for Mobile Phones without changes.
@@ -179,7 +210,7 @@ const DeviceAssessmentForm = () => {
       const currentPrice = localStorage.getItem("estimatedPrice") || "500";
 
       const assessmentSummary = {
-        ...answers,
+        ...mergedAnswers,
         storage: currentStorage,
         estimatedPrice: currentPrice,
         status: 'pending'
@@ -218,19 +249,24 @@ const DeviceAssessmentForm = () => {
                 {QUESTION_ICONS[qIndex % QUESTION_ICONS.length]} {q.label}
               </div>
               <div className="grid md:grid-cols-3 gap-4">
-                {q.options.map((opt, optIndex) => (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={() => handleConditionSelect(q.key, opt.key)}
-                    className={`relative p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${getColorClass(colorForOptionIndex(optIndex, q.options.length), answers[q.key] === opt.key)
-                      }`}
-                  >
-                    <div className="font-semibold">{opt.label}</div>
-                    {opt.description && <div className="text-xs opacity-70">{opt.description}</div>}
-                    {answers[q.key] === opt.key && <Check className="absolute top-2 right-2 w-4 h-4" />}
-                  </button>
-                ))}
+                {q.options.map((opt, optIndex) => {
+                  const selected = q.multi
+                    ? Array.isArray(answers[q.key]) && answers[q.key].includes(opt.key)
+                    : answers[q.key] === opt.key;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => handleConditionSelect(q.key, opt.key, q.multi, q.noneKey || 'none')}
+                      className={`relative p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${getColorClass(colorForOptionIndex(optIndex, q.options.length), selected)
+                        }`}
+                    >
+                      <div className="font-semibold">{opt.label}</div>
+                      {opt.description && <div className="text-xs opacity-70">{opt.description}</div>}
+                      {selected && <Check className="absolute top-2 right-2 w-4 h-4" />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
