@@ -245,9 +245,12 @@ const DeviceAssessmentForm = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {questions.map((q, qIndex) => (
             <div key={q.key} className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center gap-3 mb-6 font-bold text-xl">
+              <div className={`flex items-center gap-3 font-bold text-xl ${q.subtitle ? 'mb-1' : 'mb-6'}`}>
                 {QUESTION_ICONS[qIndex % QUESTION_ICONS.length]} {q.label}
               </div>
+              {q.subtitle && (
+                <p className="text-sm text-gray-500 mb-6 ml-9">{q.subtitle}</p>
+              )}
               <div className="grid md:grid-cols-3 gap-4">
                 {q.options.map((opt, optIndex) => {
                   const selected = q.multi

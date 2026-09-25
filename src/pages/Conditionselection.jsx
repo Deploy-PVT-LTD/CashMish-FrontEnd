@@ -281,7 +281,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
               Is Find My / Activation Lock turned off?
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
-              Check Settings on the device, or your Apple ID / Google account.
+              You can continue if you're unsure, but account locks must be removed before final payment.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
