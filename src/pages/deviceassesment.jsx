@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
-import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Monitor, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
+import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
 
 import frontImg from '../assets/front.webp';
 import backImg from '../assets/back.webp';
@@ -45,7 +45,7 @@ const LEGACY_QUESTIONS = [
 // set that ends up mismatched for most questions.
 const QUESTION_ICON_MAP = {
   screen: Smartphone,
-  display: Monitor,
+  display: Smartphone,
   back: RotateCcw,
   frame: Frame,
   battery: Battery,
