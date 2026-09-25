@@ -205,9 +205,19 @@ export default function UserForm() {
     }
   };
 
+  // US format as the user types: (307) 236-6792 — caps at 10 digits.
+  const formatUSPhone = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 10);
+    if (digits.length === 0) return '';
+    if (digits.length < 4) return `(${digits}`;
+    if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(p => ({ ...p, [name]: value }));
+    const formatted = name === 'phoneNumber' ? formatUSPhone(value) : value;
+    setFormData(p => ({ ...p, [name]: formatted }));
     setShowError(false);
   };
 
@@ -317,7 +327,7 @@ export default function UserForm() {
           >
             <Input icon={User} name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleInputChange} error={showError && !formData.fullName} />
             <Input icon={Mail} name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} />
-            <Input icon={Phone} name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
+            <Input icon={Phone} type="tel" name="phoneNumber" placeholder="(307) 236-6792" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
 
             <div className="relative" ref={suggestionRef}>
               <Input
