@@ -249,7 +249,13 @@ const DeviceAssessmentForm = () => {
                 {QUESTION_ICONS[qIndex % QUESTION_ICONS.length]} {q.label}
               </div>
               {q.subtitle && (
-                <p className="text-sm text-gray-500 mb-6 ml-9">{q.subtitle}</p>
+                <p className={`text-sm text-gray-500 ml-9 ${q.tip ? 'mb-4' : 'mb-6'}`}>{q.subtitle}</p>
+              )}
+              {q.tip && (
+                <div className="bg-green-50 text-green-800 text-sm rounded-xl px-4 py-3 mb-6 flex items-start gap-2">
+                  <span>💡</span>
+                  <span>{q.tip}</span>
+                </div>
               )}
               <div className="grid md:grid-cols-3 gap-4">
                 {q.options.map((opt, optIndex) => {
