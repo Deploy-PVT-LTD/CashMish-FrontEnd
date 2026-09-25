@@ -242,7 +242,7 @@ export default function UserForm() {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
         const data = await res.json();
         setFormData(p => ({
           ...p,
@@ -257,7 +257,7 @@ export default function UserForm() {
     }, () => {
       alert("Unable to get location");
       setLocationLoading(false);
-    });
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
   };
 
   return (
