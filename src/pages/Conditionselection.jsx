@@ -246,7 +246,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
               {[
                 { value: true, label: 'Yes, works normally' },
-                { value: false, label: 'No / has trouble turning on' },
+                { value: false, label: 'No / Has trouble turning on' },
               ].map((opt) => (
                 <button
                   key={String(opt.value)}
