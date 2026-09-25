@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
-import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Monitor, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
 
 import frontImg from '../assets/front.webp';
 import backImg from '../assets/back.webp';
@@ -40,7 +40,22 @@ const LEGACY_QUESTIONS = [
   },
 ];
 
-const QUESTION_ICONS = [<Smartphone />, <Shield />, <Battery />, <Info />];
+// One specific icon per question key — "back" (flip the phone over), "frame"
+// (its edges), "bio" (fingerprint), etc. — rather than cycling through a fixed
+// set that ends up mismatched for most questions.
+const QUESTION_ICON_MAP = {
+  screen: Smartphone,
+  display: Monitor,
+  back: RotateCcw,
+  frame: Frame,
+  battery: Battery,
+  touch: Hand,
+  camera: Camera,
+  bio: Fingerprint,
+  functions: ListChecks,
+  liquid: Droplet,
+  repair: Wrench,
+};
 
 // Green (best) -> yellow (middle) -> red (worst) across however many options a
 // question has, so a custom category's questions still look consistent.
@@ -243,10 +258,12 @@ const DeviceAssessmentForm = () => {
         <h1 className="text-3xl font-bold text-center mb-8">Device Condition Assessment</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {questions.map((q, qIndex) => (
+          {questions.map((q, qIndex) => {
+            const QuestionIcon = QUESTION_ICON_MAP[q.key] || Info;
+            return (
             <div key={q.key} className="bg-white rounded-2xl shadow-lg p-6">
               <div className={`flex items-center gap-3 font-bold text-xl ${q.subtitle ? 'mb-1' : 'mb-6'}`}>
-                {QUESTION_ICONS[qIndex % QUESTION_ICONS.length]} {q.label}
+                <QuestionIcon /> {q.label}
               </div>
               {q.subtitle && (
                 <p className={`text-sm text-gray-500 ml-9 ${q.tip ? 'mb-4' : 'mb-6'}`}>{q.subtitle}</p>
@@ -278,7 +295,8 @@ const DeviceAssessmentForm = () => {
                 })}
               </div>
             </div>
-          ))}
+            );
+          })}
 
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4 font-bold text-xl">
