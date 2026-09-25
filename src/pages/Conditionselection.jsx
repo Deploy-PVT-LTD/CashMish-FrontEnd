@@ -16,39 +16,18 @@ const ConditionSelection = ({ onSelectCondition }) => {
   const category = getSelectedCategory();
   const categoryName = localStorage.getItem("selectedCategoryName") || "Device";
 
-  // Phones-only gates, asked before anything else and in this priority order
-  // (matching the reference grading spec): account lock, then power-on. Either one
-  // failing skips every other condition question and goes straight to Storage —
-  // priced at a fixed "Grade F" (worst grade — see
-  // priceCalculator.js#calculateGradePrice / formController.js), not computed from
-  // screen/back/frame/etc. answers nobody locked out of or holding a dead phone
-  // could meaningfully give anyway.
+  // Phones-only gates, asked before anything else and in this priority order:
+  // power-on, then account lock. Either one failing skips every other condition
+  // question and goes straight to Storage — priced at a fixed "Grade F" (worst
+  // grade — see priceCalculator.js#calculateGradePrice / formController.js), not
+  // computed from screen/back/frame/etc. answers nobody locked out of or holding
+  // a dead phone could meaningfully give anyway.
   const isMobilePhones = category?.slug === 'mobile-phones';
 
-  // Gate 1: account/activation lock. null = unanswered, 'off'/'unknown' = passes
-  // through to the next gate, 'on' = blocks (forces Grade F).
-  const [accountStatus, setAccountStatus] = useState(null);
-  const accountPassed = accountStatus === 'off' || accountStatus === 'unknown';
+  // Gate 1: does it power on. null = unanswered, true/false once answered.
+  const [powersOn, setPowersOn] = useState(null);
 
-  const handleAccountSelect = (value) => {
-    setAccountStatus(value);
-    if (value !== 'on') {
-      localStorage.removeItem("forcedGrade"); // clear stale, in case of a prior "on" attempt
-    }
-  };
-
-  const handleAccountNext = () => {
-    if (accountStatus !== 'on') return;
-    localStorage.setItem("forcedGrade", "F");
-    localStorage.setItem("selectedCondition", "Account Locked");
-    onSelectCondition?.("Account Locked");
-    navigate(routeAfterCondition(category));
-  };
-
-  // Gate 2: does it power on. Only reached once the account gate has passed.
-  const [powersOn, setPowersOn] = useState(null); // null = unanswered, true/false once answered
-
-  // Selecting "Yes" reveals the normal picker on this same render (no separate
+  // Selecting "Yes" reveals the next gate on this same render (no separate
   // confirmation click for that branch), so the stale-forcedGrade cleanup has to
   // happen right here, not in handlePowersOnNext (which "Yes" never reaches).
   const handlePowersOnSelect = (value) => {
@@ -64,6 +43,27 @@ const ConditionSelection = ({ onSelectCondition }) => {
     localStorage.setItem("forcedGrade", "F");
     localStorage.setItem("selectedCondition", "Not Powering On");
     onSelectCondition?.("Not Powering On");
+    navigate(routeAfterCondition(category));
+  };
+
+  // Gate 2: account/activation lock. Only reached once the power-on gate has
+  // passed. null = unanswered, 'off'/'unknown' = passes through, 'on' = blocks
+  // (forces Grade F).
+  const [accountStatus, setAccountStatus] = useState(null);
+  const accountPassed = accountStatus === 'off' || accountStatus === 'unknown';
+
+  const handleAccountSelect = (value) => {
+    setAccountStatus(value);
+    if (value !== 'on') {
+      localStorage.removeItem("forcedGrade"); // clear stale, in case of a prior "on" attempt
+    }
+  };
+
+  const handleAccountNext = () => {
+    if (accountStatus !== 'on') return;
+    localStorage.setItem("forcedGrade", "F");
+    localStorage.setItem("selectedCondition", "Account Locked");
+    onSelectCondition?.("Account Locked");
     navigate(routeAfterCondition(category));
   };
 
@@ -220,21 +220,62 @@ const ConditionSelection = ({ onSelectCondition }) => {
         <div className="text-center mb-6">
           <button
             onClick={
-              isMobilePhones && !accountPassed
+              isMobilePhones && powersOn !== true
                 ? onBack
-                : isMobilePhones && powersOn !== true
-                  ? () => setAccountStatus(null)
+                : isMobilePhones && !accountPassed
+                  ? () => setPowersOn(null)
                   : isMobilePhones
-                    ? () => setPowersOn(null)
+                    ? () => setAccountStatus(null)
                     : onBack
             }
             className="text-green-800 hover:text-green-700 text-sm sm:text-base font-medium cursor-pointer"
           >
-            {isMobilePhones && accountPassed ? '← Back' : '← Back to models'}
+            {isMobilePhones && powersOn === true ? '← Back' : '← Back to models'}
           </button>
         </div>
 
-        {isMobilePhones && !accountPassed ? (
+        {isMobilePhones && powersOn !== true ? (
+          <div className="text-center max-w-2xl mx-auto">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">
+              Does your phone turn on normally?
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
+              Choose the answer that best matches the phone right now.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
+              {[
+                { value: true, label: 'Yes, works normally' },
+                { value: false, label: 'No / has trouble turning on' },
+              ].map((opt) => (
+                <button
+                  key={String(opt.value)}
+                  onClick={() => handlePowersOnSelect(opt.value)}
+                  className={`flex items-center gap-3 bg-white border-2 rounded-xl p-5 sm:p-6 text-left transition cursor-pointer
+                    ${powersOn === opt.value
+                      ? 'border-green-800 shadow-md ring-1 ring-green-800'
+                      : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full border-2 shrink-0 ${powersOn === opt.value ? 'border-green-800 bg-green-800' : 'border-gray-300'
+                      }`}
+                  />
+                  <span className="text-sm sm:text-base font-semibold text-gray-900">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {powersOn === false && (
+              <button
+                onClick={handlePowersOnNext}
+                className="w-full sm:w-40 bg-green-800 text-white py-2.5 px-6 rounded-xl font-bold text-base
+                           hover:bg-green-700 transition shadow-md shadow-green-800/10 active:scale-95 cursor-pointer"
+              >
+                Next
+              </button>
+            )}
+          </div>
+        ) : isMobilePhones && !accountPassed ? (
           <div className="text-center max-w-2xl mx-auto">
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">
               Is Find My / Activation Lock turned off?
@@ -269,47 +310,6 @@ const ConditionSelection = ({ onSelectCondition }) => {
             {accountStatus === 'on' && (
               <button
                 onClick={handleAccountNext}
-                className="w-full sm:w-40 bg-green-800 text-white py-2.5 px-6 rounded-xl font-bold text-base
-                           hover:bg-green-700 transition shadow-md shadow-green-800/10 active:scale-95 cursor-pointer"
-              >
-                Next
-              </button>
-            )}
-          </div>
-        ) : isMobilePhones && powersOn !== true ? (
-          <div className="text-center max-w-2xl mx-auto">
-            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">
-              Does your phone turn on normally?
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
-              Choose the answer that best matches the phone right now.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
-              {[
-                { value: true, label: 'Yes, works normally' },
-                { value: false, label: 'No / has trouble turning on' },
-              ].map((opt) => (
-                <button
-                  key={String(opt.value)}
-                  onClick={() => handlePowersOnSelect(opt.value)}
-                  className={`flex items-center gap-3 bg-white border-2 rounded-xl p-5 sm:p-6 text-left transition cursor-pointer
-                    ${powersOn === opt.value
-                      ? 'border-green-800 shadow-md ring-1 ring-green-800'
-                      : 'border-gray-200 hover:border-green-800/50 hover:shadow-lg'}`}
-                >
-                  <span
-                    className={`w-4 h-4 rounded-full border-2 shrink-0 ${powersOn === opt.value ? 'border-green-800 bg-green-800' : 'border-gray-300'
-                      }`}
-                  />
-                  <span className="text-sm sm:text-base font-semibold text-gray-900">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-
-            {powersOn === false && (
-              <button
-                onClick={handlePowersOnNext}
                 className="w-full sm:w-40 bg-green-800 text-white py-2.5 px-6 rounded-xl font-bold text-base
                            hover:bg-green-700 transition shadow-md shadow-green-800/10 active:scale-95 cursor-pointer"
               >
