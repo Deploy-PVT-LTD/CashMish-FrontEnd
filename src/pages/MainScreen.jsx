@@ -360,20 +360,14 @@ const PhoneFlipLanding = () => {
               </p>
             </div>
 
-            {/* Soft green backdrop */}
-            <div className="absolute w-[95%] aspect-square bg-green-100/70 rounded-full -z-10 top-1/2 -translate-y-1/2" />
-
-            {/* The source photo has its own flat background — fade it out at the
-                edges so it blends into the green backdrop instead of showing a
-                hard rectangle. */}
+            {/* The gradient backdrop on the parent already matches the source
+                photo's own flat/light background closely enough that it blends
+                in on its own — no fade mask needed (and the mask was actually
+                eating into the leaves/devices near the edges). */}
             <img
               src={mobileimg}
               alt="Sell your iPhone, Samsung, and other devices for instant cash"
               className="relative w-[90%] sm:w-[80%] lg:w-full max-w-xl"
-              style={{
-                maskImage: "radial-gradient(ellipse 62% 62% at center, black 55%, transparent 85%)",
-                WebkitMaskImage: "radial-gradient(ellipse 62% 62% at center, black 55%, transparent 85%)",
-              }}
             />
           </div>
         </div>
