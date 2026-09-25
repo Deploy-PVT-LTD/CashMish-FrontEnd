@@ -345,7 +345,10 @@ const PhoneFlipLanding = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="relative flex justify-center lg:justify-end pt-4 lg:pt-0">
+          <div
+            className="relative flex justify-center lg:justify-end pt-4 lg:pt-0 rounded-3xl overflow-hidden"
+            style={{ background: 'linear-gradient(88deg, rgba(255, 255, 255, 1) 51%, rgba(235, 235, 235, 1) 100%)' }}
+          >
             {/* Handwritten note */}
             <div className="hidden sm:flex absolute -top-2 right-4 lg:right-0 items-start gap-1 z-20 text-gray-700">
               <svg width="34" height="34" viewBox="0 0 34 34" fill="none" className="mt-1 -scale-x-100 rotate-[20deg]">
