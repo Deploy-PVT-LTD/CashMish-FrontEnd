@@ -13,9 +13,11 @@ import Storageselection from './pages/Storageselection';
 import HowItWorks from './pages/HowItWork';
 import WhyCashMish from './pages/WhyCashMish';
 import Userdata from './pages/form';
+import PaymentMethod from './pages/PaymentMethod';
 import DeviceAssessmentForm from './pages/deviceassesment';
 import PendingPage from './pages/pending';
 import OfferAcceptancePage from './pages/acceptRejectOffer';
+import AcceptOffer from './pages/AcceptOffer';
 import NotFound from './pages/NotFound';
 import RejectionPage from './pages/NotAccepted';
 import CarrierSelection from './pages/Phonecarrier';
@@ -106,7 +108,9 @@ function AppContent() {
         <Route path='/priceresult' element={<PriceResult />} />
         <Route path="/deviceassessment" element={<DeviceAssessmentForm />} />
         <Route path="/userdata" element={<Userdata />} />
+        <Route path="/paymentmethod" element={<PaymentMethod />} />
         <Route path="/offeracceptance" element={<OfferAcceptancePage />} />
+        <Route path="/offer/:token" element={<AcceptOffer />} />
         <Route path="/cart" element={<MobileCart />} />
         <Route path='/cartlogin' element={<CartLogin />} />
 

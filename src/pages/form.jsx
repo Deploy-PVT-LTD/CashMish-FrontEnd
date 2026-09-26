@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import imageCompression from 'browser-image-compression';
 import Header from "../components/layout/header.jsx";
-import { BASE_URL } from '../lib/api';
 import {
-  Search, CreditCard, Calendar, MapPin, Phone,
-  ArrowRight, Mail, Navigation, Loader2, User
+  Search, CreditCard, MapPin, Phone,
+  ArrowRight, Mail, Navigation, Loader2, User, Truck
 } from 'lucide-react';
 import favIcon from '../assets/cashmish-Fav.svg';
 import Chatbot from '../components/Chatbot.jsx';
@@ -14,17 +12,14 @@ export default function UserForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const suggestionRef = useRef(null);
-  // Guards against a double POST (and duplicate "PersonalDataForm" tracking
-  // event) from a fast double-click on "Confirm Pickup" — React state
-  // (`loading`) updates async, so `disabled={loading}` alone can't close
-  // that race; this ref check is synchronous.
+  // Guards against firing "Confirm Pickup" twice (double-click) before the
+  // navigate() to the payment-method step goes through.
   const isSubmittingRef = useRef(false);
 
-  // ✔ Pichle page se aayi hui images yahan milengi
+  // ✔ Pichle page se aayi hui images yahan milengi — carried forward to the
+  // payment-method step, where the actual submission happens.
   const imagesToUpload = location.state?.files || [];
 
-  const [loading, setLoading] = useState(false);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [showError, setShowError] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -37,11 +32,8 @@ export default function UserForm() {
 
   const [formData, setFormData] = useState({
     fullName: '', email: '', phoneNumber: '',
-    address: '', date: '', coords: null
+    address: '', coords: null
   });
-
-  const timeSlots = ['9:00 AM - 11:00 AM', '11:00 AM - 1:00 PM', '2:00 PM - 4:00 PM', '4:00 PM - 6:00 PM'];
-  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     let conditionAnswers = {};
@@ -74,135 +66,58 @@ export default function UserForm() {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
+  // Tracking: "Personal Data Form" — fires once the contact details (name,
+  // phone, email, address) are confirmed here. Named event for Meta Pixel +
+  // Google Ads/GA4 + GTM so it's distinguishable from the earlier "Mobile
+  // Form Submit" step in Events Manager. The actual backend submission now
+  // happens one step later, on the payment-method page.
+  const handleContinue = (e) => {
     e.preventDefault();
 
     if (isSubmittingRef.current) return;
 
-    if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.date || !selectedTimeSlot) {
+    if (!formData.fullName || !formData.phoneNumber || !formData.address) {
       setShowError(true);
       return;
     }
 
     isSubmittingRef.current = true;
-    setLoading(true);
-    const data = new FormData();
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const userId = user._id || user.id;
 
-    // 1. Device Info Append
-    if (userId) data.append("userId", userId);
-    data.append("mobileId", deviceDetails.mobileId);
-    data.append("storage", deviceDetails.storage);
-    data.append("condition", deviceDetails.condition);
-    data.append("conditionAnswers", JSON.stringify(deviceDetails.conditionAnswers || {}));
-    const forcedGrade = localStorage.getItem("forcedGrade");
-    if (forcedGrade) data.append("forcedGrade", forcedGrade);
-    data.append("estimatedPrice", localStorage.getItem('estimatedPrice') || "0");
-    data.append("carrier", localStorage.getItem('selectedCarrier') || "");
-
-    // 2. Pickup Details
-    const pickUpDetails = {
-      fullName: formData.fullName,
-      phoneNumber: formData.phoneNumber,
-      email: formData.email,
-      address: {
-        addressText: formData.address,
-        location: {
-          type: "Point",
-          coordinates: [formData.coords?.lng || 0, formData.coords?.lat || 0]
-        }
-      },
-      pickUpDate: formData.date,
-      timeSlot: selectedTimeSlot
-    };
-    data.append("pickUpDetails", JSON.stringify(pickUpDetails));
-
-    // 3. IMAGES LOOP (Fix for DB upload + Client Side Compression)
-    if (imagesToUpload.length > 0) {
-      for (const file of imagesToUpload) {
-        try {
-          const options = {
-            maxSizeMB: 0.8,
-            maxWidthOrHeight: 1200,
-            useWebWorker: true,
-          };
-          const compressedFile = await imageCompression(file, options);
-          data.append("images", compressedFile);
-        } catch (error) {
-          console.error("Image compression error:", error);
-          // Fallback to original file if compression fails
-          data.append("images", file);
-        }
-      }
+    const estimatedPriceValue = Number(localStorage.getItem('estimatedPrice')) || 0;
+    const deviceLabel = `${deviceDetails.brand} ${deviceDetails.model}`.trim();
+    if (typeof window.fbq === 'function') {
+      window.fbq('trackCustom', 'PersonalDataForm', {
+        value: estimatedPriceValue,
+        currency: 'USD',
+        content_name: deviceLabel,
+      });
     }
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'personal_data_form', {
+        event_category: 'conversion',
+        event_label: deviceLabel,
+        value: estimatedPriceValue,
+      });
+    }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'personal_data_form',
+      device: deviceLabel,
+      estimatedPrice: estimatedPriceValue,
+    });
 
-    try {
-      const res = await fetch(`${BASE_URL}/api/forms`, {
-        method: "POST",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
+    navigate('/paymentmethod', {
+      state: {
+        files: imagesToUpload,
+        pickupDetails: {
+          fullName: formData.fullName,
+          phoneNumber: formData.phoneNumber,
+          email: formData.email,
+          address: formData.address,
+          coords: formData.coords,
         },
-        body: data
-      });
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to submit");
-
-      // Tracking: "Personal Data Form" — fires once the pickup/contact details
-      // (name, phone, email, address) are successfully submitted. Named event
-      // for Meta Pixel + Google Ads/GA4 + GTM so it's distinguishable from the
-      // earlier "Mobile Form Submit" step in Events Manager.
-      const estimatedPriceValue = Number(localStorage.getItem('estimatedPrice')) || 0;
-      const deviceLabel = `${deviceDetails.brand} ${deviceDetails.model}`.trim();
-      if (typeof window.fbq === 'function') {
-        window.fbq('trackCustom', 'PersonalDataForm', {
-          value: estimatedPriceValue,
-          currency: 'USD',
-          content_name: deviceLabel,
-        });
-      }
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'personal_data_form', {
-          event_category: 'conversion',
-          event_label: deviceLabel,
-          value: estimatedPriceValue,
-        });
-      }
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'personal_data_form',
-        device: deviceLabel,
-        estimatedPrice: estimatedPriceValue,
-      });
-
-      // Clear the "doesn't turn on" override so it doesn't bleed into the next device.
-      localStorage.removeItem('forcedGrade');
-
-      // ✔ Save to myGuestOrders for cart visibility
-      const guestOrders = JSON.parse(localStorage.getItem('myGuestOrders') || '[]');
-      if (result._id && !guestOrders.includes(result._id)) {
-        guestOrders.push(result._id);
-        localStorage.setItem('myGuestOrders', JSON.stringify(guestOrders));
-      }
-
-      // Delete draft from DB after successful submission
-      const userForDraft = JSON.parse(localStorage.getItem("user") || "{}");
-      const draftUserId = userForDraft._id || userForDraft.id;
-      if (draftUserId) {
-        fetch(`${BASE_URL}/api/drafts/${draftUserId}`, { method: 'DELETE' })
-          .catch(err => console.error('Draft delete error:', err));
-      }
-
-      navigate("/pending", { state: { estimatedPrice: result.estimatedPrice } });
-    } catch (err) {
-      console.error(err);
-      alert("Error: " + err.message);
-      isSubmittingRef.current = false;
-    } finally {
-      setLoading(false);
-    }
+      },
+    });
   };
 
   // US format as the user types: (555) 123-4567 — caps at 10 digits.
@@ -262,7 +177,7 @@ export default function UserForm() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Header />
+      <Header simple />
       <Chatbot />
       <div className="max-w-4xl mx-auto p-6 grid md:grid-cols-2 gap-8">
 
@@ -279,11 +194,10 @@ export default function UserForm() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="bg-green-100 p-3 rounded-xl"><Calendar className="w-5 h-5 text-green-600" /></div>
+                <div className="bg-green-100 p-3 rounded-xl"><Truck className="w-5 h-5 text-green-600" /></div>
                 <div>
-                  {/* add estimated value  */}
-                  <h3 className="font-semibold text-sm">Schedule</h3>
-                  <p className="text-xs text-gray-600">Quick Pickup & Pay</p>
+                  <h3 className="font-semibold text-sm">Shipping</h3>
+                  <p className="text-xs text-gray-600">Free prepaid USPS label</p>
                 </div>
               </div>
             </div>
@@ -321,7 +235,7 @@ export default function UserForm() {
             className="space-y-4"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
-                handleSubmit(e);
+                handleContinue(e);
               }
             }}
           >
@@ -352,21 +266,8 @@ export default function UserForm() {
               )}
             </div>
 
-            <Input type="date" icon={Calendar} name="date" min={today} value={formData.date} onChange={handleInputChange} error={showError && !formData.date} />
-
-            <div className="grid grid-cols-2 gap-2">
-              {timeSlots.map((slot) => (
-                <button
-                  type="button" key={slot} onClick={() => setSelectedTimeSlot(slot)}
-                  className={`py-3 rounded-xl text-[10px] cursor-pointer font-bold transition-all ${selectedTimeSlot === slot ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} ${showError && !selectedTimeSlot ? 'border border-red-500' : ''}`}
-                >
-                  {slot}
-                </button>
-              ))}
-            </div>
-
-            <button disabled={loading} type="button" onClick={handleSubmit} className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
-              {loading ? <Loader2 className="animate-spin" /> : <>Confirm Pickup <ArrowRight size={20} /></>}
+            <button type="button" onClick={handleContinue} className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
+              Confirm Pickup <ArrowRight size={20} />
             </button>
           </div>
         </div>

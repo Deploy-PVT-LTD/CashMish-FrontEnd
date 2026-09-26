@@ -241,7 +241,7 @@ function Header({ simple = false }) {
 
             {/* Mobile Header Icons & Toggle */}
             <div className="md:hidden flex items-center gap-3">
-              {isLoggedIn && (
+              {!simple && isLoggedIn && (
                 <button onClick={handleWalletClick} className="flex items-center gap-1.5 relative">
                   <Wallet size={24} className="text-gray-600" />
                   {pendingOrders?.length > 0 && (
@@ -288,15 +288,17 @@ function Header({ simple = false }) {
                 </div>
 
                 <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
-                  <a href="/cart" onClick={() => setOpen(false)} className="relative flex items-center gap-2 text-gray-600 font-medium">
-                    <ShoppingBag size={20} />
-                    <span>Cart</span>
-                    {cartItemCount > 0 && (
-                      <span className="h-4 w-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                        {cartItemCount}
-                      </span>
-                    )}
-                  </a>
+                  {!simple && (
+                    <a href="/cart" onClick={() => setOpen(false)} className="relative flex items-center gap-2 text-gray-600 font-medium">
+                      <ShoppingBag size={20} />
+                      <span>Cart</span>
+                      {cartItemCount > 0 && (
+                        <span className="h-4 w-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                          {cartItemCount}
+                        </span>
+                      )}
+                    </a>
+                  )}
 
                   {isLoggedIn ? (
                     <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
