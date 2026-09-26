@@ -1,4 +1,4 @@
-import { Menu, X, ShoppingBag, LogOut, Wallet, ChevronDown, Link2, Rocket, ExternalLink } from "lucide-react";
+import { Menu, X, LogOut, Wallet, ChevronDown, Link2, Rocket, ExternalLink } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/deploy-logo.png";
@@ -197,61 +197,25 @@ function Header({ simple = false }) {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
 
-              {!simple && (
-                <div className="flex items-center gap-4 ml-4">
-                  {isLoggedIn && (
-                    <>
-                      <button
-                        onClick={handleWalletClick}
-                        className="cursor-pointer flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-full border border-gray-100 transition-all relative"
-                      >
-                        <Wallet size={22} className="text-gray-600" />
-                        {pendingOrders?.length > 0 && (
-                          <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
-                        )}
-                        <span className="bg-green-600 text-white text-[14px] font-bold px-2 py-0.5 rounded-full shadow-sm">
-                          ${walletBalance || 0}
-                        </span>
-                      </button>
-
-                      {/* Desktop Cart */}
-                      <a href="/cart" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                        <ShoppingBag size={22} />
-                        {cartItemCount > 0 && (
-                          <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-600 text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center">
-                            {cartItemCount}
-                          </span>
-                        )}
-                      </a>
-
-                      <button onClick={handleLogout} className="cursor-pointer flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
-                        <LogOut size={16} /> Logout
-                      </button>
-                    </>
-                  )}
-
-                  {!isLoggedIn && (
-                    <a href="/login" className="bg-green-800 text-white px-8 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition-all shadow-md">
-                      Login
-                    </a>
-                  )}
-                </div>
-              )}
+              {/* Wallet + Cart icons removed site-wide (kept the Wallet
+                  modal/context wiring above untouched in case some other
+                  page still opens it via the 'openWallet' event) — only
+                  Logout/Login remain here now. */}
+              <div className="flex items-center gap-4 ml-4">
+                {isLoggedIn ? (
+                  <button onClick={handleLogout} className="cursor-pointer flex items-center gap-2 border px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
+                    <LogOut size={16} /> Logout
+                  </button>
+                ) : (
+                  <a href="/login" className="bg-green-800 text-white px-8 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition-all shadow-md">
+                    Login
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Mobile Header Icons & Toggle */}
             <div className="md:hidden flex items-center gap-3">
-              {!simple && isLoggedIn && (
-                <button onClick={handleWalletClick} className="flex items-center gap-1.5 relative">
-                  <Wallet size={24} className="text-gray-600" />
-                  {pendingOrders?.length > 0 && (
-                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
-                  )}
-                  <span className="bg-green-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-full">
-                    ${walletBalance || 0}
-                  </span>
-                </button>
-              )}
               <button onClick={() => setOpen(!open)} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                 {open ? <X size={26} /> : <Menu size={26} />}
               </button>
@@ -287,19 +251,7 @@ function Header({ simple = false }) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-gray-50 pt-4 px-2">
-                  {!simple && (
-                    <a href="/cart" onClick={() => setOpen(false)} className="relative flex items-center gap-2 text-gray-600 font-medium">
-                      <ShoppingBag size={20} />
-                      <span>Cart</span>
-                      {cartItemCount > 0 && (
-                        <span className="h-4 w-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                          {cartItemCount}
-                        </span>
-                      )}
-                    </a>
-                  )}
-
+                <div className="flex items-center justify-end border-t border-gray-50 pt-4 px-2">
                   {isLoggedIn ? (
                     <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 font-semibold">
                       <LogOut size={20} /> Logout
