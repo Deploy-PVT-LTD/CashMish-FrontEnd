@@ -176,7 +176,7 @@ const ConditionSelection = ({ onSelectCondition }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+      <Header simple />
       <Chatbot />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full pb-20">
         {/* Progress Tracker */}

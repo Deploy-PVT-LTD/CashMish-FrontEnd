@@ -88,7 +88,7 @@ const StorageSelection = ({
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <Header />
+      <Header simple />
       {/* chatbot */}
       <Chatbot />
       {/* Main */}

@@ -65,7 +65,7 @@ const CarrierSelection = () => {
 
   return (
     <div>
-      <Header />
+      <Header simple />
       {/* chatbot */}
       <Chatbot />
       <div className="bg-gray-50 flex items-center justify-center px-4 py-8">

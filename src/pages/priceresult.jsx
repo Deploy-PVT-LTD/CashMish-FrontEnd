@@ -173,7 +173,7 @@ const PriceResult = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans pb-12">
-      <Header />
+      <Header simple />
       <Chatbot />
       <main className="flex-1 flex flex-col items-center px-2 pt-5">
         {/* Step Indicator */}
