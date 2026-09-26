@@ -1,6 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
 @import "tailwindcss";
 
+/* Site-wide button rules — Tailwind v4's preflight resets <button> to
+   `cursor: default` (matching native browser behavior) instead of pointer,
+   and a handful of buttons opt into `uppercase` styling. Neither is wanted
+   anywhere on this site, so both are enforced globally here instead of
+   depending on every button remembering the right classes. */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer !important;
+}
+
+button {
+  text-transform: none !important;
+}
+
 .font-handwritten {
   font-family: 'Caveat', cursive;
 }
