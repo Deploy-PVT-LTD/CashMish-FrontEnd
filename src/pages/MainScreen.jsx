@@ -345,10 +345,7 @@ const PhoneFlipLanding = () => {
           </div>
 
           {/* RIGHT */}
-          <div
-            className="relative flex justify-center lg:justify-end pt-4 lg:pt-0 rounded-3xl"
-            style={{ background: 'linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(220, 220, 223, 1) 100%)' }}
-          >
+          <div className="relative flex justify-center lg:justify-end pt-4 lg:pt-0 rounded-3xl">
             {/* Handwritten note */}
             <div className="hidden sm:flex absolute -top-2 right-4 lg:right-4 items-start gap-1 z-20 text-gray-700">
               <svg width="34" height="34" viewBox="0 0 34 34" fill="none" className="mt-1 -scale-x-100 rotate-[20deg]">
@@ -360,10 +357,6 @@ const PhoneFlipLanding = () => {
               </p>
             </div>
 
-            {/* The gradient backdrop on the parent already matches the source
-                photo's own flat/light background closely enough that it blends
-                in on its own — no fade mask needed (and the mask was actually
-                eating into the leaves/devices near the edges). */}
             <img
               src={mobileimg}
               alt="Sell your iPhone, Samsung, and other devices for instant cash"
