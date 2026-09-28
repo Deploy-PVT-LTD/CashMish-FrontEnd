@@ -35,6 +35,20 @@ export default function PaymentMethod() {
 
   const estimatedPrice = Number(localStorage.getItem('estimatedPrice')) || 0;
 
+  // US format as the user types: (555) 123-4567 — digits only, caps at 10.
+  const formatUSPhone = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 10);
+    if (digits.length === 0) return '';
+    if (digits.length < 4) return `(${digits}`;
+    if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  };
+
+  const handleZelleContactChange = (e) => {
+    const { value } = e.target;
+    setZelleContact(zelleContactType === 'phone' ? formatUSPhone(value) : value);
+  };
+
   const handleBankChange = (e) => {
     const { name, value } = e.target;
     setBank((p) => ({ ...p, [name]: value }));
@@ -201,15 +215,16 @@ export default function PaymentMethod() {
           {method === 'zelle' && (
             <div className="space-y-4">
               <div className="flex gap-2">
-                <button type="button" onClick={() => setZelleContactType('email')} className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${zelleContactType === 'email' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600'}`}>Email</button>
-                <button type="button" onClick={() => setZelleContactType('phone')} className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${zelleContactType === 'phone' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600'}`}>Phone</button>
+                <button type="button" onClick={() => { setZelleContactType('email'); setZelleContact(''); }} className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${zelleContactType === 'email' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600'}`}>Email</button>
+                <button type="button" onClick={() => { setZelleContactType('phone'); setZelleContact(''); }} className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${zelleContactType === 'phone' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-600'}`}>Phone</button>
               </div>
               <Field
                 icon={zelleContactType === 'email' ? MailIcon : Phone}
                 type={zelleContactType === 'email' ? 'email' : 'tel'}
+                inputMode={zelleContactType === 'phone' ? 'numeric' : undefined}
                 placeholder={zelleContactType === 'email' ? 'zelle@email.com' : '(555) 123-4567'}
                 value={zelleContact}
-                onChange={(e) => setZelleContact(e.target.value)}
+                onChange={handleZelleContactChange}
               />
             </div>
           )}
