@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { Upload, X, Check, Smartphone, Battery, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
 
-import cashmishMark from '../assets/cashmish-Fav.svg';
+import cashmishLogoDark from '../assets/cashmish-logo-dark.svg';
 import usaFlag from '../assets/usa-flag.svg';
 import frontImg from '../assets/front.webp';
 import backImg from '../assets/back.webp';
@@ -536,25 +536,23 @@ const DeviceAssessmentForm = () => {
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col max-h-[95vh] animate-in zoom-in-95 duration-300">
             {/* Modal Header */}
-            <div className="bg-gray-900 p-8 text-white relative">
+            <div className="bg-gray-900 p-6 sm:p-8 text-white relative">
               <button
                 type="button"
                 onClick={() => setShowTermsModal(false)}
-                className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+                className="absolute top-5 right-5 sm:top-6 sm:right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
               >
                 <X size={20} />
               </button>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center -space-x-2">
-                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-md z-10 overflow-hidden p-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pr-10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center shadow-md overflow-hidden p-2 sm:p-2.5 flex-shrink-0">
                     <img src={usaFlag} alt="United States" className="w-full h-full object-contain rounded-sm" />
                   </div>
-                  <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center shadow-md border-2 border-gray-900">
-                    <img src={cashmishMark} alt="CashMish" className="w-8 h-8 object-contain" />
-                  </div>
+                  <img src={cashmishLogoDark} alt="CashMish" className="h-5 sm:h-7 w-auto object-contain" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black uppercase tracking-tight">Terms & <span className="text-green-400">Conditions</span></h3>
+                  <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Terms & <span className="text-green-400">Conditions</span></h3>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">United States Edition</p>
                 </div>
               </div>
