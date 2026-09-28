@@ -592,19 +592,6 @@ const DeviceAssessmentForm = () => {
               </div>
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-8 border-t border-gray-100 flex justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setAcceptedTerms(true);
-                  setShowTermsModal(false);
-                }}
-                className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-green-700 transition-all shadow-xl shadow-green-600/20 cursor-pointer active:scale-95"
-              >
-                I Understand & Agree
-              </button>
-            </div>
           </div>
           <style>{`
             .custom-scrollbar::-webkit-scrollbar {
