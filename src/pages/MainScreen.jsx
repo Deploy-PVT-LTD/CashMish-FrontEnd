@@ -347,7 +347,7 @@ const PhoneFlipLanding = () => {
           {/* RIGHT */}
           <div
             className="relative flex justify-center lg:justify-end pt-4 lg:pt-0 rounded-3xl"
-            style={{ background: 'linear-gradient(88deg, rgba(255, 255, 255, 1) 51%, rgba(235, 235, 235, 1) 100%)' }}
+            style={{ background: 'linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(220, 220, 223, 1) 100%)' }}
           >
             {/* Handwritten note */}
             <div className="hidden sm:flex absolute -top-2 right-4 lg:right-4 items-start gap-1 z-20 text-gray-700">
