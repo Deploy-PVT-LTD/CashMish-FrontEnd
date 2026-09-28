@@ -55,7 +55,7 @@ export default function AcceptOffer() {
             <CheckCircle2 className="w-14 h-14 text-green-600 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-900">Offer Accepted!</h1>
             <p className="text-gray-600 mt-3">
-              Thanks — you'll receive a confirmation email shortly with your shipping label and tracking link.
+              Thanks — you'll receive a confirmation email shortly.
               Your payment of <strong>${offer?.counterOfferPrice?.toLocaleString()}</strong> will be sent within
               48 hours of us receiving your device.
             </p>
