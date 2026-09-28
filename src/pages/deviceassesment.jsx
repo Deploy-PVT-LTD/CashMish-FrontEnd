@@ -4,7 +4,7 @@ import Header from '../components/layout/header.jsx';
 import { Upload, X, Check, Smartphone, Battery, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
 
 import cashmishLogoDark from '../assets/cashmish-logo-dark.svg';
-import usaFlag from '../assets/usa-flag.svg';
+import usaFlag from '../assets/usa-flag.webp';
 import frontImg from '../assets/front.webp';
 import backImg from '../assets/back.webp';
 import leftImg from '../assets/left.webp';
