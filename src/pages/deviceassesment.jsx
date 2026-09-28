@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
-import { Upload, X, Check, Smartphone, Battery, Shield, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
+import { Upload, X, Check, Smartphone, Battery, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
 
+import cashmishMark from '../assets/cashmish-Fav.svg';
+import usaFlag from '../assets/usa-flag.svg';
 import frontImg from '../assets/front.webp';
 import backImg from '../assets/back.webp';
 import leftImg from '../assets/left.webp';
@@ -543,8 +545,13 @@ const DeviceAssessmentForm = () => {
                 <X size={20} />
               </button>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center">
-                  <Shield size={24} className="text-green-400" />
+                <div className="flex items-center -space-x-2">
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-md z-10 overflow-hidden p-2.5">
+                    <img src={usaFlag} alt="United States" className="w-full h-full object-contain rounded-sm" />
+                  </div>
+                  <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center shadow-md border-2 border-gray-900">
+                    <img src={cashmishMark} alt="CashMish" className="w-8 h-8 object-contain" />
+                  </div>
                 </div>
                 <div>
                   <h3 className="text-2xl font-black uppercase tracking-tight">Terms & <span className="text-green-400">Conditions</span></h3>
