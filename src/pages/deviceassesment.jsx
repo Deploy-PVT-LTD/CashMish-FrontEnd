@@ -544,16 +544,14 @@ const DeviceAssessmentForm = () => {
               >
                 <X size={20} />
               </button>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pr-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center shadow-md overflow-hidden p-2 sm:p-2.5 flex-shrink-0">
-                    <img src={usaFlag} alt="United States" className="w-full h-full object-contain rounded-sm" />
-                  </div>
-                  <img src={cashmishLogoDark} alt="CashMish" className="h-5 sm:h-7 w-auto object-contain" />
+              <div className="flex items-center gap-4 sm:gap-5 pr-10">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md flex-shrink-0">
+                  <img src={usaFlag} alt="United States" className="w-full h-full object-cover object-left" />
                 </div>
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight">Terms & <span className="text-green-400">Conditions</span></h3>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">United States Edition</p>
+                  <img src={cashmishLogoDark} alt="CashMish" className="h-4 sm:h-5 w-auto object-contain mb-1.5" />
+                  <h3 className="text-xl sm:text-3xl font-black uppercase tracking-tight leading-tight">Terms & <span className="text-green-400">Conditions</span></h3>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">United States Edition</p>
                 </div>
               </div>
             </div>
