@@ -549,7 +549,7 @@ const DeviceAssessmentForm = () => {
                   <img src={usaFlag} alt="United States" className="w-full h-full object-cover object-left" />
                 </div>
                 <div>
-                  <img src={cashmishLogoDark} alt="CashMish" className="h-4 sm:h-5 w-auto object-contain mb-1.5" />
+                  <img src={cashmishLogoDark} alt="CashMish" className="h-3 sm:h-3.5 w-auto object-contain mb-1.5" />
                   <h3 className="text-xl sm:text-3xl font-black uppercase tracking-tight leading-tight">Terms & <span className="text-green-400">Conditions</span></h3>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">United States Edition</p>
                 </div>
