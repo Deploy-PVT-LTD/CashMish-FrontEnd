@@ -12,7 +12,7 @@ export default function UserForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const suggestionRef = useRef(null);
-  // Guards against firing "Confirm Pickup" twice (double-click) before the
+  // Guards against firing "Continue" twice (double-click) before the
   // navigate() to the payment-method step goes through.
   const isSubmittingRef = useRef(false);
 
@@ -230,7 +230,7 @@ export default function UserForm() {
             sending our own explicit "PersonalDataForm" tracking event.
             Enter-to-submit UX is preserved via onKeyDown below. */}
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
-          <h2 className="text-xl font-bold mb-6 text-gray-800">Schedule Pickup</h2>
+          <h2 className="text-xl font-bold mb-6 text-gray-800">Your Details</h2>
           <div
             className="space-y-4"
             onKeyDown={(e) => {
@@ -245,7 +245,7 @@ export default function UserForm() {
 
             <div className="relative" ref={suggestionRef}>
               <Input
-                icon={MapPin} name="address" autoComplete="off" placeholder="Pickup address"
+                icon={MapPin} name="address" autoComplete="off" placeholder="Your address"
                 value={formData.address} onChange={(e) => { handleInputChange(e); fetchSuggestions(e.target.value); }}
                 error={showError && !formData.address}
                 rightIcon={
@@ -267,7 +267,7 @@ export default function UserForm() {
             </div>
 
             <button type="button" onClick={handleContinue} className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
-              Confirm Pickup <ArrowRight size={20} />
+              Continue <ArrowRight size={20} />
             </button>
           </div>
         </div>
@@ -291,7 +291,7 @@ function DetailRow({ label, value }) {
   return (
     <div className="flex justify-between border-b border-white/10 py-2">
       <span className="text-green-100 text-sm">{label}</span>
-      <span className="font-bold text-sm uppercase">{formatValue(value)}</span>
+      <span className="font-bold text-sm">{formatValue(value)}</span>
     </div>
   );
 }

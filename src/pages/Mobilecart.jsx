@@ -598,7 +598,7 @@ const MobileCart = () => {
                     <div className="flex-grow w-full text-center md:text-left">
                       <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-2 mb-3">
                         <div>
-                          <h3 className={`text-lg font-black leading-none uppercase tracking-tight ${isCancelled ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.brand} {item.name}</h3>
+                          <h3 className={`text-lg font-black leading-none tracking-tight ${isCancelled ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{item.brand} {item.name}</h3>
                           <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Requested on {item.uploadDate}</p>
                         </div>
                         <Badge status={item.status} />
@@ -608,7 +608,7 @@ const MobileCart = () => {
                         <MiniBox label="Condition" value={item.condition} />
                         <MiniBox label="Carrier" value={item.carrier} />
                         <div className="col-span-2 bg-gray-50 px-3 py-2 rounded-lg text-left border border-gray-100/50">
-                          <p className="text-[9px] text-gray-400 font-bold uppercase mb-1">Pickup Address</p>
+                          <p className="text-[9px] text-gray-400 font-bold uppercase mb-1">Your Address</p>
                           <p className="text-xs font-semibold text-gray-600 truncate">{item.address}</p>
                         </div>
                       </div>

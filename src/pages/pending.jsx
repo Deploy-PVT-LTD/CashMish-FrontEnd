@@ -18,14 +18,17 @@ export default function PendingPage() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Thanks for choosing CashMish!</h1>
-          <p className="mt-3 text-gray-600 leading-relaxed">
-            Check your email for your free shipping label and a confirmation of your submission.
+          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Thank you for choosing CashMish!</h1>
+          <p className="mt-3 text-gray-600 leading-relaxed font-medium">
+            Your submission has been received successfully.
+          </p>
+          <p className="mt-4 text-gray-600 leading-relaxed">
+            Check your email for your free shipping label and confirmation details. Please print the shipping label and drop off your device using the provided label.
           </p>
 
           <div className="mt-6 flex items-center justify-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-3">
             <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <p className="text-sm text-gray-500">We'll also email you as soon as your device is reviewed.</p>
+            <p className="text-sm text-gray-500">We'll review your device and email you with an update once the inspection is complete.</p>
           </div>
 
           <Link

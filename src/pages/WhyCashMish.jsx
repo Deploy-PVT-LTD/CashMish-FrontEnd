@@ -20,7 +20,7 @@ const REASONS = [
   },
   {
     icon: Truck,
-    title: "Free Shipping & Pickup",
+    title: "Free Shipping Label",
     desc: "A prepaid shipping label, on us. No hidden shipping fees, no cost to you to send your device in.",
   },
   {

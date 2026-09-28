@@ -216,14 +216,14 @@ const PriceResult = () => {
               </div>
 
               <div className="mb-8">
-                <h2 className="text-sm font-bold text-gray-700 capitalize">{brand} {model}</h2>
+                <h2 className="text-sm font-bold text-gray-700">{brand} {model}</h2>
                 <p className="text-xs text-gray-400 font-medium">{[storage, condition].filter(Boolean).join(' • ')}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-8">
                 <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-2xl border border-gray-100">
                   <Truck className="w-4 h-4 text-blue-500" />
-                  <span className="text-[10px] font-bold text-gray-600 text-left leading-tight">Free Home Pickup</span>
+                  <span className="text-[10px] font-bold text-gray-600 text-left leading-tight">Free Shipping Label</span>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-2xl border border-gray-100">
                   <ShieldCheck className="w-4 h-4 text-green-500" />
@@ -235,7 +235,7 @@ const PriceResult = () => {
                 onClick={handleProceed}
                 className="group w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-bold py-5 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
-                <span className="text-sm uppercase tracking-wider">Confirm My Offer</span>
+                <span className="text-sm tracking-wider">Confirm My Offer</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
