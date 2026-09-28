@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import mobileimg from "../assets/hero-devices-bundle.jpg"
+import mobileimg from "../assets/hero-devices-bundle.png"
 import appleIcon from "../assets/apple.png"
 import samsungIcon from "../assets/samsung.png"
 import googleIcon from "../assets/google.png"
