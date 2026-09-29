@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Loader2, CheckCircle2, XCircle, Smartphone, PackageX } from 'lucide-react';
 import { BASE_URL } from '../lib/api';
 import Header from '../components/layout/header.jsx';
 
 export default function AcceptOffer() {
   const { token } = useParams();
+  const [searchParams] = useSearchParams();
+  // The email's "Reject Offer" button links here with ?intent=reject so it
+  // jumps straight to the reject-confirmation step instead of the neutral
+  // accept/reject choice screen (which used to make both buttons look like
+  // they did the same thing).
+  const rejectIntent = searchParams.get('intent') === 'reject';
+
   const [loading, setLoading] = useState(true);
   const [offer, setOffer] = useState(null);
   const [error, setError] = useState('');
@@ -13,7 +20,7 @@ export default function AcceptOffer() {
   const [accepted, setAccepted] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [rejected, setRejected] = useState(false);
-  const [confirmingReject, setConfirmingReject] = useState(false);
+  const [confirmingReject, setConfirmingReject] = useState(rejectIntent);
 
   useEffect(() => {
     fetch(`${BASE_URL}/api/forms/offer/${token}`)
