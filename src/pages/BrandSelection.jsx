@@ -152,7 +152,7 @@ const BrandSelection = ({ onSelectBrand }) => {
                     )}
                   </div>
 
-                  <div className="text-sm font-bold text-gray-700 uppercase tracking-wider">
+                  <div className="text-sm font-bold text-gray-700 tracking-wider">
                     {brandName}
                   </div>
                 </button>

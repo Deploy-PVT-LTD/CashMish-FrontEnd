@@ -164,7 +164,7 @@ const ModelSelection = () => {
             ← Back to Brands
           </button>
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
-            Select Your <span className="text-green-800 uppercase">{brand}</span> Model
+            Select Your <span className="text-green-800">{brand}</span> Model
           </h1>
           <p className="text-gray-500 mt-2">We Offer Best Price for your Mobile Phones.</p>
         </div>
