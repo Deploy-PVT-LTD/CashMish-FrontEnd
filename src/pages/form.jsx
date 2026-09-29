@@ -8,10 +8,24 @@ import {
 import favIcon from '../assets/cashmish-Fav.svg';
 import Chatbot from '../components/Chatbot.jsx';
 
+// USPS state abbreviations — used for the shipping-address dropdown.
+const US_STATES = [
+  ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'], ['CA', 'California'],
+  ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'], ['DC', 'District of Columbia'], ['FL', 'Florida'],
+  ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'], ['IN', 'Indiana'],
+  ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'],
+  ['MD', 'Maryland'], ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'],
+  ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'],
+  ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'], ['NC', 'North Carolina'], ['ND', 'North Dakota'],
+  ['OH', 'Ohio'], ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'],
+  ['SC', 'South Carolina'], ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'],
+  ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'], ['WI', 'Wisconsin'],
+  ['WY', 'Wyoming'],
+];
+
 export default function UserForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const suggestionRef = useRef(null);
   // Guards against firing "Continue" twice (double-click) before the
   // navigate() to the payment-method step goes through.
   const isSubmittingRef = useRef(false);
@@ -22,8 +36,6 @@ export default function UserForm() {
 
   const [showError, setShowError] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [deviceDetails, setDeviceDetails] = useState({
     brand: 'N/A', model: 'N/A', storage: 'N/A',
@@ -32,7 +44,7 @@ export default function UserForm() {
 
   const [formData, setFormData] = useState({
     fullName: '', email: '', phoneNumber: '',
-    address: '', coords: null
+    streetAddress: '', city: '', state: '', zipCode: '', coords: null
   });
 
   useEffect(() => {
@@ -76,7 +88,8 @@ export default function UserForm() {
 
     if (isSubmittingRef.current) return;
 
-    if (!formData.fullName || !formData.phoneNumber || !formData.address) {
+    const zipValid = /^\d{5}$/.test(formData.zipCode);
+    if (!formData.fullName || !formData.phoneNumber || !formData.streetAddress || !formData.city || !formData.state || !zipValid) {
       setShowError(true);
       return;
     }
@@ -113,7 +126,10 @@ export default function UserForm() {
           fullName: formData.fullName,
           phoneNumber: formData.phoneNumber,
           email: formData.email,
-          address: formData.address,
+          streetAddress: formData.streetAddress,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
           coords: formData.coords,
         },
       },
@@ -131,23 +147,17 @@ export default function UserForm() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const formatted = name === 'phoneNumber' ? formatUSPhone(value) : value;
+    const formatted = name === 'phoneNumber'
+      ? formatUSPhone(value)
+      : name === 'zipCode'
+        ? value.replace(/\D/g, '').slice(0, 5)
+        : value;
     setFormData(p => ({ ...p, [name]: formatted }));
     setShowError(false);
   };
 
-  const fetchSuggestions = async (q) => {
-    if (q.length < 3) return;
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=5`);
-      const data = await res.json();
-      setSuggestions(data);
-      setShowSuggestions(true);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+  // "Use my location" — reverse-geocodes and fills street/city/state/zip
+  // directly instead of one free-text address line.
   const fetchCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported");
@@ -159,14 +169,21 @@ export default function UserForm() {
       try {
         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
         const data = await res.json();
+        const addr = data.address || {};
+        const street = [addr.house_number, addr.road].filter(Boolean).join(' ');
+        const city = addr.city || addr.town || addr.village || addr.suburb || '';
+        const stateEntry = US_STATES.find(([, name]) => name.toLowerCase() === (addr.state || '').toLowerCase());
         setFormData(p => ({
           ...p,
-          address: data.display_name,
+          streetAddress: street || p.streetAddress,
+          city: city || p.city,
+          state: stateEntry ? stateEntry[0] : p.state,
+          zipCode: (addr.postcode || '').slice(0, 5) || p.zipCode,
           coords: { lat: latitude, lng: longitude }
         }));
-        setShowSuggestions(false);
       } catch (err) {
         console.error("Location error:", err);
+        alert("Couldn't determine your address — please enter it manually.");
       }
       setLocationLoading(false);
     }, () => {
@@ -243,28 +260,41 @@ export default function UserForm() {
             <Input icon={Mail} name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} />
             <Input icon={Phone} type="tel" name="phoneNumber" placeholder="(555) 123-4567" value={formData.phoneNumber} onChange={handleInputChange} error={showError && !formData.phoneNumber} />
 
-            <div className="relative" ref={suggestionRef}>
+            <Input
+              icon={MapPin} name="streetAddress" autoComplete="off" placeholder="Street Address"
+              value={formData.streetAddress} onChange={handleInputChange}
+              error={showError && !formData.streetAddress}
+              rightIcon={
+                <button type="button" onClick={fetchCurrentLocation} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                  {locationLoading ? <Loader2 className="animate-spin text-green-800 w-4 h-4" /> : <Navigation className="text-green-600 w-4 h-4" />}
+                </button>
+              }
+            />
+
+            <div className="grid grid-cols-2 gap-3">
               <Input
-                icon={MapPin} name="address" autoComplete="off" placeholder="Your address"
-                value={formData.address} onChange={(e) => { handleInputChange(e); fetchSuggestions(e.target.value); }}
-                error={showError && !formData.address}
-                rightIcon={
-                  <button type="button" onClick={fetchCurrentLocation} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                    {locationLoading ? <Loader2 className="animate-spin text-green-800 w-4 h-4" /> : <Navigation className="text-green-600 w-4 h-4" />}
-                  </button>
-                }
+                name="city" autoComplete="off" placeholder="City"
+                value={formData.city} onChange={handleInputChange}
+                error={showError && !formData.city}
               />
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl mt-1 shadow-2xl max-h-48 overflow-y-auto">
-                  {suggestions.map((s, i) => (
-                    <div key={i} onClick={() => {
-                      setFormData(p => ({ ...p, address: s.display_name, coords: { lat: parseFloat(s.lat), lng: parseFloat(s.lon) } }));
-                      setShowSuggestions(false);
-                    }} className="px-4 py-3 text-sm hover:bg-blue-50 cursor-pointer border-b last:border-0">{s.display_name}</div>
-                  ))}
-                </div>
-              )}
+              <select
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none transition-all ${showError && !formData.state ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`}
+              >
+                <option value="">State</option>
+                {US_STATES.map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
+              </select>
             </div>
+
+            <Input
+              name="zipCode" inputMode="numeric" autoComplete="off" placeholder="ZIP Code" maxLength={5}
+              value={formData.zipCode} onChange={handleInputChange}
+              error={showError && !/^\d{5}$/.test(formData.zipCode)}
+            />
 
             <button type="button" onClick={handleContinue} className="w-full bg-green-800 cursor-pointer hover:bg-green-700 text-white py-4 rounded-xl font-bold flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg transition-all active:scale-[0.98]">
               Continue <ArrowRight size={20} />
@@ -299,10 +329,10 @@ function DetailRow({ label, value }) {
 function Input({ icon: Icon, rightIcon, error, ...props }) {
   return (
     <div className="relative">
-      <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+      {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
       <input
         {...props}
-        className={`w-full pl-11 pr-10 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`}
+        className={`w-full ${Icon ? 'pl-11' : 'pl-4'} pr-10 py-3 rounded-xl bg-gray-50 border text-sm focus:outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-600 focus:bg-white'}`}
       />
       {rightIcon && <div className="absolute right-4 top-1/2 -translate-y-1/2">{rightIcon}</div>}
     </div>

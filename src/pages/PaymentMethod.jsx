@@ -107,7 +107,11 @@ export default function PaymentMethod() {
         phoneNumber: pickupDetails.phoneNumber,
         email: pickupDetails.email,
         address: {
-          addressText: pickupDetails.address,
+          addressText: `${pickupDetails.streetAddress}, ${pickupDetails.city}, ${pickupDetails.state} ${pickupDetails.zipCode}`,
+          street: pickupDetails.streetAddress,
+          city: pickupDetails.city,
+          state: pickupDetails.state,
+          zipCode: pickupDetails.zipCode,
           location: {
             type: "Point",
             coordinates: [pickupDetails.coords?.lng || 0, pickupDetails.coords?.lat || 0]
