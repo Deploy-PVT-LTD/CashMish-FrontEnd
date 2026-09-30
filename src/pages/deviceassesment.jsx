@@ -101,9 +101,9 @@ const DeviceAssessmentForm = () => {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [photoSlots, setPhotoSlots] = useState({});
-  // Whether the customer says they're able to upload photos at all — "No" skips
-  // straight past the upload UI instead of blocking submission on it.
-  const [canUploadPhotos, setCanUploadPhotos] = useState(true);
+  // Whether the customer says they're able to upload photos at all — null until they
+  // pick Yes/No; the upload UI only appears once they explicitly click Yes.
+  const [canUploadPhotos, setCanUploadPhotos] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [activeSlot, setActiveSlot] = useState(null);
   const slotInputRef = useRef(null);
@@ -202,8 +202,12 @@ const DeviceAssessmentForm = () => {
 
   const allQuestionsAnswered = questions.every(q => answers[q.key]);
 
+  // true -> must actually have uploaded photos; false -> customer said they can't, so
+  // it's fine; null (not yet answered) -> not fine, they still need to pick Yes/No.
+  const photosOk = canUploadPhotos === true ? selectedFiles.length > 0 : canUploadPhotos === false;
+
   const isFormValid = () => {
-    return allQuestionsAnswered && (canUploadPhotos ? selectedFiles.length > 0 : true) && acceptedTerms;
+    return allQuestionsAnswered && photosOk && acceptedTerms;
   };
 
   const handleSubmit = (e) => {
@@ -329,7 +333,7 @@ const DeviceAssessmentForm = () => {
               ))}
             </div>
 
-            {canUploadPhotos ? (
+            {canUploadPhotos === true ? (
               <>
                 <div
                   onClick={openGuide}
@@ -357,9 +361,9 @@ const DeviceAssessmentForm = () => {
                   </div>
                 )}
               </>
-            ) : (
+            ) : canUploadPhotos === false ? (
               <p className="text-sm text-gray-500 italic">Uploading pictures helps us provide a more accurate estimate.</p>
-            )}
+            ) : null}
           </div>
 
           <div className="bg-white rounded-2xl shadow-lg p-6">
@@ -387,10 +391,10 @@ const DeviceAssessmentForm = () => {
               }`}
           >
             {(() => {
-              const photosOk = canUploadPhotos ? selectedFiles.length > 0 : true;
               if (isFormValid()) return "Get My Offer";
               if (!acceptedTerms && allQuestionsAnswered && photosOk) return "Accept Terms to Continue";
-              if (!photosOk && allQuestionsAnswered) return "Please Upload Photos";
+              if (!photosOk && allQuestionsAnswered && canUploadPhotos === true) return "Please Upload Photos";
+              if (!photosOk && allQuestionsAnswered && canUploadPhotos === null) return "Please Answer the Photos Question";
               return "Get My Offer";
             })()}
           </button>
