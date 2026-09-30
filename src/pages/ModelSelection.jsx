@@ -38,6 +38,9 @@ const ModelSelection = () => {
 
   const brand = localStorage.getItem("selectedBrand");
   const category = localStorage.getItem("selectedCategory");
+  const categoryName = localStorage.getItem("selectedCategoryName") || "";
+  // Apple phones are branded "iPhone", not "Apple", everywhere else Apple stays Apple (MacBook, iPad, etc.)
+  const brandLabel = brand === "Apple" && categoryName === "Mobile Phones" ? "iPhone" : brand;
 
   useEffect(() => {
     const fetchModelsByBrand = async () => {
@@ -164,7 +167,7 @@ const ModelSelection = () => {
             ← Back to Brands
           </button>
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
-            Select Your <span className="text-green-800">{brand}</span> Model
+            Select Your <span className="text-green-800">{brandLabel}</span> Model
           </h1>
           <p className="text-gray-500 mt-2">We Offer Best Price for your Mobile Phones.</p>
         </div>
