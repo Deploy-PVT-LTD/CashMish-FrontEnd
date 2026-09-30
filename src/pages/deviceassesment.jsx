@@ -309,7 +309,7 @@ const DeviceAssessmentForm = () => {
 
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-3 mb-4 font-bold text-xl">
-              <ImageIcon className="text-orange-500" /> Device Photos
+              <ImageIcon className="text-orange-500" /> Device Pictures
             </div>
 
             <p className="text-sm font-medium text-gray-700 mb-3">Would you be able to upload your device picture?</p>
