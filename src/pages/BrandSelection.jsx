@@ -23,6 +23,11 @@ const BrandSelection = ({ onSelectBrand }) => {
   const [loading, setLoading] = useState(true);
   const category = localStorage.getItem("selectedCategory");
   const categoryName = localStorage.getItem("selectedCategoryName") || "Device";
+  // MacBooks only ever come from Apple — there's no real "brand" choice here, these
+  // tiles are actually the MacBook lines (Air/Pro/etc.), so word it as a model pick.
+  const isMacBooks = categoryName === "MacBooks";
+  const headingLabel = isMacBooks ? "MacBook" : categoryName;
+  const headingWord = isMacBooks ? "Model" : "Brand";
 
   useEffect(() => {
     // Category must be picked first — send them back if they landed here directly (e.g. a stale link)
@@ -121,7 +126,7 @@ const BrandSelection = ({ onSelectBrand }) => {
         </div>
 
         <div className="text-center">
-          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your {categoryName} Brand</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your {headingLabel} {headingWord}</h1>
 
           {loading ? (
             <div className="mt-20 flex justify-center items-center gap-2">
