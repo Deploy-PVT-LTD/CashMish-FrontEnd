@@ -190,7 +190,7 @@ const ModelSelection = () => {
               ))
             ) : (
               <div className="col-span-full text-center py-10 text-gray-500">
-                This Brand Model Is Not Available Yet.
+                This brand model is currently unavailable.
               </div>
             )}
           </div>
