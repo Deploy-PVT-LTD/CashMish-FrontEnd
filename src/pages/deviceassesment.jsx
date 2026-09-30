@@ -101,6 +101,9 @@ const DeviceAssessmentForm = () => {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [photoSlots, setPhotoSlots] = useState({});
+  // Whether the customer says they're able to upload photos at all — "No" skips
+  // straight past the upload UI instead of blocking submission on it.
+  const [canUploadPhotos, setCanUploadPhotos] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [activeSlot, setActiveSlot] = useState(null);
   const slotInputRef = useRef(null);
@@ -200,7 +203,7 @@ const DeviceAssessmentForm = () => {
   const allQuestionsAnswered = questions.every(q => answers[q.key]);
 
   const isFormValid = () => {
-    return allQuestionsAnswered && selectedFiles.length > 0 && acceptedTerms;
+    return allQuestionsAnswered && (canUploadPhotos ? selectedFiles.length > 0 : true) && acceptedTerms;
   };
 
   const handleSubmit = (e) => {
@@ -306,30 +309,56 @@ const DeviceAssessmentForm = () => {
               <span className="ml-1 text-[12px] text-red-500 font-black uppercase tracking-widest">*</span>
             </div>
 
-            <div
-              onClick={openGuide}
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
-            >
-              <Upload className="w-8 h-8 text-gray-400 mb-2" />
-              <p className="text-sm text-gray-500">
-                {uploadedCount > 0 ? `${uploadedCount}/${photoCategories.length} photos uploaded — tap to add more` : 'Upload photos to show condition'}
-              </p>
+            <p className="text-sm font-medium text-gray-700 mb-3">Would you be able to upload your device pictures?</p>
+            <div className="flex gap-3 mb-5">
+              {[
+                { value: true, label: 'Yes' },
+                { value: false, label: 'No' },
+              ].map((opt) => (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  onClick={() => setCanUploadPhotos(opt.value)}
+                  className={`px-6 py-2 rounded-xl font-semibold text-sm border-2 transition-all cursor-pointer ${canUploadPhotos === opt.value
+                    ? 'bg-green-800 border-green-800 text-white'
+                    : 'border-gray-200 text-gray-600 hover:border-green-800/50'
+                    }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
 
-            {/* Hidden input for slot uploads */}
-            <input ref={slotInputRef} type="file" className="hidden" accept="image/*" onChange={handleSlotUpload} />
+            {canUploadPhotos ? (
+              <>
+                <div
+                  onClick={openGuide}
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500">
+                    {uploadedCount > 0 ? `${uploadedCount}/${photoCategories.length} photos uploaded — tap to add more` : 'Upload photos to show condition'}
+                  </p>
+                </div>
 
-            {imagePreviews.length > 0 && (
-              <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
-                {imagePreviews.map((img, i) => (
-                  <div key={i} className="relative min-w-[120px] h-24">
-                    <img src={img.preview} className="w-full h-full object-cover rounded-lg border shadow-sm" alt="device" />
-                    <button type="button" onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors cursor-pointer">
-                      <X size={14} />
-                    </button>
+                {/* Hidden input for slot uploads */}
+                <input ref={slotInputRef} type="file" className="hidden" accept="image/*" onChange={handleSlotUpload} />
+
+                {imagePreviews.length > 0 && (
+                  <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
+                    {imagePreviews.map((img, i) => (
+                      <div key={i} className="relative min-w-[120px] h-24">
+                        <img src={img.preview} className="w-full h-full object-cover rounded-lg border shadow-sm" alt="device" />
+                        <button type="button" onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors cursor-pointer">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-gray-500 italic">Uploading pictures helps us provide a more accurate estimate.</p>
             )}
           </div>
 
@@ -357,7 +386,13 @@ const DeviceAssessmentForm = () => {
             className={`w-full py-4 rounded-xl font-bold text-white text-lg transition-all ${isFormValid() ? "bg-green-800 hover:bg-green-700 shadow-xl cursor-pointer" : "bg-gray-300 cursor-not-allowed"
               }`}
           >
-            {isFormValid() ? "Get My Offer" : !acceptedTerms && allQuestionsAnswered && selectedFiles.length > 0 ? "Accept Terms to Continue" : !selectedFiles.length && allQuestionsAnswered ? "Please Upload Photos" : "Get My Offer"}
+            {(() => {
+              const photosOk = canUploadPhotos ? selectedFiles.length > 0 : true;
+              if (isFormValid()) return "Get My Offer";
+              if (!acceptedTerms && allQuestionsAnswered && photosOk) return "Accept Terms to Continue";
+              if (!photosOk && allQuestionsAnswered) return "Please Upload Photos";
+              return "Get My Offer";
+            })()}
           </button>
         </form>
       </div>
