@@ -312,7 +312,7 @@ const DeviceAssessmentForm = () => {
               <ImageIcon className="text-orange-500" /> Device Pictures
             </div>
 
-            <p className="text-sm font-medium text-gray-700 mb-3">Would you be able to upload your device picture?</p>
+            <p className="text-sm font-medium text-gray-700 mb-3">Would you be able to upload pictures of your device?</p>
             <div className="flex gap-3 mb-5">
               {[
                 { value: true, label: 'Yes' },
