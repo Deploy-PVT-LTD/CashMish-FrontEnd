@@ -169,7 +169,7 @@ const ModelSelection = () => {
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
             Select Your <span className="text-green-800">{brandLabel}</span> Model
           </h1>
-          <p className="text-gray-500 mt-2">We Offer Best Price for your Mobile Phones.</p>
+          <p className="text-gray-500 mt-2">We offer the best price for your mobile phones.</p>
         </div>
 
         {loading ? (
