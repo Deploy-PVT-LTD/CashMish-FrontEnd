@@ -2,8 +2,7 @@ import axios from 'axios';
 
 // Priority list of backend URLs
 const BACKEND_URLS = [
-    ...(import.meta.env.DEV ? ['http://localhost:5000'] : ['https://app.cashmish.com']),
-    'https://cashmish-backend.onrender.com'
+    import.meta.env.DEV ? 'http://localhost:5000' : 'https://app.cashmish.com'
 ];
 
 // Always try the preferred backend first when the application loads.
