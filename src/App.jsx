@@ -47,13 +47,13 @@ import ScrollToTop from './components/layout/ScrollToTop';
 
 // Context
 import { WalletProvider } from './contexts/Walletcontext';
+import { BASE_URL } from './lib/api';
 
 function App() {
   useEffect(() => {
     // Ping the backend so the trackTraffic middleware records this visitor.
     // Fire-and-forget — we don't block the UI on this.
-    const backendUrl = import.meta.env.DEV ? 'http://localhost:5000' : 'https://cashmish-backend.onrender.com';
-    fetch(`${backendUrl}/api/traffic/ping`, { method: 'GET' }).catch(() => {});
+    fetch(`${BASE_URL}/api/traffic/ping`, { method: 'GET' }).catch(() => {});
   }, []);
 
   return (

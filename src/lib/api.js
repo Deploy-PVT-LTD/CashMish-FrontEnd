@@ -3,22 +3,19 @@ import axios from 'axios';
 // Priority list of backend URLs
 const BACKEND_URLS = [
     ...(import.meta.env.DEV ? ['http://localhost:5000'] : []),  // Local Testing (dev server only)
-    'https://cashmish-backend.onrender.com'            // Production (Primary / fallback)
+    'https://app.cashmish.com',
+    'https://cashmish-backend.onrender.com'
 ];
 
-// Initialize from sessionStorage or default to 0.
-// In dev, always start at 0 (localhost) fresh — don't honor a stale fallback
-// pin left over from an earlier session where localhost happened to be down.
-let currentIndex = import.meta.env.DEV
-    ? 0
-    : parseInt(sessionStorage.getItem('active_backend_idx') || '0');
-if (currentIndex >= BACKEND_URLS.length) currentIndex = 0;
+// Always try the preferred backend first when the application loads.
+let currentIndex = 0;
 
 export const BASE_URL = BACKEND_URLS[currentIndex];
 
 const getActiveURL = () => BACKEND_URLS[currentIndex];
+export const getActiveBackendURL = getActiveURL;
 
-const switchBackend = () => {
+export const switchBackend = () => {
     if (currentIndex < BACKEND_URLS.length - 1) {
         currentIndex++;
         sessionStorage.setItem('active_backend_idx', currentIndex.toString());
@@ -33,9 +30,8 @@ const switchBackend = () => {
 // Global Headers
 axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 axios.defaults.baseURL = getActiveURL();
-// Set a fast timeout for Local VM to trigger fallback quickly (e.g., 5s)
-// Render might need more time for cold starts (e.g., 30s)
-axios.defaults.timeout = currentIndex === 0 ? 5000 : 30000;
+// Keep local development checks quick; hosted backends may need more time.
+axios.defaults.timeout = import.meta.env.DEV && currentIndex === 0 ? 5000 : 30000;
 
 // Axios Interceptor for Fallback
 axios.interceptors.response.use(
@@ -99,7 +95,9 @@ window.fetch = async function (resource, config = {}) {
 
     // Fast timeout for fetch on primary
     const controller = new AbortController();
-    const id = currentIndex === 0 ? setTimeout(() => controller.abort(), 5000) : null;
+    const id = import.meta.env.DEV && currentIndex === 0
+        ? setTimeout(() => controller.abort(), 5000)
+        : null;
 
     const fetchConfig = { ...config, signal: config.signal || controller.signal };
 

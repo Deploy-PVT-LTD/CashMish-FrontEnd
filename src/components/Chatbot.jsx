@@ -1,12 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send } from 'lucide-react';
 import { io } from 'socket.io-client';
-import { BASE_URL } from '../lib/api';
-
-const BACKEND_URLS = [
-    ...(import.meta.env.DEV ? ['http://localhost:5000'] : []),
-    'https://cashmish-backend.onrender.com'
-];
+import { getActiveBackendURL, switchBackend } from '../lib/api';
 
 const predefinedQuestions = [
     { q: "What devices do you buy?", a: "We buy smartphones, tablets, laptops, and smartwatches from all major brands like Apple, Samsung, Google, and more." },
@@ -61,11 +56,8 @@ export default function Chatbot() {
 
         setSessionId(currentSessionId);
 
-        // In dev, always start at 0 (localhost) fresh — same reasoning as lib/api.js.
-        let urlIdx = import.meta.env.DEV ? 0 : parseInt(sessionStorage.getItem('active_backend_idx') || '0');
-
-        const createSocket = (idx) => {
-            const url = BACKEND_URLS[idx] || BACKEND_URLS[0];
+        const createSocket = () => {
+            const url = getActiveBackendURL();
             console.log(`Connecting socket to: ${url}`);
             return io(url, {
                 transports: ['websocket', 'polling'],
@@ -74,16 +66,14 @@ export default function Chatbot() {
             });
         };
 
-        let newSocket = createSocket(urlIdx);
+        let newSocket = createSocket();
         setSocket(newSocket);
 
         newSocket.on('connect_error', () => {
-            if (urlIdx < BACKEND_URLS.length - 1) {
+            if (switchBackend()) {
                 console.warn("Socket connection failed, trying backup...");
                 newSocket.disconnect();
-                urlIdx++;
-                sessionStorage.setItem('active_backend_idx', urlIdx.toString());
-                newSocket = createSocket(urlIdx);
+                newSocket = createSocket();
                 setSocket(newSocket);
                 setupListeners(newSocket);
             }
@@ -123,7 +113,7 @@ export default function Chatbot() {
         const loadHistory = async () => {
             try {
                 // The global fetch override will handle the URL fallback automatically
-                const targetUrl = BACKEND_URLS[urlIdx] || BACKEND_URLS[0];
+                const targetUrl = getActiveBackendURL();
                 const res = await fetch(`${targetUrl}/api/chat/${currentSessionId}`);
                 const data = await res.json();
                 if (data.messages && data.messages.length > 0) {
