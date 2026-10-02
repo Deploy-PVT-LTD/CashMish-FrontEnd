@@ -2,8 +2,7 @@ import axios from 'axios';
 
 // Priority list of backend URLs
 const BACKEND_URLS = [
-    ...(import.meta.env.DEV ? ['http://localhost:5000'] : []),  // Local Testing (dev server only)
-    'https://app.cashmish.com',
+    ...(import.meta.env.DEV ? ['http://localhost:5000'] : ['https://app.cashmish.com']),
     'https://cashmish-backend.onrender.com'
 ];
 
@@ -40,7 +39,11 @@ axios.interceptors.response.use(
         const originalRequest = error.config;
 
         // If it's a network error OR a timeout OR specific status codes like 502/503/504
-        const isNetworkError = !error.response || error.code === 'ECONNABORTED' || error.message === 'Network Error';
+        const isNetworkError = !error.response
+            || error.code === 'ECONNABORTED'
+            || error.message === 'Network Error'
+            || error.response.status === 404
+            || ([502, 503, 504].includes(error.response.status) && originalRequest.method === 'get');
 
         if (isNetworkError && !originalRequest._retry) {
             if (switchBackend()) {
@@ -105,6 +108,15 @@ window.fetch = async function (resource, config = {}) {
         const finalResource = getResolvedUrl(resource);
         const response = await originalFetch(finalResource, fetchConfig);
         if (id) clearTimeout(id);
+
+        const isBackendRequest = typeof resource === 'string'
+            && BACKEND_URLS.some(url => resource.startsWith(url));
+        if (response.status === 404 && isBackendRequest && switchBackend()) {
+            const retryResource = getResolvedUrl(resource);
+            console.warn(`Backend route missing at ${finalResource}; retrying at ${retryResource}`);
+            return originalFetch(retryResource, config);
+        }
+
         return response;
     } catch (error) {
         if (id) clearTimeout(id);
