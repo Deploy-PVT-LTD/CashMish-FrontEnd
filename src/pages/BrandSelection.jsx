@@ -133,6 +133,12 @@ const BrandSelection = ({ onSelectBrand }) => {
               <div className="w-6 h-6 border-4 border-green-800 border-t-transparent rounded-full animate-spin"></div>
               <span>Loading Brands...</span>
             </div>
+          ) : brands.length === 0 ? (
+            <div className="mt-20 text-center">
+              <p className="text-xl text-gray-600">
+                No brands are available for {categoryName.toLowerCase()} right now.
+              </p>
+            </div>
           ) : (
             <div className="flex flex-wrap justify-center gap-6 max-w-xl mx-auto">
               {brands.map((brandName) => (
