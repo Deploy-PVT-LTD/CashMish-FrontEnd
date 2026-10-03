@@ -88,6 +88,10 @@ const BrandSelection = ({ onSelectBrand }) => {
     navigate("/ModelSelection");
   };
 
+  const onBack = () => {
+    navigate("/categoryselection", { replace: true });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header simple />
@@ -126,6 +130,12 @@ const BrandSelection = ({ onSelectBrand }) => {
         </div>
 
         <div className="text-center">
+          <button
+            onClick={onBack}
+            className="text-green-800 cursor-pointer hover:underline text-sm font-medium mb-4 inline-block"
+          >
+            ← Back to Categories
+          </button>
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-8">Select Your {headingLabel} {headingWord}</h1>
 
           {loading ? (
