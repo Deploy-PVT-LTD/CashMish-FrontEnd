@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../components/layout/header.jsx';
 import { Upload, X, Check, Smartphone, Battery, Image as ImageIcon, Camera, RotateCcw, ArrowUp, ArrowDown, Info, ChevronRight, ChevronLeft, Frame, Hand, Fingerprint, Droplet, Wrench, ListChecks } from 'lucide-react';
+import { BASE_URL } from '../lib/api.js';
 
 import cashmishLogoDark from '../assets/cashmish-logo-dark.svg';
 import usaFlag from '../assets/usa-flag.webp';
@@ -14,7 +15,7 @@ import batteryImg from '../assets/battery-health.webp';
 import top from '../assets/top.webp';
 import bottom from '../assets/bottom.webp';
 import Chatbot from '../components/Chatbot.jsx';
-import { getSelectedCategory } from '../lib/categoryFlow';
+import { getSelectedCategory, hasCarrierStep, hasStorageStep } from '../lib/categoryFlow';
 
 // Fallback questions — only used if a category somehow has no condition questions
 // configured yet, so the flow doesn't just break.
@@ -67,6 +68,13 @@ const colorForOptionIndex = (index, total) => {
   return 'yellow';
 };
 
+const bucketHasAPrice = (bucket) => {
+  if (!bucket) return false;
+  return [bucket.unlocked, bucket.locked].some(
+    (tier) => tier && Object.values(tier).some((value) => typeof value === 'number')
+  );
+};
+
 const ALL_PHOTO_SLOTS = [
   { key: 'front', label: 'Front Side', desc: 'Take a clear photo of the screen facing the camera', icon: <img src={frontImg} alt="Front view" className="w-20 h-50 object-contain" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', activeBorder: 'border-blue-500' },
   { key: 'back', label: 'Back Side', desc: 'Flip your device and capture the back panel clearly', icon: <img src={backImg} alt="Back view" className="w-20 h-50 object-contain" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', activeBorder: 'border-purple-500' },
@@ -80,6 +88,16 @@ const ALL_PHOTO_SLOTS = [
 const DeviceAssessmentForm = () => {
   const navigate = useNavigate();
   const category = getSelectedCategory();
+  const showStorageSelect = hasStorageStep(category);
+  const showCarrierSelect = hasCarrierStep(category);
+  const storageOptions = category?.storageOptions?.length > 0
+    ? category.storageOptions
+    : ['64GB', '128GB', '256GB', '512GB', '1TB', '2TB'];
+  const [availableStorageOptions, setAvailableStorageOptions] = useState(storageOptions);
+  const [loadingStorageOptions, setLoadingStorageOptions] = useState(showStorageSelect);
+  const carrierOptions = category?.carrierOptions?.length > 0
+    ? category.carrierOptions
+    : ['AT&T', 'Verizon', 'Sprint', 'T-Mobile', 'Unlocked', 'Other'];
   // A phone marked "doesn't turn on" on the Condition step is priced at a fixed
   // grade (see Conditionselection.jsx) — no point asking screen/body/battery
   // questions nobody submitting a dead phone could meaningfully answer.
@@ -94,6 +112,52 @@ const DeviceAssessmentForm = () => {
 
   // Generic map of questionKey -> chosen optionKey (works for any category's questions).
   const [answers, setAnswers] = useState({});
+  const [selectedStorage, setSelectedStorage] = useState(() => localStorage.getItem('selectedStorage') || '');
+  const [selectedCarrier, setSelectedCarrier] = useState(() => localStorage.getItem('selectedCarrier') || '');
+
+  useEffect(() => {
+    if (!showStorageSelect) {
+      setLoadingStorageOptions(false);
+      return;
+    }
+
+    const mobileId = localStorage.getItem('selectedMobileId');
+    if (!mobileId) {
+      setAvailableStorageOptions(storageOptions);
+      setLoadingStorageOptions(false);
+      return;
+    }
+
+    let cancelled = false;
+    fetch(`${BASE_URL}/api/mobiles/${mobileId}`)
+      .then((response) => response.json())
+      .then((mobile) => {
+        if (cancelled) return;
+        const gradePricing = mobile?.gradePricing || {};
+        const hasAnyPricing = Object.keys(gradePricing).length > 0;
+        const pricedOptions = hasAnyPricing
+          ? storageOptions.filter((option) => bucketHasAPrice(gradePricing[option]))
+          : storageOptions;
+        const nextOptions = pricedOptions;
+        setAvailableStorageOptions(nextOptions);
+        setSelectedStorage((currentStorage) => {
+          const nextStorage = nextOptions.includes(currentStorage) ? currentStorage : nextOptions[0] || '';
+          if (nextStorage) localStorage.setItem('selectedStorage', nextStorage);
+          else localStorage.removeItem('selectedStorage');
+          return nextStorage;
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setAvailableStorageOptions(storageOptions);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingStorageOptions(false);
+      });
+
+    return () => { cancelled = true; };
+    // Category and selected model are fixed for this assessment visit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [imagePreviews, setImagePreviews] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -207,7 +271,11 @@ const DeviceAssessmentForm = () => {
   const photosOk = canUploadPhotos === true ? selectedFiles.length > 0 : canUploadPhotos === false;
 
   const isFormValid = () => {
-    return allQuestionsAnswered && photosOk && acceptedTerms;
+    return allQuestionsAnswered
+      && photosOk
+      && acceptedTerms
+          && (!showStorageSelect || (!loadingStorageOptions && Boolean(selectedStorage)))
+      && (!showCarrierSelect || Boolean(selectedCarrier));
   };
 
   const handleSubmit = (e) => {
@@ -223,6 +291,8 @@ const DeviceAssessmentForm = () => {
       }
       const mergedAnswers = { ...existingAnswers, ...answers };
       localStorage.setItem("conditionAnswers", JSON.stringify(mergedAnswers));
+      if (showStorageSelect) localStorage.setItem('selectedStorage', selectedStorage);
+      if (showCarrierSelect) localStorage.setItem('selectedCarrier', selectedCarrier);
       // Legacy mirrors — harmless no-ops for categories that don't use these keys,
       // kept so any other page still reading them directly (e.g. a cart summary)
       // keeps working for Mobile Phones without changes.
@@ -236,6 +306,7 @@ const DeviceAssessmentForm = () => {
       const assessmentSummary = {
         ...mergedAnswers,
         storage: currentStorage,
+        carrier: localStorage.getItem('selectedCarrier') || '',
         estimatedPrice: currentPrice,
         status: 'pending'
       };
@@ -267,6 +338,56 @@ const DeviceAssessmentForm = () => {
         <h1 className="text-3xl font-bold text-center mb-8">Device Condition Assessment</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {(showStorageSelect || showCarrierSelect) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+              {showStorageSelect && (
+                <label className="block font-semibold text-gray-800">
+                  Device storage
+                  <select
+                    value={selectedStorage}
+                    disabled={loadingStorageOptions || availableStorageOptions.length === 0}
+                    onChange={(e) => {
+                      setSelectedStorage(e.target.value);
+                      localStorage.setItem('selectedStorage', e.target.value);
+                    }}
+                    className="mt-2 block w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 font-normal text-gray-700 focus:border-green-700 focus:outline-none"
+                    required
+                  >
+                    <option value="" disabled>
+                      {loadingStorageOptions
+                        ? 'Loading storage options...'
+                        : availableStorageOptions.length === 0
+                          ? 'No priced storage options available'
+                          : 'Select storage'}
+                    </option>
+                    {availableStorageOptions.map((storage) => (
+                      <option key={storage} value={storage}>{storage}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              {showCarrierSelect && (
+                <label className="block font-semibold text-gray-800">
+                  Phone carrier
+                  <select
+                    value={selectedCarrier}
+                    onChange={(e) => {
+                      setSelectedCarrier(e.target.value);
+                      localStorage.setItem('selectedCarrier', e.target.value);
+                    }}
+                    className="mt-2 block w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 font-normal text-gray-700 focus:border-green-700 focus:outline-none"
+                    required
+                  >
+                    <option value="" disabled>Select carrier</option>
+                    {carrierOptions.map((carrier) => (
+                      <option key={carrier} value={carrier}>{carrier}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
+            </div>
+          )}
+
           {questions.map((q, qIndex) => {
             const QuestionIcon = QUESTION_ICON_MAP[q.key] || Info;
             return (

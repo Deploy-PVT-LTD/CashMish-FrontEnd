@@ -383,8 +383,8 @@ const MobileCart = () => {
     const stepMap = {
       brand: '/ModelSelection',
       model: '/ConditionSelection',
-      condition: '/Storageselection',
-      storage: '/carrierselection',
+      condition: '/deviceassessment',
+      storage: '/deviceassessment',
       carrier: '/deviceassessment',
       assessment: '/userdata'
     };

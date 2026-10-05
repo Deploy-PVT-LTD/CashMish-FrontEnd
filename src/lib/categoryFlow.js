@@ -1,8 +1,6 @@
-// Shared helpers for the category-driven sell flow (Category -> Brand -> Model ->
-// Condition -> [Storage] -> [Carrier] -> Assessment -> Price -> ...). Each category
-// can turn the Storage and Carrier steps on/off and defines its own condition
-// questions — see CategorySelection.jsx (which caches the full category object) and
-// the admin Categories page (where these are configured).
+// Shared helpers for the category-driven sell flow. Storage and carrier are now
+// collected on the assessment page; category settings still control which fields
+// appear there.
 
 export const getSelectedCategory = () => {
   try {
@@ -15,15 +13,8 @@ export const getSelectedCategory = () => {
 export const hasCarrierStep = (category) => category?.hasCarrierStep === true;
 export const hasStorageStep = (category) => category?.hasStorageStep === true;
 
-// Where to go after the (always-shown) coarse condition-grade step.
-export const routeAfterCondition = (category) => {
-  if (hasStorageStep(category)) return '/storageselection';
-  if (hasCarrierStep(category)) return '/carrierselection';
-  return '/deviceassessment';
-};
+// Storage and carrier are collected together on the assessment page.
+export const routeAfterCondition = () => '/deviceassessment';
 
-// Where to go after storage is picked.
-export const routeAfterStorage = (category) => {
-  if (hasCarrierStep(category)) return '/carrierselection';
-  return '/deviceassessment';
-};
+// Keep legacy storage-page callers moving into the current flow.
+export const routeAfterStorage = () => '/deviceassessment';
